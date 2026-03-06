@@ -79,9 +79,84 @@ def _price_range(item):
 	return item.price * Decimal("0.20")
 
 
-def similar_by_price(queryset, item, limit=6):
+def _collect_unique_candidates(tier_querysets, max_items=6):
+	collected = []
+	seen_ids = set()
+	for queryset in tier_querysets:
+		for obj in queryset:
+			if obj.pk in seen_ids:
+				continue
+			collected.append(obj)
+			seen_ids.add(obj.pk)
+			if len(collected) >= max_items:
+				return collected
+	return collected
+
+
+def similar_items_by_rules(base_queryset, item, tier_filters, min_items=4, max_items=6):
 	price_delta = _price_range(item)
-	return queryset.filter(price__gte=item.price - price_delta, price__lte=item.price + price_delta).exclude(pk=item.pk)[:limit]
+	price_filter = {
+		"price__gte": item.price - price_delta,
+		"price__lte": item.price + price_delta,
+	}
+
+	tier_querysets = []
+	for filters_map in tier_filters:
+		queryset = (
+			base_queryset
+			.exclude(pk=item.pk)
+			.filter(**filters_map)
+			.filter(**price_filter)
+			.order_by("-view_count", "-date_added")[:max_items]
+		)
+		tier_querysets.append(queryset)
+
+	if tier_filters:
+		strict_queryset = (
+			base_queryset
+			.exclude(pk=item.pk)
+			.filter(**tier_filters[0])
+			.order_by("-view_count", "-date_added")[:max_items]
+		)
+		tier_querysets.append(strict_queryset)
+
+	items = _collect_unique_candidates(tier_querysets=tier_querysets, max_items=max_items)
+
+	if len(items) < min_items:
+		fallback_queryset = (
+			base_queryset
+			.exclude(pk=item.pk)
+			.exclude(pk__in=[candidate.pk for candidate in items])
+			.order_by("-view_count", "-date_added")[:max_items]
+		)
+		items.extend(_collect_unique_candidates([fallback_queryset], max_items=max_items - len(items)))
+
+	return items[:max_items]
+
+
+def recommended_items_for_you(base_queryset, item, category_filters, min_items=4, max_items=6):
+	category_queryset = base_queryset.exclude(pk=item.pk).filter(**category_filters)
+
+	popular_in_category = category_queryset.order_by("-view_count", "-date_added")[:max_items]
+	recent_in_category = category_queryset.order_by("-date_added")[:max_items]
+	popular_global = base_queryset.exclude(pk=item.pk).order_by("-view_count", "-date_added")[:max_items]
+	recent_global = base_queryset.exclude(pk=item.pk).order_by("-date_added")[:max_items]
+
+	items = _collect_unique_candidates(
+		tier_querysets=[popular_in_category, recent_in_category, popular_global, recent_global],
+		max_items=max_items,
+	)
+
+	if len(items) < min_items:
+		fallback_queryset = (
+			base_queryset
+			.exclude(pk=item.pk)
+			.exclude(pk__in=[candidate.pk for candidate in items])
+			.order_by("-view_count", "-date_added")[:max_items]
+		)
+		items.extend(_collect_unique_candidates([fallback_queryset], max_items=max_items - len(items)))
+
+	return items[:max_items]
 
 
 def _get_recent_session_map(request):
@@ -350,10 +425,21 @@ class CarDetailView(SiteLoginRequiredMixin, View):
 		contact_phone = car.seller_phone or "+243000000000"
 		whatsapp_message = f"Bonjour, je suis interesse par {car.brand} {car.model} sur KICHEFU-CHEFU STORE."
 		whatsapp_link = make_whatsapp_link(contact_phone, whatsapp_message)
-		similar_cars = similar_by_price(
-			Car.objects.prefetch_related("images").filter(brand=car.brand, vehicle_type=car.vehicle_type), car
+		car_base_queryset = Car.objects.prefetch_related("images").all()
+		similar_cars = similar_items_by_rules(
+			base_queryset=car_base_queryset,
+			item=car,
+			tier_filters=[
+				{"brand__iexact": car.brand, "vehicle_type": car.vehicle_type},
+				{"brand__iexact": car.brand},
+				{"vehicle_type": car.vehicle_type},
+			],
 		)
-		recommended_cars = Car.objects.prefetch_related("images").filter(vehicle_type=car.vehicle_type).exclude(pk=car.pk)[:6]
+		recommended_cars = recommended_items_for_you(
+			base_queryset=car_base_queryset,
+			item=car,
+			category_filters={"vehicle_type": car.vehicle_type},
+		)
 
 		return render(
 			request,
@@ -417,8 +503,21 @@ class PhoneDetailView(SiteLoginRequiredMixin, View):
 		favorite_map = get_favorite_id_map(request.user)
 		whatsapp_message = f"Bonjour, je veux le {phone.brand} {phone.model} vu sur KICHEFU-CHEFU STORE."
 		whatsapp_link = make_whatsapp_link(WHATSAPP_DEFAULT, whatsapp_message)
-		similar_phones = similar_by_price(Phone.objects.prefetch_related("images").filter(brand=phone.brand), phone)
-		recommended_phones = Phone.objects.prefetch_related("images").filter(storage=phone.storage).exclude(pk=phone.pk)[:6]
+		phone_base_queryset = Phone.objects.prefetch_related("images").all()
+		similar_phones = similar_items_by_rules(
+			base_queryset=phone_base_queryset,
+			item=phone,
+			tier_filters=[
+				{"brand__iexact": phone.brand, "storage": phone.storage},
+				{"brand__iexact": phone.brand},
+				{"storage": phone.storage},
+			],
+		)
+		recommended_phones = recommended_items_for_you(
+			base_queryset=phone_base_queryset,
+			item=phone,
+			category_filters={"storage": phone.storage},
+		)
 		return render(
 			request,
 			self.template_name,
@@ -496,13 +595,20 @@ class RealEstateDetailView(SiteLoginRequiredMixin, View):
 			f"Bonjour, je suis interesse par cette annonce {listing.get_real_estate_type_display()} a {listing.location}."
 		)
 		whatsapp_link = make_whatsapp_link(WHATSAPP_DEFAULT, whatsapp_message)
-		similar_listings = similar_by_price(RealEstate.objects.prefetch_related("images").filter(
-			real_estate_type=listing.real_estate_type,
-			location=listing.location,
-		), listing)
-		recommended_listings = RealEstate.objects.prefetch_related("images").filter(
-			real_estate_type=listing.real_estate_type
-		).exclude(pk=listing.pk)[:6]
+		real_estate_base_queryset = RealEstate.objects.prefetch_related("images").all()
+		similar_listings = similar_items_by_rules(
+			base_queryset=real_estate_base_queryset,
+			item=listing,
+			tier_filters=[
+				{"real_estate_type": listing.real_estate_type, "location__iexact": listing.location},
+				{"real_estate_type": listing.real_estate_type},
+			],
+		)
+		recommended_listings = recommended_items_for_you(
+			base_queryset=real_estate_base_queryset,
+			item=listing,
+			category_filters={"real_estate_type": listing.real_estate_type},
+		)
 		return render(
 			request,
 			self.template_name,
