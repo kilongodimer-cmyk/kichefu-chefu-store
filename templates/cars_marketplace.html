@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Marketplace Voitures | KICHEFU-CHEFU STORE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --black: #000;
+        --white: #fff;
+        --gold: #c9a227;
+        --line: rgba(255, 255, 255, 0.12);
+        --muted: rgba(255, 255, 255, 0.75);
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; font-family: "Poppins", sans-serif; background: #080808; color: var(--white); }
+      .container { width: min(1220px, 92vw); margin: 0 auto; }
+      .top { position: sticky; top: 0; z-index: 10; background: rgba(0, 0, 0, 0.9); border-bottom: 1px solid var(--line); }
+      .top .container { min-height: 76px; display: flex; align-items: center; justify-content: space-between; }
+      .brand { text-decoration: none; color: var(--white); font-weight: 700; letter-spacing: 0.06em; }
+      .btn { border-radius: 999px; border: 1px solid var(--line); color: var(--white); text-decoration: none; padding: 10px 16px; display: inline-flex; align-items: center; justify-content: center; }
+      .btn-gold { background: var(--gold); color: #000; border-color: transparent; }
+      .hero { padding: 54px 0 32px; }
+      h1 { margin: 0; font-size: clamp(1.8rem, 4vw, 3rem); }
+      .sub { margin-top: 10px; color: var(--muted); }
+      .search-box { margin-top: 22px; display: grid; grid-template-columns: 1fr auto; gap: 10px; }
+      .search-box input { background: #111; color: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; font-family: inherit; }
+      .layout { display: grid; grid-template-columns: 300px 1fr; gap: 22px; padding: 24px 0 70px; }
+      .panel { background: #101010; border: 1px solid var(--line); border-radius: 16px; padding: 16px; }
+      .panel h3 { margin: 0 0 14px; }
+      .filters { display: grid; gap: 10px; }
+      label { font-size: 0.85rem; color: var(--muted); }
+      select, input { width: 100%; background: #0c0c0c; color: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; font-family: inherit; }
+      .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+      .card { background: #101010; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; box-shadow: 0 16px 35px rgba(0, 0, 0, 0.28); }
+      .card img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; display: block; }
+      .body { padding: 14px; }
+      .body h4 { margin: 0; font-size: 1.02rem; }
+      .meta { margin-top: 8px; display: grid; gap: 5px; color: var(--muted); font-size: 0.9rem; }
+      .price { color: var(--gold); font-weight: 700; }
+      .actions { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
+      .status { padding: 4px 10px; border-radius: 999px; font-size: 0.78rem; border: 1px solid var(--line); width: fit-content; }
+      .pager { margin-top: 24px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+      .pager a, .pager span { padding: 8px 12px; border: 1px solid var(--line); border-radius: 999px; text-decoration: none; color: var(--white); }
+      .pager .active { background: var(--gold); color: #000; border-color: transparent; }
+      @media (max-width: 1080px) { .layout { grid-template-columns: 1fr; } .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+      @media (max-width: 740px) { .grid { grid-template-columns: 1fr; } .search-box { grid-template-columns: 1fr; } }
+    </style>
+  </head>
+  <body>
+    <header class="top">
+      <div class="container">
+        <a class="brand" href="/">KICHEFU-CHEFU STORE</a>
+        <a class="btn btn-gold" href="{% url 'marketplace:sell_car' %}">Vendre votre voiture</a>
+      </div>
+    </header>
+
+    <section class="hero container">
+      <h1>Marketplace Automobile</h1>
+      <p class="sub">Trouvez rapidement la bonne voiture par marque, modèle, prix, année, kilométrage et type.</p>
+      <form method="get" class="search-box">
+        <input type="text" name="q" placeholder="Rechercher par marque ou modèle" value="{{ filters.q }}" />
+        <button class="btn btn-gold" type="submit">Rechercher</button>
+      </form>
+    </section>
+
+    <main class="container layout">
+      <aside class="panel">
+        <h3>Filtres</h3>
+        <form method="get" class="filters">
+          <div>
+            <label>Marque</label>
+            <select name="brand">
+              <option value="">Toutes</option>
+              {% for item in brands %}
+                <option value="{{ item }}" {% if filters.brand == item %}selected{% endif %}>{{ item }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div>
+            <label>Type de véhicule</label>
+            <select name="vehicle_type">
+              <option value="">Tous</option>
+              {% for value, label in vehicle_types %}
+                <option value="{{ value }}" {% if filters.vehicle_type == value %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div>
+            <label>Année</label>
+            <input type="number" name="year" value="{{ filters.year }}" />
+          </div>
+          <div>
+            <label>Kilométrage max</label>
+            <input type="number" name="max_mileage" value="{{ filters.max_mileage }}" />
+          </div>
+          <div>
+            <label>Prix min</label>
+            <input type="number" step="0.01" name="min_price" value="{{ filters.min_price }}" />
+          </div>
+          <div>
+            <label>Prix max</label>
+            <input type="number" step="0.01" name="max_price" value="{{ filters.max_price }}" />
+          </div>
+          <button class="btn btn-gold" type="submit">Appliquer</button>
+        </form>
+      </aside>
+
+      <section>
+        <div class="grid">
+          {% for car in page_obj.object_list %}
+            <article class="card">
+              {% with first_image=car.images.first %}
+                {% if first_image %}
+                  <img src="{{ first_image.image.url }}" alt="{{ car.brand }} {{ car.model }}" />
+                {% else %}
+                  <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1000&q=80" alt="{{ car.brand }} {{ car.model }}" />
+                {% endif %}
+              {% endwith %}
+              <div class="body">
+                <h4>{{ car.brand }} {{ car.model }}</h4>
+                <div class="meta">
+                  <span>{{ car.get_vehicle_type_display }} • {{ car.year }}</span>
+                  <span>Kilométrage: {{ car.mileage }} km</span>
+                  <span class="price">Prix: {{ car.price }} $</span>
+                  <span class="status">{{ car.get_availability_display }}</span>
+                </div>
+                <div class="actions">
+                  <a class="btn" href="{% url 'marketplace:car_detail' car.id %}">Voir détails</a>
+                  <a class="btn btn-gold" target="_blank" rel="noopener noreferrer" href="https://wa.me/243000000000?text=Bonjour,%20je%20suis%20interess%C3%A9%20par%20{{ car.brand }}%20{{ car.model }}%20sur%20KICHEFU-CHEFU%20STORE.">Contacter sur WhatsApp</a>
+                </div>
+              </div>
+            </article>
+          {% empty %}
+            <p>Aucun véhicule ne correspond aux filtres.</p>
+          {% endfor %}
+        </div>
+
+        {% if page_obj.paginator.num_pages > 1 %}
+          <div class="pager">
+            {% if page_obj.has_previous %}
+              <a href="?page={{ page_obj.previous_page_number }}&q={{ filters.q }}&brand={{ filters.brand }}&vehicle_type={{ filters.vehicle_type }}&year={{ filters.year }}&max_mileage={{ filters.max_mileage }}&min_price={{ filters.min_price }}&max_price={{ filters.max_price }}">Précédent</a>
+            {% endif %}
+            <span class="active">Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+            {% if page_obj.has_next %}
+              <a href="?page={{ page_obj.next_page_number }}&q={{ filters.q }}&brand={{ filters.brand }}&vehicle_type={{ filters.vehicle_type }}&year={{ filters.year }}&max_mileage={{ filters.max_mileage }}&min_price={{ filters.min_price }}&max_price={{ filters.max_price }}">Suivant</a>
+            {% endif %}
+          </div>
+        {% endif %}
+      </section>
+    </main>
+  </body>
+</html>

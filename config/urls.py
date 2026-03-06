@@ -23,7 +23,8 @@ from django.urls import include, path
 urlpatterns = [
     path('', TemplateView.as_view(template_name='kichefu_store.html'), name='home'),
     path('admin/', admin.site.urls),
-    path('api/marketplace/', include('marketplace.urls')),
+    path('api/marketplace/', include('marketplace.api_urls')),
+    path('voitures/', include('marketplace.urls')),
 ]
 
 if settings.DEBUG:

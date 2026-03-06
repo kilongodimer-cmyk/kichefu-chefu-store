@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vendre votre voiture | KICHEFU-CHEFU STORE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+      :root { --black:#000; --white:#fff; --gold:#c9a227; --line:rgba(255,255,255,0.13); --muted:rgba(255,255,255,0.75); }
+      * { box-sizing: border-box; }
+      body { margin:0; background:#080808; color:var(--white); font-family:"Poppins",sans-serif; }
+      .container { width:min(780px,92vw); margin:0 auto; }
+      .top { border-bottom:1px solid var(--line); background:#050505; }
+      .top .container { min-height:74px; display:flex; align-items:center; justify-content:space-between; }
+      .brand { color:var(--white); text-decoration:none; font-weight:700; letter-spacing:.05em; }
+      .btn { border:1px solid var(--line); border-radius:999px; color:var(--white); text-decoration:none; padding:10px 16px; display:inline-flex; }
+      .wrap { padding:36px 0 70px; }
+      .panel { background:#101010; border:1px solid var(--line); border-radius:16px; padding:22px; }
+      h1 { margin:0; }
+      .sub { margin-top:8px; color:var(--muted); }
+      form { margin-top:20px; display:grid; gap:12px; }
+      label { font-size:.86rem; color:var(--muted); }
+      input { width:100%; background:#0b0b0b; color:#fff; border:1px solid var(--line); border-radius:10px; padding:11px 12px; font-family:inherit; }
+      .submit { background:var(--gold); color:#000; border:none; border-radius:999px; padding:12px 18px; font-weight:700; cursor:pointer; }
+      .ok { margin-top:12px; border:1px solid rgba(80,200,120,.45); background:rgba(80,200,120,.12); border-radius:10px; padding:10px 12px; }
+      .err { margin-top:8px; color:#ff7676; font-size:.85rem; }
+    </style>
+  </head>
+  <body>
+    <header class="top">
+      <div class="container">
+        <a class="brand" href="/">KICHEFU-CHEFU STORE</a>
+        <a class="btn" href="{% url 'marketplace:car_list' %}">Marketplace voitures</a>
+      </div>
+    </header>
+    <main class="container wrap">
+      <section class="panel">
+        <h1>Vendre votre voiture</h1>
+        <p class="sub">Soumettez votre voiture à notre équipe. Nous vous recontactons rapidement.</p>
+        {% if messages %}
+          {% for message in messages %}
+            <div class="ok">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div>
+            <label for="id_name">Nom</label>
+            {{ form.name }}
+            {% if form.name.errors %}<div class="err">{{ form.name.errors|striptags }}</div>{% endif %}
+          </div>
+          <div>
+            <label for="id_phone_number">Téléphone</label>
+            {{ form.phone_number }}
+            {% if form.phone_number.errors %}<div class="err">{{ form.phone_number.errors|striptags }}</div>{% endif %}
+          </div>
+          <div>
+            <label for="id_model">Modèle</label>
+            {{ form.model }}
+            {% if form.model.errors %}<div class="err">{{ form.model.errors|striptags }}</div>{% endif %}
+          </div>
+          <div>
+            <label for="id_year">Année</label>
+            {{ form.year }}
+            {% if form.year.errors %}<div class="err">{{ form.year.errors|striptags }}</div>{% endif %}
+          </div>
+          <div>
+            <label for="id_desired_price">Prix souhaité</label>
+            {{ form.desired_price }}
+            {% if form.desired_price.errors %}<div class="err">{{ form.desired_price.errors|striptags }}</div>{% endif %}
+          </div>
+          <div>
+            <label for="id_photos">Photos</label>
+            {{ form.photos }}
+            {% if form.photos.errors %}<div class="err">{{ form.photos.errors|striptags }}</div>{% endif %}
+          </div>
+          <button class="submit" type="submit">Envoyer ma proposition</button>
+        </form>
+      </section>
+    </main>
+  </body>
+</html>

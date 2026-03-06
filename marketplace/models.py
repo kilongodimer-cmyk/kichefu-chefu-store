@@ -23,6 +23,10 @@ def upload_proposal_image(instance, filename):
 	return f"marketplace/proposals/{instance.proposal_id}/{filename}"
 
 
+def upload_sell_car_image(instance, filename):
+	return f"marketplace/sell_car/{instance.sell_request_id}/{filename}"
+
+
 class AvailabilityChoices(models.TextChoices):
 	AVAILABLE = "available", "Disponible"
 	RESERVED = "reserved", "Reserve"
@@ -30,14 +34,51 @@ class AvailabilityChoices(models.TextChoices):
 
 
 class Car(models.Model):
+	class VehicleType(models.TextChoices):
+		SEDAN = "sedan", "Berline"
+		SUV = "suv", "SUV"
+		PICKUP = "pickup", "Pickup"
+		HATCHBACK = "hatchback", "Hatchback"
+		COUPE = "coupe", "Coupe"
+		VAN = "van", "Van"
+		OTHER = "other", "Autre"
+
+	class TransmissionType(models.TextChoices):
+		MANUAL = "manual", "Manuelle"
+		AUTOMATIC = "automatic", "Automatique"
+
+	class FuelType(models.TextChoices):
+		PETROL = "petrol", "Essence"
+		DIESEL = "diesel", "Diesel"
+		HYBRID = "hybrid", "Hybride"
+		ELECTRIC = "electric", "Electrique"
+		GAS = "gas", "Gaz"
+
 	brand = models.CharField(max_length=60, db_index=True)
 	model = models.CharField(max_length=60, db_index=True)
+	vehicle_type = models.CharField(
+		max_length=20,
+		choices=VehicleType.choices,
+		default=VehicleType.OTHER,
+		db_index=True,
+	)
 	year = models.PositiveIntegerField(
 		validators=[MinValueValidator(1950), MaxValueValidator(timezone.now().year + 1)]
 	)
 	mileage = models.PositiveIntegerField(validators=[MinValueValidator(0)])
+	transmission = models.CharField(
+		max_length=12,
+		choices=TransmissionType.choices,
+		default=TransmissionType.AUTOMATIC,
+	)
+	fuel_type = models.CharField(
+		max_length=12,
+		choices=FuelType.choices,
+		default=FuelType.PETROL,
+	)
 	price = models.DecimalField(max_digits=12, decimal_places=2, db_index=True)
 	description = models.TextField(blank=True)
+	seller_phone = models.CharField(max_length=30, blank=True)
 	availability = models.CharField(
 		max_length=12,
 		choices=AvailabilityChoices.choices,
@@ -50,6 +91,7 @@ class Car(models.Model):
 		ordering = ["-date_added"]
 		indexes = [
 			models.Index(fields=["brand", "model"]),
+			models.Index(fields=["vehicle_type", "availability"]),
 			models.Index(fields=["availability", "price"]),
 			models.Index(fields=["year", "mileage"]),
 		]
@@ -200,5 +242,38 @@ class ProposalImage(models.Model):
 
 	def __str__(self):
 		return f"Image Proposal #{self.proposal_id}"
+
+
+class CarSellRequest(models.Model):
+	name = models.CharField(max_length=120)
+	phone_number = models.CharField(max_length=30)
+	model = models.CharField(max_length=120)
+	year = models.PositiveIntegerField(
+		validators=[MinValueValidator(1950), MaxValueValidator(timezone.now().year + 1)]
+	)
+	desired_price = models.DecimalField(max_digits=12, decimal_places=2)
+	created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+	class Meta:
+		ordering = ["-created_at"]
+
+	def __str__(self):
+		return f"{self.name} - {self.model} ({self.year})"
+
+
+class CarSellRequestImage(models.Model):
+	sell_request = models.ForeignKey(
+		CarSellRequest,
+		on_delete=models.CASCADE,
+		related_name="photos",
+	)
+	image = models.ImageField(upload_to=upload_sell_car_image)
+	created_at = models.DateTimeField(auto_now_add=True)
+
+	class Meta:
+		ordering = ["-created_at"]
+
+	def __str__(self):
+		return f"Photo SellCar #{self.sell_request_id}"
 
 # Create your models here.

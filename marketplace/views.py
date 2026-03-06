@@ -1,10 +1,17 @@
+from django.contrib import messages
+from django.core.paginator import Paginator
+from django.db.models import Q
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views import View
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, permissions, viewsets
 
+from .forms import CarSellRequestForm
 from .models import (
 	Accessory,
 	Car,
 	CarImage,
+	CarSellRequestImage,
 	Phone,
 	PhoneImage,
 	Proposal,
@@ -31,9 +38,9 @@ class CarViewSet(viewsets.ModelViewSet):
 	serializer_class = CarSerializer
 	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 	filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-	filterset_fields = ["brand", "model", "year", "availability"]
+	filterset_fields = ["brand", "model", "year", "availability", "vehicle_type", "fuel_type", "transmission"]
 	search_fields = ["brand", "model", "description"]
-	ordering_fields = ["price", "year", "date_added"]
+	ordering_fields = ["price", "year", "mileage", "date_added"]
 
 
 class CarImageViewSet(viewsets.ModelViewSet):
@@ -95,4 +102,94 @@ class ProposalImageViewSet(viewsets.ModelViewSet):
 	serializer_class = ProposalImageSerializer
 	permission_classes = [permissions.IsAuthenticated]
 
-# Create your views here.
+
+class CarMarketplaceListView(View):
+	template_name = "cars_marketplace.html"
+
+	def get(self, request):
+		cars = Car.objects.prefetch_related("images").all()
+
+		search = request.GET.get("q", "").strip()
+		brand = request.GET.get("brand", "").strip()
+		vehicle_type = request.GET.get("vehicle_type", "").strip()
+		year = request.GET.get("year", "").strip()
+		max_mileage = request.GET.get("max_mileage", "").strip()
+		min_price = request.GET.get("min_price", "").strip()
+		max_price = request.GET.get("max_price", "").strip()
+
+		if search:
+			cars = cars.filter(Q(brand__icontains=search) | Q(model__icontains=search))
+		if brand:
+			cars = cars.filter(brand__iexact=brand)
+		if vehicle_type:
+			cars = cars.filter(vehicle_type=vehicle_type)
+		if year.isdigit():
+			cars = cars.filter(year=int(year))
+		if max_mileage.isdigit():
+			cars = cars.filter(mileage__lte=int(max_mileage))
+
+		try:
+			if min_price:
+				cars = cars.filter(price__gte=float(min_price))
+			if max_price:
+				cars = cars.filter(price__lte=float(max_price))
+		except ValueError:
+			pass
+
+		paginator = Paginator(cars, 12)
+		page_obj = paginator.get_page(request.GET.get("page", 1))
+
+		context = {
+			"page_obj": page_obj,
+			"brands": Car.objects.values_list("brand", flat=True).distinct().order_by("brand"),
+			"vehicle_types": Car.VehicleType.choices,
+			"filters": {
+				"q": search,
+				"brand": brand,
+				"vehicle_type": vehicle_type,
+				"year": year,
+				"max_mileage": max_mileage,
+				"min_price": min_price,
+				"max_price": max_price,
+			},
+		}
+		return render(request, self.template_name, context)
+
+
+class CarDetailView(View):
+	template_name = "car_detail.html"
+
+	def get(self, request, pk):
+		car = get_object_or_404(Car.objects.prefetch_related("images"), pk=pk)
+		contact_phone = car.seller_phone or "+243000000000"
+		whatsapp_message = f"Bonjour, je suis intéressé par {car.brand} {car.model} sur KICHEFU-CHEFU STORE."
+		whatsapp_link = f"https://wa.me/{contact_phone.replace('+', '').replace(' ', '')}?text={whatsapp_message}"
+
+		return render(
+			request,
+			self.template_name,
+			{
+				"car": car,
+				"contact_phone": contact_phone,
+				"whatsapp_link": whatsapp_link,
+			},
+		)
+
+
+class SellCarView(View):
+	template_name = "sell_car.html"
+
+	def get(self, request):
+		return render(request, self.template_name, {"form": CarSellRequestForm()})
+
+	def post(self, request):
+		form = CarSellRequestForm(request.POST, request.FILES)
+		if not form.is_valid():
+			return render(request, self.template_name, {"form": form})
+
+		sell_request = form.save()
+		for image in request.FILES.getlist("photos"):
+			CarSellRequestImage.objects.create(sell_request=sell_request, image=image)
+
+		messages.success(request, "Votre demande a été envoyée avec succès. Nous vous contacterons rapidement.")
+		return redirect("marketplace:sell_car")

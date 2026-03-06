@@ -4,6 +4,8 @@ from .models import (
 	Accessory,
 	Car,
 	CarImage,
+	CarSellRequest,
+	CarSellRequestImage,
 	Phone,
 	PhoneImage,
 	Proposal,
@@ -20,8 +22,8 @@ class CarImageInline(admin.TabularInline):
 
 @admin.register(Car)
 class CarAdmin(admin.ModelAdmin):
-	list_display = ("brand", "model", "year", "mileage", "price", "availability", "date_added")
-	list_filter = ("availability", "year", "brand")
+	list_display = ("brand", "model", "vehicle_type", "year", "mileage", "price", "availability", "date_added")
+	list_filter = ("availability", "vehicle_type", "year", "brand", "fuel_type", "transmission")
 	search_fields = ("brand", "model", "description")
 	ordering = ("-date_added",)
 	inlines = [CarImageInline]
@@ -75,5 +77,19 @@ class ProposalAdmin(admin.ModelAdmin):
 	search_fields = ("name", "phone_number", "description")
 	ordering = ("-created_at",)
 	inlines = [ProposalImageInline]
+
+
+class CarSellRequestImageInline(admin.TabularInline):
+	model = CarSellRequestImage
+	extra = 1
+
+
+@admin.register(CarSellRequest)
+class CarSellRequestAdmin(admin.ModelAdmin):
+	list_display = ("name", "phone_number", "model", "year", "desired_price", "created_at")
+	list_filter = ("year", "created_at")
+	search_fields = ("name", "phone_number", "model")
+	ordering = ("-created_at",)
+	inlines = [CarSellRequestImageInline]
 
 # Register your models here.
