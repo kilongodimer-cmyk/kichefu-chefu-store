@@ -36,6 +36,8 @@
       select, input { width: 100%; background: #0c0c0c; color: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; font-family: inherit; }
       .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
       .card { background: #101010; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; box-shadow: 0 16px 35px rgba(0, 0, 0, 0.28); }
+      .card { transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease; }
+      .card:hover { transform: translateY(-6px); border-color: var(--gold); box-shadow: 0 22px 42px rgba(0, 0, 0, 0.35); }
       .card img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; display: block; }
       .body { padding: 14px; }
       .body h4 { margin: 0; font-size: 1.02rem; }
@@ -115,9 +117,9 @@
             <article class="card">
               {% with first_image=car.images.first %}
                 {% if first_image %}
-                  <img src="{{ first_image.image.url }}" alt="{{ car.brand }} {{ car.model }}" />
+                  <img src="{{ first_image.image.url }}" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />
                 {% else %}
-                  <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1000&q=80" alt="{{ car.brand }} {{ car.model }}" />
+                  <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1000&q=80" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />
                 {% endif %}
               {% endwith %}
               <div class="body">

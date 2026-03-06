@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>KICHEFU-CHEFU STORE | Marketplace</title>
+    <title>KICHEFU-CHEFU STORE | Marketplace Premium</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -15,14 +15,15 @@
         --black: #000000;
         --white: #ffffff;
         --gold: #c9a227;
-        --ink-1: #080808;
-        --ink-2: #121212;
-        --line: rgba(255, 255, 255, 0.12);
+        --ink-1: #070707;
+        --ink-2: #111111;
+        --line: rgba(255, 255, 255, 0.14);
         --muted: rgba(255, 255, 255, 0.74);
-        --soft-shadow: 0 18px 45px rgba(0, 0, 0, 0.35);
+        --ok: #34c759;
         --radius-xl: 24px;
         --radius-lg: 18px;
         --radius-md: 14px;
+        --shadow-soft: 0 16px 36px rgba(0, 0, 0, 0.3);
       }
 
       * {
@@ -31,13 +32,12 @@
 
       body {
         margin: 0;
+        color: var(--white);
         font-family: "Poppins", system-ui, sans-serif;
         background:
-          radial-gradient(circle at 9% 0%, rgba(201, 162, 39, 0.2), transparent 34%),
-          radial-gradient(circle at 91% 14%, rgba(201, 162, 39, 0.11), transparent 30%),
-          linear-gradient(180deg, #050505 0%, #090909 54%, #050505 100%);
-        color: var(--white);
-        line-height: 1.55;
+          radial-gradient(circle at 12% 0%, rgba(201, 162, 39, 0.22), transparent 33%),
+          radial-gradient(circle at 88% 12%, rgba(201, 162, 39, 0.12), transparent 28%),
+          linear-gradient(180deg, #050505 0%, #090909 55%, #050505 100%);
       }
 
       .container {
@@ -49,13 +49,13 @@
         position: sticky;
         top: 0;
         z-index: 20;
+        background: rgba(6, 6, 6, 0.86);
+        backdrop-filter: blur(10px);
         border-bottom: 1px solid var(--line);
-        background: rgba(4, 4, 4, 0.84);
-        backdrop-filter: blur(11px);
       }
 
       .nav {
-        min-height: 82px;
+        min-height: 84px;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -78,41 +78,41 @@
 
       .brand-name {
         text-transform: uppercase;
-        font-size: 0.95rem;
-        letter-spacing: 0.08em;
         font-weight: 700;
+        font-size: 0.92rem;
+        letter-spacing: 0.09em;
       }
 
       .menu {
         display: flex;
         align-items: center;
-        gap: 18px;
+        gap: 17px;
         flex-wrap: wrap;
       }
 
       .menu a {
         color: var(--white);
+        opacity: 0.86;
         text-decoration: none;
         font-size: 0.92rem;
-        opacity: 0.86;
-        transition: color 0.25s ease, opacity 0.25s ease;
+        transition: opacity 0.25s ease, color 0.25s ease;
       }
 
       .menu a:hover {
-        color: var(--gold);
         opacity: 1;
+        color: var(--gold);
       }
 
       .btn {
         border-radius: 999px;
-        padding: 11px 19px;
+        border: 1px solid transparent;
+        padding: 11px 18px;
         text-decoration: none;
         font-weight: 600;
-        border: 1px solid transparent;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        transition: transform 0.28s ease, box-shadow 0.28s ease, background 0.28s ease, color 0.28s ease;
+        transition: transform 0.28s ease, box-shadow 0.28s ease;
       }
 
       .btn:hover {
@@ -120,50 +120,43 @@
       }
 
       .btn-gold {
+        color: #000;
         background: linear-gradient(135deg, #c9a227, #e0bf57);
-        color: var(--black);
-        box-shadow: 0 10px 24px rgba(201, 162, 39, 0.26);
+        box-shadow: 0 10px 22px rgba(201, 162, 39, 0.28);
       }
 
-      .btn-outline {
-        border-color: var(--gold);
+      .btn-ghost {
         color: var(--white);
-      }
-
-      .btn-dark {
         border-color: var(--line);
-        color: var(--white);
-        background: rgba(255, 255, 255, 0.02);
+        background: rgba(255, 255, 255, 0.03);
       }
 
       .hero {
-        padding: 116px 0 104px;
-        background: linear-gradient(135deg, rgba(15, 15, 15, 0.9) 0%, rgba(8, 8, 8, 0.95) 100%);
+        padding: 110px 0 95px;
         border-bottom: 1px solid var(--line);
       }
 
       .hero-grid {
         display: grid;
-        grid-template-columns: 1.08fr 0.92fr;
+        grid-template-columns: 1.05fr 0.95fr;
         gap: 34px;
         align-items: center;
       }
 
-      .badge {
+      .hero-badge {
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        font-size: 0.8rem;
-        letter-spacing: 0.07em;
-        text-transform: uppercase;
         padding: 8px 14px;
         border-radius: 999px;
-        border: 1px solid rgba(201, 162, 39, 0.42);
-        color: rgba(255, 255, 255, 0.88);
+        border: 1px solid rgba(201, 162, 39, 0.45);
         background: rgba(201, 162, 39, 0.1);
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
       }
 
-      .badge::before {
+      .hero-badge::before {
         content: "";
         width: 7px;
         height: 7px;
@@ -173,53 +166,28 @@
 
       h1 {
         margin: 18px 0 0;
-        font-size: clamp(2.2rem, 5vw, 4.35rem);
-        line-height: 1.05;
-        letter-spacing: 0.02em;
+        font-size: clamp(2.1rem, 5vw, 4.3rem);
+        line-height: 1.04;
       }
 
       .lead {
+        margin: 18px 0 0;
+        max-width: 650px;
         color: var(--muted);
-        margin-top: 18px;
-        max-width: 660px;
       }
 
-      .actions {
+      .hero-actions {
         margin-top: 28px;
         display: flex;
         gap: 12px;
         flex-wrap: wrap;
       }
 
-      .hero-stats {
-        margin-top: 24px;
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-      }
-
-      .hero-stat {
-        border: 1px solid var(--line);
-        border-radius: 999px;
-        padding: 8px 14px;
-        font-size: 0.85rem;
-        color: rgba(255, 255, 255, 0.83);
-        background: rgba(255, 255, 255, 0.02);
-      }
-
       .hero-media {
+        border: 1px solid var(--line);
         border-radius: var(--radius-xl);
         overflow: hidden;
-        border: 1px solid var(--line);
-        box-shadow: var(--soft-shadow);
-        position: relative;
-      }
-
-      .hero-media::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(0deg, rgba(0, 0, 0, 0.42), transparent 50%);
+        box-shadow: var(--shadow-soft);
       }
 
       .hero-media img {
@@ -231,26 +199,18 @@
       }
 
       .section {
-        padding: 96px 0;
+        padding: 92px 0;
       }
 
-      .section-head {
-        display: flex;
-        align-items: end;
-        justify-content: space-between;
-        gap: 16px;
-        flex-wrap: wrap;
-      }
-
-      .title {
+      .section-title {
         margin: 0 0 10px;
-        font-size: clamp(1.5rem, 2.2vw, 2.15rem);
+        font-size: clamp(1.45rem, 2.3vw, 2.18rem);
       }
 
-      .subtitle {
+      .section-subtitle {
         margin: 0;
+        max-width: 760px;
         color: var(--muted);
-        max-width: 720px;
       }
 
       .grid {
@@ -262,38 +222,77 @@
       .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
       .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 
-      .card {
-        background: linear-gradient(180deg, #101010 0%, #0a0a0a 100%);
+      .category-card,
+      .product-card {
         border: 1px solid var(--line);
         border-radius: var(--radius-md);
         overflow: hidden;
+        background: linear-gradient(180deg, #101010 0%, #0a0a0a 100%);
+        box-shadow: var(--shadow-soft);
         transition: transform 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease;
-        box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28);
       }
 
-      .card:hover {
+      .category-card:hover,
+      .product-card:hover {
         transform: translateY(-7px);
         border-color: var(--gold);
-        box-shadow: 0 22px 44px rgba(0, 0, 0, 0.35);
+        box-shadow: 0 22px 44px rgba(0, 0, 0, 0.36);
       }
 
-      .card img {
+      .category-card img,
+      .product-card img {
         width: 100%;
         aspect-ratio: 16 / 10;
         object-fit: cover;
         display: block;
       }
 
-      .card-body { padding: 16px; }
-      .card h3 { margin: 0; font-size: 1.05rem; }
-      .meta { margin-top: 10px; display: grid; gap: 6px; color: var(--muted); font-size: 0.92rem; }
-      .price { color: var(--gold); font-weight: 700; }
-      .card-actions { margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap; }
+      .category-body,
+      .product-body {
+        padding: 15px;
+      }
 
       .category-title {
-        margin-top: 10px;
+        margin: 0;
         font-size: 1.02rem;
-        letter-spacing: 0.01em;
+      }
+
+      .product-title {
+        margin: 0;
+        font-size: 1.05rem;
+      }
+
+      .product-price {
+        margin-top: 8px;
+        color: var(--gold);
+        font-weight: 700;
+      }
+
+      .product-meta {
+        margin-top: 8px;
+        display: grid;
+        gap: 6px;
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      .status-badge {
+        margin-top: 8px;
+        width: fit-content;
+        padding: 5px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(52, 199, 89, 0.45);
+        color: #cbf5d7;
+        background: rgba(52, 199, 89, 0.14);
+        font-size: 0.76rem;
+        font-weight: 600;
+      }
+
+      .product-actions {
+        margin-top: 12px;
+        display: flex;
+        gap: 9px;
+        flex-wrap: wrap;
       }
 
       .commission {
@@ -307,15 +306,15 @@
       .commission-box {
         border: 1px solid var(--line);
         border-radius: var(--radius-xl);
+        background: linear-gradient(145deg, rgba(16, 16, 16, 0.97), rgba(25, 25, 25, 0.92));
+        box-shadow: var(--shadow-soft);
         padding: 34px;
-        background: linear-gradient(145deg, rgba(14, 14, 14, 0.96), rgba(24, 24, 24, 0.92));
-        box-shadow: var(--soft-shadow);
       }
 
       footer {
         border-top: 1px solid var(--line);
+        padding: 70px 0 34px;
         background: #050505;
-        padding: 72px 0 34px;
       }
 
       .footer-grid {
@@ -324,51 +323,47 @@
         gap: 28px;
       }
 
-      .footer-grid h4 { margin: 0 0 12px; }
-      .footer-grid p, .footer-grid li, .footer-grid a {
-        color: var(--muted);
+      .footer-grid h4 {
+        margin: 0 0 12px;
+      }
+
+      .footer-grid p,
+      .footer-grid a,
+      .footer-grid li {
         margin: 0;
+        color: var(--muted);
         text-decoration: none;
         list-style: none;
       }
 
-      .footer-grid ul { margin: 0; padding: 0; display: grid; gap: 8px; }
-      .copy { margin-top: 24px; color: rgba(255, 255, 255, 0.56); font-size: 0.88rem; }
-
-      .fade-up {
-        opacity: 0;
-        transform: translateY(16px);
-        animation: fadeUp 0.7s ease forwards;
+      .footer-grid ul {
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 8px;
       }
 
-      .fade-delay-1 { animation-delay: 0.1s; }
-      .fade-delay-2 { animation-delay: 0.2s; }
-      .fade-delay-3 { animation-delay: 0.3s; }
-
-      @keyframes fadeUp {
-        from {
-          opacity: 0;
-          transform: translateY(16px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
+      .copy {
+        margin-top: 24px;
+        font-size: 0.87rem;
+        color: rgba(255, 255, 255, 0.58);
       }
 
-      @media (max-width: 1060px) {
+      @media (max-width: 1080px) {
         .hero-grid { grid-template-columns: 1fr; }
-        .hero-media { order: -1; }
         .grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-        .grid-3, .footer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .grid-3,
+        .footer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       }
 
       @media (max-width: 760px) {
         .nav { flex-direction: column; align-items: flex-start; padding: 14px 0; }
         .menu { gap: 12px; }
-        .grid-4, .grid-3, .footer-grid { grid-template-columns: 1fr; }
+        .hero { padding: 84px 0 72px; }
         .section { padding: 68px 0; }
-        .hero { padding: 84px 0 74px; }
+        .grid-4,
+        .grid-3,
+        .footer-grid { grid-template-columns: 1fr; }
         .commission-box { padding: 24px; }
       }
     </style>
@@ -376,15 +371,15 @@
   <body>
     <header class="topbar">
       <div class="container nav">
-        <a href="#" class="brand" aria-label="KICHEFU-CHEFU STORE">
+        <a href="/" class="brand" aria-label="KICHEFU-CHEFU STORE">
           <span class="brand-crown">♛</span>
           <span class="brand-name">KICHEFU-CHEFU STORE</span>
         </a>
-        <nav class="menu">
+        <nav class="menu" aria-label="Navigation principale">
           <a href="#accueil">Accueil</a>
+          <a href="/voitures/">Voitures</a>
           <a href="#telephones">Téléphones</a>
           <a href="#accessoires">Accessoires</a>
-          <a href="/voitures/">Voitures</a>
           <a href="#immobilier">Immobilier</a>
           <a href="#vendre">Vendre avec nous</a>
           <a href="#contact">Contact</a>
@@ -396,81 +391,148 @@
     <main id="accueil">
       <section class="hero">
         <div class="container hero-grid">
-          <div class="fade-up">
-            <span class="badge">Marketplace Premium</span>
+          <div>
+            <span class="hero-badge">Plateforme Marketplace Pro</span>
             <h1>KICHEFU-CHEFU STORE</h1>
             <p class="lead">Téléphones • Accessoires • Vente et importation de voitures • Commission immobilière</p>
-            <div class="actions">
+            <div class="hero-actions">
               <a class="btn btn-gold" href="/voitures/">Voir les véhicules</a>
-              <a class="btn btn-outline" href="#telephones">Voir les téléphones</a>
-            </div>
-            <div class="hero-stats">
-              <span class="hero-stat">Voitures récentes</span>
-              <span class="hero-stat">Smartphones populaires</span>
-              <span class="hero-stat">Commission immobilière</span>
+              <a class="btn btn-ghost" href="#telephones">Voir les téléphones</a>
             </div>
           </div>
-          <div class="hero-media fade-up fade-delay-1">
-            <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80" alt="Voiture premium" />
+          <div class="hero-media">
+            <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80" alt="Voiture premium" loading="eager" fetchpriority="high" decoding="async" />
           </div>
         </div>
       </section>
 
       <section class="section" id="accessoires">
         <div class="container">
-          <div class="section-head">
-            <div>
-              <h2 class="title">Catégories</h2>
-              <p class="subtitle">Explorez nos univers produits avec une présentation claire, moderne et professionnelle.</p>
-            </div>
-          </div>
+          <h2 class="section-title">Catégories</h2>
+          <p class="section-subtitle">Une interface moderne inspirée des grands marketplaces: navigation claire, produits visibles, actions rapides.</p>
           <div class="grid grid-4">
-            <article class="card fade-up"><img src="https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=1000&q=80" alt="Téléphones" /><div class="card-body"><h3 class="category-title">Téléphones</h3></div></article>
-            <article class="card fade-up fade-delay-1"><img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=1000&q=80" alt="Accessoires" /><div class="card-body"><h3 class="category-title">Accessoires</h3></div></article>
-            <article class="card fade-up fade-delay-2"><img src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1000&q=80" alt="Voitures" /><div class="card-body"><h3 class="category-title">Voitures</h3></div></article>
-            <article class="card fade-up fade-delay-3"><img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1000&q=80" alt="Immobilier" /><div class="card-body"><h3 class="category-title">Immobilier</h3></div></article>
+            <article class="category-card">
+              <img src="https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=1000&q=80" alt="Téléphones" loading="lazy" decoding="async" />
+              <div class="category-body"><h3 class="category-title">Téléphones</h3></div>
+            </article>
+            <article class="category-card">
+              <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=1000&q=80" alt="Accessoires" loading="lazy" decoding="async" />
+              <div class="category-body"><h3 class="category-title">Accessoires</h3></div>
+            </article>
+            <article class="category-card">
+              <img src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1000&q=80" alt="Voitures" loading="lazy" decoding="async" />
+              <div class="category-body"><h3 class="category-title">Voitures</h3></div>
+            </article>
+            <article class="category-card">
+              <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1000&q=80" alt="Immobilier" loading="lazy" decoding="async" />
+              <div class="category-body"><h3 class="category-title">Immobilier</h3></div>
+            </article>
           </div>
         </div>
       </section>
 
       <section class="section" id="voitures">
         <div class="container">
-          <div class="section-head">
-            <div>
-              <h2 class="title">Voitures Récentes</h2>
-              <p class="subtitle">Une sélection premium dans un affichage inspiré des marketplaces automobiles modernes.</p>
-            </div>
-          </div>
+          <h2 class="section-title">Voitures Récentes</h2>
+          <p class="section-subtitle">Des cartes automobiles comparables aux grandes plateformes: image large, prix en évidence, badge statut et actions directes.</p>
           <div class="grid grid-3">
-            <article class="card"><img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1100&q=80" alt="Toyota Land Cruiser" /><div class="card-body"><h3>Toyota Land Cruiser</h3><div class="meta"><span>Année: 2022</span><span class="price">Prix: 58 000 $</span><span>Disponibilité: Disponible</span></div><div class="card-actions"><a class="btn btn-dark" href="/voitures/">Voir détails</a><a class="btn btn-gold" href="https://wa.me/243000000000" target="_blank" rel="noopener noreferrer">Contacter sur WhatsApp</a></div></div></article>
-            <article class="card"><img src="https://images.unsplash.com/photo-1549924231-f129b911e442?auto=format&fit=crop&w=1100&q=80" alt="Mercedes GLE" /><div class="card-body"><h3>Mercedes GLE</h3><div class="meta"><span>Année: 2021</span><span class="price">Prix: 64 500 $</span><span>Disponibilité: Stock limité</span></div><div class="card-actions"><a class="btn btn-dark" href="/voitures/">Voir détails</a><a class="btn btn-gold" href="https://wa.me/243000000000" target="_blank" rel="noopener noreferrer">Contacter sur WhatsApp</a></div></div></article>
-            <article class="card"><img src="https://images.unsplash.com/photo-1617469767053-c787537917f1?auto=format&fit=crop&w=1100&q=80" alt="BMW X5" /><div class="card-body"><h3>BMW X5</h3><div class="meta"><span>Année: 2023</span><span class="price">Prix: 71 300 $</span><span>Disponibilité: Disponible</span></div><div class="card-actions"><a class="btn btn-dark" href="/voitures/">Voir détails</a><a class="btn btn-gold" href="https://wa.me/243000000000" target="_blank" rel="noopener noreferrer">Contacter sur WhatsApp</a></div></div></article>
+            <article class="product-card">
+              <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1100&q=80" alt="Toyota Land Cruiser" loading="lazy" decoding="async" />
+              <div class="product-body">
+                <h3 class="product-title">Toyota Land Cruiser 2022</h3>
+                <div class="product-price">58 000 $</div>
+                <div class="product-meta"><span>Kilométrage: 42 000 km</span></div>
+                <span class="status-badge">Disponible</span>
+                <div class="product-actions">
+                  <a class="btn btn-ghost" href="/voitures/">Voir détails</a>
+                  <a class="btn btn-gold" href="https://wa.me/243000000000?text=Bonjour,%20je%20suis%20interesse%20par%20Toyota%20Land%20Cruiser%202022." target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                </div>
+              </div>
+            </article>
+            <article class="product-card">
+              <img src="https://images.unsplash.com/photo-1549924231-f129b911e442?auto=format&fit=crop&w=1100&q=80" alt="Mercedes GLE" loading="lazy" decoding="async" />
+              <div class="product-body">
+                <h3 class="product-title">Mercedes GLE 2021</h3>
+                <div class="product-price">64 500 $</div>
+                <div class="product-meta"><span>Kilométrage: 36 800 km</span></div>
+                <span class="status-badge">Stock limité</span>
+                <div class="product-actions">
+                  <a class="btn btn-ghost" href="/voitures/">Voir détails</a>
+                  <a class="btn btn-gold" href="https://wa.me/243000000000?text=Bonjour,%20je%20suis%20interesse%20par%20Mercedes%20GLE%202021." target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                </div>
+              </div>
+            </article>
+            <article class="product-card">
+              <img src="https://images.unsplash.com/photo-1617469767053-c787537917f1?auto=format&fit=crop&w=1100&q=80" alt="BMW X5" loading="lazy" decoding="async" />
+              <div class="product-body">
+                <h3 class="product-title">BMW X5 2023</h3>
+                <div class="product-price">71 300 $</div>
+                <div class="product-meta"><span>Kilométrage: 18 500 km</span></div>
+                <span class="status-badge">Disponible</span>
+                <div class="product-actions">
+                  <a class="btn btn-ghost" href="/voitures/">Voir détails</a>
+                  <a class="btn btn-gold" href="https://wa.me/243000000000?text=Bonjour,%20je%20suis%20interesse%20par%20BMW%20X5%202023." target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                </div>
+              </div>
+            </article>
           </div>
         </div>
       </section>
 
       <section class="section" id="telephones">
         <div class="container">
-          <div class="section-head">
-            <div>
-              <h2 class="title">Téléphones Populaires</h2>
-              <p class="subtitle">Les modèles les plus demandés, présentés avec un design premium orienté conversion.</p>
-            </div>
-          </div>
+          <h2 class="section-title">Téléphones Populaires</h2>
+          <p class="section-subtitle">Même standard de présentation premium que l'automobile, pour une expérience e-commerce cohérente.</p>
           <div class="grid grid-3">
-            <article class="card"><img src="https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=1100&q=80" alt="iPhone 15 Pro" /><div class="card-body"><h3>iPhone 15 Pro</h3><div class="meta"><span class="price">Prix: 1 240 $</span><span>Disponibilité: Disponible</span></div><div class="card-actions"><a class="btn btn-dark" href="#">Voir détails</a></div></div></article>
-            <article class="card"><img src="https://images.unsplash.com/photo-1678652197831-2d180705cd2c?auto=format&fit=crop&w=1100&q=80" alt="Samsung Galaxy S24 Ultra" /><div class="card-body"><h3>Samsung Galaxy S24 Ultra</h3><div class="meta"><span class="price">Prix: 1 180 $</span><span>Disponibilité: Sur commande</span></div><div class="card-actions"><a class="btn btn-dark" href="#">Voir détails</a></div></div></article>
-            <article class="card"><img src="https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?auto=format&fit=crop&w=1100&q=80" alt="Google Pixel 8 Pro" /><div class="card-body"><h3>Google Pixel 8 Pro</h3><div class="meta"><span class="price">Prix: 980 $</span><span>Disponibilité: Disponible</span></div><div class="card-actions"><a class="btn btn-dark" href="#">Voir détails</a></div></div></article>
+            <article class="product-card">
+              <img src="https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=1100&q=80" alt="iPhone 15 Pro" loading="lazy" decoding="async" />
+              <div class="product-body">
+                <h3 class="product-title">iPhone 15 Pro</h3>
+                <div class="product-price">1 240 $</div>
+                <div class="product-meta"><span>Stockage: 256 Go</span></div>
+                <span class="status-badge">Disponible</span>
+                <div class="product-actions">
+                  <a class="btn btn-ghost" href="#">Voir détails</a>
+                  <a class="btn btn-gold" href="https://wa.me/243000000000?text=Bonjour,%20je%20suis%20interesse%20par%20iPhone%2015%20Pro." target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                </div>
+              </div>
+            </article>
+            <article class="product-card">
+              <img src="https://images.unsplash.com/photo-1678652197831-2d180705cd2c?auto=format&fit=crop&w=1100&q=80" alt="Samsung Galaxy S24 Ultra" loading="lazy" decoding="async" />
+              <div class="product-body">
+                <h3 class="product-title">Samsung Galaxy S24 Ultra</h3>
+                <div class="product-price">1 180 $</div>
+                <div class="product-meta"><span>Stockage: 512 Go</span></div>
+                <span class="status-badge">Sur commande</span>
+                <div class="product-actions">
+                  <a class="btn btn-ghost" href="#">Voir détails</a>
+                  <a class="btn btn-gold" href="https://wa.me/243000000000?text=Bonjour,%20je%20suis%20interesse%20par%20Samsung%20Galaxy%20S24%20Ultra." target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                </div>
+              </div>
+            </article>
+            <article class="product-card">
+              <img src="https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?auto=format&fit=crop&w=1100&q=80" alt="Google Pixel 8 Pro" loading="lazy" decoding="async" />
+              <div class="product-body">
+                <h3 class="product-title">Google Pixel 8 Pro</h3>
+                <div class="product-price">980 $</div>
+                <div class="product-meta"><span>Stockage: 256 Go</span></div>
+                <span class="status-badge">Disponible</span>
+                <div class="product-actions">
+                  <a class="btn btn-ghost" href="#">Voir détails</a>
+                  <a class="btn btn-gold" href="https://wa.me/243000000000?text=Bonjour,%20je%20suis%20interesse%20par%20Google%20Pixel%208%20Pro." target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                </div>
+              </div>
+            </article>
           </div>
         </div>
       </section>
 
       <section class="section commission" id="vendre">
         <div class="container">
-          <div class="commission-box fade-up">
-            <h2 class="title">Vendre avec nous</h2>
-            <p class="subtitle">Vous voulez vendre votre voiture ou votre parcelle rapidement ? KICHEFU-CHEFU STORE vous aide à trouver un acheteur.</p>
-            <div class="actions">
+          <div class="commission-box">
+            <h2 class="section-title">Vendre avec nous</h2>
+            <p class="section-subtitle">Vous voulez vendre votre voiture ou votre parcelle rapidement ? KICHEFU-CHEFU STORE vous aide à trouver un acheteur.</p>
+            <div class="hero-actions" style="margin-top:20px;">
               <a class="btn btn-gold" href="/voitures/vendre/">Proposer un bien</a>
             </div>
           </div>
@@ -479,16 +541,48 @@
 
       <section class="section" id="immobilier">
         <div class="container">
-          <div class="section-head">
-            <div>
-              <h2 class="title">Immobilier</h2>
-              <p class="subtitle">Maisons et parcelles premium avec contact rapide et présentation professionnelle.</p>
-            </div>
-          </div>
+          <h2 class="section-title">Immobilier</h2>
+          <p class="section-subtitle">Maisons et parcelles avec la même qualité de présentation qu'une plateforme immobilière professionnelle.</p>
           <div class="grid grid-3">
-            <article class="card"><img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=1100&q=80" alt="Maison" /><div class="card-body"><h3>Maison</h3><div class="meta"><span>Localisation: Gombe, Kinshasa</span><span class="price">Prix: 185 000 $</span></div><div class="card-actions"><a class="btn btn-gold" href="https://wa.me/243000000000" target="_blank" rel="noopener noreferrer">Contacter</a></div></div></article>
-            <article class="card"><img src="https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1100&q=80" alt="Parcelle" /><div class="card-body"><h3>Parcelle</h3><div class="meta"><span>Localisation: Limete, Kinshasa</span><span class="price">Prix: 72 000 $</span></div><div class="card-actions"><a class="btn btn-gold" href="https://wa.me/243000000000" target="_blank" rel="noopener noreferrer">Contacter</a></div></div></article>
-            <article class="card"><img src="https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?auto=format&fit=crop&w=1100&q=80" alt="Maison familiale" /><div class="card-body"><h3>Maison</h3><div class="meta"><span>Localisation: Ngaliema, Kinshasa</span><span class="price">Prix: 210 000 $</span></div><div class="card-actions"><a class="btn btn-gold" href="https://wa.me/243000000000" target="_blank" rel="noopener noreferrer">Contacter</a></div></div></article>
+            <article class="product-card">
+              <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=1100&q=80" alt="Maison Gombe" loading="lazy" decoding="async" />
+              <div class="product-body">
+                <h3 class="product-title">Maison - Gombe</h3>
+                <div class="product-price">185 000 $</div>
+                <div class="product-meta"><span>Type: Maison</span></div>
+                <span class="status-badge">Disponible</span>
+                <div class="product-actions">
+                  <a class="btn btn-ghost" href="#">Voir détails</a>
+                  <a class="btn btn-gold" href="https://wa.me/243000000000?text=Bonjour,%20je%20suis%20interesse%20par%20la%20maison%20a%20Gombe." target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                </div>
+              </div>
+            </article>
+            <article class="product-card">
+              <img src="https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1100&q=80" alt="Parcelle Limete" loading="lazy" decoding="async" />
+              <div class="product-body">
+                <h3 class="product-title">Parcelle - Limete</h3>
+                <div class="product-price">72 000 $</div>
+                <div class="product-meta"><span>Type: Parcelle</span></div>
+                <span class="status-badge">Disponible</span>
+                <div class="product-actions">
+                  <a class="btn btn-ghost" href="#">Voir détails</a>
+                  <a class="btn btn-gold" href="https://wa.me/243000000000?text=Bonjour,%20je%20suis%20interesse%20par%20la%20parcelle%20a%20Limete." target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                </div>
+              </div>
+            </article>
+            <article class="product-card">
+              <img src="https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?auto=format&fit=crop&w=1100&q=80" alt="Maison Ngaliema" loading="lazy" decoding="async" />
+              <div class="product-body">
+                <h3 class="product-title">Maison - Ngaliema</h3>
+                <div class="product-price">210 000 $</div>
+                <div class="product-meta"><span>Type: Maison</span></div>
+                <span class="status-badge">Stock limité</span>
+                <div class="product-actions">
+                  <a class="btn btn-ghost" href="#">Voir détails</a>
+                  <a class="btn btn-gold" href="https://wa.me/243000000000?text=Bonjour,%20je%20suis%20interesse%20par%20la%20maison%20a%20Ngaliema." target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                </div>
+              </div>
+            </article>
           </div>
         </div>
       </section>
@@ -498,8 +592,11 @@
       <div class="container">
         <div class="footer-grid">
           <div>
-            <a href="#" class="brand"><span class="brand-crown">♛</span><span class="brand-name">KICHEFU-CHEFU STORE</span></a>
-            <p style="margin-top:12px">Marketplace premium pour téléphones, accessoires, voitures et commission immobilière.</p>
+            <a href="/" class="brand" aria-label="KICHEFU-CHEFU STORE">
+              <span class="brand-crown">♛</span>
+              <span class="brand-name">KICHEFU-CHEFU STORE</span>
+            </a>
+            <p style="margin-top:12px;">Marketplace premium pour voitures, téléphones, accessoires et immobilier.</p>
           </div>
           <div>
             <h4>Liens rapides</h4>
