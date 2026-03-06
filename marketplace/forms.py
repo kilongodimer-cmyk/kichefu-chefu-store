@@ -46,3 +46,25 @@ class ProposalSellForm(forms.ModelForm):
             ),
             "desired_price": forms.NumberInput(attrs={"placeholder": "Ex: 15000"}),
         }
+
+
+class CarCSVImportForm(forms.Form):
+    DUPLICATE_STRATEGIES = (
+        ("skip", "Ignorer les doublons"),
+        ("update", "Mettre a jour les doublons"),
+    )
+
+    csv_file = forms.FileField(
+        label="Fichier CSV",
+        help_text="Colonnes requises: marque, modele, annee, kilometrage, prix, description, image",
+    )
+    images_zip = forms.FileField(
+        label="Archive ZIP des images (optionnel)",
+        required=False,
+        help_text="Le CSV peut contenir plusieurs images dans la colonne image, separees par | ; ou ,",
+    )
+    duplicate_strategy = forms.ChoiceField(
+        label="Gestion des doublons",
+        choices=DUPLICATE_STRATEGIES,
+        initial="skip",
+    )

@@ -7,8 +7,28 @@ Backend marketplace construit avec Django, PostgreSQL et Django REST Framework.
 - Gestion des images pour voitures, telephones, immobilier et propositions clients.
 - Formulaire API "Vendre avec nous" via le modele `Proposal`.
 - Admin Django complet: ajout, modification, suppression, gestion des images.
+- Import massif des voitures via CSV dans l'admin (jusqu'a 1000+ annonces).
 - API REST avec pagination, filtres, recherche et tri.
 - Lien WhatsApp automatique par produit.
+
+## Import CSV massif des voitures (Admin)
+1. Aller dans `Admin > Cars > Importer CSV`.
+2. Charger un fichier CSV avec les colonnes obligatoires:
+	- `marque` / `brand`
+	- `modele` / `model`
+	- `annee` / `year`
+	- `kilometrage` / `mileage`
+	- `prix` / `price`
+	- `description`
+	- `image`
+3. Optionnel: charger une archive ZIP d'images.
+4. La colonne `image` accepte plusieurs images par voiture (`|`, `;` ou `,`):
+	- exemple: `prado-1.jpg|prado-2.jpg|prado-3.jpg`
+5. Choisir la strategie de doublon:
+	- `Ignorer les doublons`
+	- `Mettre a jour les doublons`
+
+Le systeme cree automatiquement les fiches voitures, ajoute les images, et met a jour les pages produits.
 
 ## Installation
 ```bash

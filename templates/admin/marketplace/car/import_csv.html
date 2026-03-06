@@ -1,0 +1,32 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+  <h1>Importer des voitures via CSV</h1>
+  <p>Utilisez cette page pour importer rapidement un grand catalogue de vehicules (jusqu'a 1000+ annonces).</p>
+
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    <fieldset class="module aligned">
+      {% for field in form %}
+        <div class="form-row">
+          {{ field.errors }}
+          <div>
+            {{ field.label_tag }}
+            {{ field }}
+            {% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </fieldset>
+    <div class="submit-row">
+      <input type="submit" value="Lancer l'import" class="default" />
+      <a href="{% url 'admin:marketplace_car_changelist' %}" class="button cancel-link">Annuler</a>
+    </div>
+  </form>
+
+  <h2>Format CSV attendu</h2>
+  <p>Colonnes obligatoires: marque, modele, annee, kilometrage, prix, description, image.</p>
+  <p>La colonne <code>image</code> peut contenir une ou plusieurs references separees par <code>|</code>, <code>;</code> ou <code>,</code>.</p>
+  <p>Exemple: <code>toyota-prado-1.jpg|toyota-prado-2.jpg</code>.</p>
+  <p>Optionnel: vehicle_type, transmission, fuel_type, availability, seller_phone, is_commission.</p>
+{% endblock %}

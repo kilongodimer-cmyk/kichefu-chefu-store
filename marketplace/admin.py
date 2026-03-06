@@ -1,5 +1,10 @@
 from django.contrib import admin
+from django.contrib import messages
+from django.shortcuts import redirect, render
+from django.urls import path, reverse
 
+from .forms import CarCSVImportForm
+from .importers import CarCSVImporter
 from .models import (
 	Accessory,
 	Car,
@@ -23,11 +28,64 @@ class CarImageInline(admin.TabularInline):
 
 @admin.register(Car)
 class CarAdmin(admin.ModelAdmin):
+	change_list_template = "admin/marketplace/car/change_list.html"
+	list_per_page = 50
 	list_display = ("brand", "model", "vehicle_type", "year", "mileage", "price", "view_count", "is_commission", "availability", "date_added")
 	list_filter = ("availability", "is_commission", "vehicle_type", "year", "brand", "fuel_type", "transmission")
 	search_fields = ("brand", "model", "description")
 	ordering = ("-date_added",)
 	inlines = [CarImageInline]
+
+	def get_urls(self):
+		urls = super().get_urls()
+		custom_urls = [
+			path(
+				"import-csv/",
+				self.admin_site.admin_view(self.import_csv_view),
+				name="marketplace_car_import_csv",
+			),
+		]
+		return custom_urls + urls
+
+	def import_csv_view(self, request):
+		if request.method == "POST":
+			form = CarCSVImportForm(request.POST, request.FILES)
+			if form.is_valid():
+				importer = CarCSVImporter(duplicate_strategy=form.cleaned_data["duplicate_strategy"])
+				result = importer.import_file(
+					csv_file=form.cleaned_data["csv_file"],
+					images_zip_file=form.cleaned_data.get("images_zip"),
+				)
+
+				if result.errors:
+					messages.warning(
+						request,
+						f"Import termine avec erreurs: {len(result.errors)} ligne(s) ignoree(s).",
+					)
+					for error in result.errors[:20]:
+						messages.error(request, error)
+				else:
+					messages.success(request, "Import termine sans erreur.")
+
+				messages.info(
+					request,
+					(
+						f"Traite: {result.processed} | Crees: {result.created} | "
+						f"Mises a jour: {result.updated} | Doublons ignores: {result.skipped_duplicates} | "
+						f"Images ajoutees: {result.images_added}"
+					),
+				)
+				return redirect(reverse("admin:marketplace_car_changelist"))
+		else:
+			form = CarCSVImportForm()
+
+		context = {
+			**self.admin_site.each_context(request),
+			"opts": self.model._meta,
+			"title": "Importer des voitures via CSV",
+			"form": form,
+		}
+		return render(request, "admin/marketplace/car/import_csv.html", context)
 
 
 class PhoneImageInline(admin.TabularInline):
