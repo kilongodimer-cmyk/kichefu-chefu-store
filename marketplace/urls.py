@@ -19,6 +19,8 @@ from .views import (
     RealEstateDetailView,
     RealEstateMarketplaceListView,
     SellWithUsView,
+    NotificationsView,
+    TogglePriceAlertView,
     ToggleFavoriteView,
 )
 
@@ -48,4 +50,6 @@ urlpatterns = [
     path("vendre-avec-nous/", SellWithUsView.as_view(), name="sell_with_us"),
     path("favoris/", FavoritesView.as_view(), name="favorites"),
     path("favoris/toggle/<str:model_name>/<int:pk>/", ToggleFavoriteView.as_view(), name="toggle_favorite"),
+    path("alertes/prix/<str:model_name>/<int:pk>/", TogglePriceAlertView.as_view(), name="toggle_price_alert"),
+    path("notifications/", NotificationsView.as_view(), name="notifications"),
 ]

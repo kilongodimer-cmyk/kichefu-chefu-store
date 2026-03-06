@@ -111,6 +111,16 @@
         padding: 9px 14px;
         font-size: 0.9rem;
       }
+      .city-form { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
+      .city-form input {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 10px 12px;
+        background: #0f0f0f;
+        color: var(--white);
+        font-family: inherit;
+        min-width: 220px;
+      }
       .hero-visual {
         border: 1px solid var(--line);
         border-radius: 20px;
@@ -239,6 +249,7 @@
           <a href="/telephones/">Telephones</a>
           <a href="/parcelles/">Parcelles</a>
           <a href="/favoris/">Favoris</a>
+          <a href="/notifications/">Notifications</a>
           <a href="/vendre-avec-nous/">Vendre</a>
         </nav>
         <div class="auth-actions">
@@ -269,6 +280,10 @@
             <strong>{{ available_cars_count }}</strong>
             <span>vehicules disponibles</span>
           </div>
+          <form class="city-form" method="get" action="/">
+            <input type="text" name="city" value="{{ user_city }}" placeholder="Votre ville (Lubumbashi, Kinshasa...)" />
+            <button class="btn btn-ghost" type="submit">Activer la proximite</button>
+          </form>
         </div>
         <div class="hero-visual">
           <img
@@ -293,6 +308,40 @@
           </form>
         </div>
       </section>
+
+      {% if user_city and nearby_cars %}
+        <section class="container section">
+          <div class="section-head">
+            <div>
+              <h2>Voitures proches de vous</h2>
+              <p>Annonces disponibles autour de {{ user_city }}.</p>
+            </div>
+            <a class="btn btn-ghost" href="/voitures/?city={{ user_city|urlencode }}">Voir tout</a>
+          </div>
+          <div class="cards cards-4">
+            {% for item, item_badges in nearby_cars %}
+              <article class="card" style="animation-delay: {{ forloop.counter0 }}00ms;">
+                {% with img=item.images.first %}
+                  <div class="media">
+                    {% if img %}
+                      <img src="{{ img.image.url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />
+                    {% else %}
+                      <img src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />
+                    {% endif %}
+                    <div class="badges">{% for label in item_badges %}<span class="badge">{{ label }}</span>{% endfor %}</div>
+                  </div>
+                {% endwith %}
+                <div class="body">
+                  <h3 class="title">{{ item.brand }} {{ item.model }}</h3>
+                  <div class="meta">{{ item.year }} - {{ item.city|default:"Ville non precisee" }}</div>
+                  <div class="price">{{ item.price }} $</div>
+                  <div class="actions"><a class="btn btn-ghost" href="{{ item.get_absolute_url }}">Voir details</a></div>
+                </div>
+              </article>
+            {% endfor %}
+          </div>
+        </section>
+      {% endif %}
 
       <section class="container section">
         <div class="section-head">
@@ -408,6 +457,56 @@
             </article>
           {% empty %}
             <p>Aucune annonce immobiliere.</p>
+          {% endfor %}
+        </div>
+      </section>
+
+      <section class="container section">
+        <div class="section-head">
+          <div>
+            <h2>Les plus consultes</h2>
+            <p>Produits les plus regardes par la communaute.</p>
+          </div>
+        </div>
+        <div class="simple-list">
+          {% for item in most_viewed_items %}
+            <article class="simple-item">
+              <div>
+                <strong>{{ item.title }}</strong>
+                <small>{{ item.kind }}</small>
+              </div>
+              <div>
+                <strong>{{ item.price }} $</strong>
+                <a class="btn btn-ghost" href="{{ item.url }}">Voir</a>
+              </div>
+            </article>
+          {% empty %}
+            <p>Aucun produit consulte pour le moment.</p>
+          {% endfor %}
+        </div>
+      </section>
+
+      <section class="container section">
+        <div class="section-head">
+          <div>
+            <h2>Les plus vendus</h2>
+            <p>Articles vendus recemment sur la plateforme.</p>
+          </div>
+        </div>
+        <div class="simple-list">
+          {% for item in most_sold_items %}
+            <article class="simple-item">
+              <div>
+                <strong>{{ item.title }}</strong>
+                <small>{{ item.kind }}</small>
+              </div>
+              <div>
+                <strong>{{ item.price }} $</strong>
+                <a class="btn btn-ghost" href="{{ item.url }}">Voir</a>
+              </div>
+            </article>
+          {% empty %}
+            <p>Aucun historique de vente pour le moment.</p>
           {% endfor %}
         </div>
       </section>

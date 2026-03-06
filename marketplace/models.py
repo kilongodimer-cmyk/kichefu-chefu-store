@@ -99,6 +99,7 @@ class Car(models.Model):
 		default=FuelType.PETROL,
 	)
 	price = models.DecimalField(max_digits=12, decimal_places=2, db_index=True)
+	city = models.CharField(max_length=80, blank=True, db_index=True)
 	description = models.TextField(blank=True)
 	seller_phone = models.CharField(max_length=30, blank=True)
 	is_commission = models.BooleanField(default=False, db_index=True)
@@ -117,6 +118,7 @@ class Car(models.Model):
 			models.Index(fields=["brand", "model"]),
 			models.Index(fields=["vehicle_type", "availability"]),
 			models.Index(fields=["availability", "price"]),
+			models.Index(fields=["city", "availability"]),
 			models.Index(fields=["year", "mileage"]),
 		]
 
@@ -347,5 +349,66 @@ class Favorite(models.Model):
 
 	def __str__(self):
 		return f"Favorite #{self.pk} by {self.user_id}"
+
+
+class UserMarketplaceProfile(models.Model):
+	user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="marketplace_profile")
+	city = models.CharField(max_length=80, blank=True, db_index=True)
+	notify_new_listings = models.BooleanField(default=True, db_index=True)
+	created_at = models.DateTimeField(auto_now_add=True)
+	updated_at = models.DateTimeField(auto_now=True)
+
+	def __str__(self):
+		return f"Profile {self.user_id}"
+
+
+class PriceDropAlert(models.Model):
+	user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="price_alerts")
+	content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+	object_id = models.PositiveIntegerField()
+	content_object = GenericForeignKey("content_type", "object_id")
+	target_price = models.DecimalField(max_digits=12, decimal_places=2, db_index=True)
+	is_active = models.BooleanField(default=True, db_index=True)
+	created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+	class Meta:
+		ordering = ["-created_at"]
+		constraints = [
+			models.UniqueConstraint(
+				fields=["user", "content_type", "object_id"],
+				name="unique_user_price_alert",
+			)
+		]
+		indexes = [
+			models.Index(fields=["content_type", "object_id", "is_active"]),
+		]
+
+	def __str__(self):
+		return f"PriceAlert #{self.pk} by {self.user_id}"
+
+
+class UserNotification(models.Model):
+	class NotificationType(models.TextChoices):
+		PRICE_DROP = "price_drop", "Baisse de prix"
+		NEW_LISTING = "new_listing", "Nouvelle annonce"
+
+	user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="marketplace_notifications")
+	notification_type = models.CharField(max_length=20, choices=NotificationType.choices, db_index=True)
+	title = models.CharField(max_length=180)
+	message = models.TextField(blank=True)
+	content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True, blank=True)
+	object_id = models.PositiveIntegerField(null=True, blank=True)
+	content_object = GenericForeignKey("content_type", "object_id")
+	is_read = models.BooleanField(default=False, db_index=True)
+	created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+	class Meta:
+		ordering = ["-created_at"]
+		indexes = [
+			models.Index(fields=["user", "is_read", "created_at"]),
+		]
+
+	def __str__(self):
+		return f"Notification #{self.pk} -> {self.user_id}"
 
 # Create your models here.

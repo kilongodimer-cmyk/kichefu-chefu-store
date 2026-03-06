@@ -61,6 +61,7 @@
       .pager { margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
       .pager a,.pager span { border: 1px solid var(--line); color: var(--white); border-radius: 999px; text-decoration: none; padding: 7px 12px; }
       .pager .active { border-color: transparent; background: var(--orange); color: #111; font-weight: 700; }
+      #infinite-loader { margin-top: 16px; color: var(--muted); }
       @media (max-width: 1080px) { .layout { grid-template-columns: 1fr; } .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
       @media (max-width: 760px) { .nav { flex-direction: column; align-items: flex-start; padding: 10px 0; } .grid { grid-template-columns: 1fr; } }
     </style>
@@ -110,6 +111,7 @@
           </select>
           <input type="number" name="year" value="{{ filters.year }}" placeholder="Annee" />
           <input type="number" name="max_mileage" value="{{ filters.max_mileage }}" placeholder="Kilometrage max" />
+          <input type="text" name="city" value="{{ filters.city }}" placeholder="Ville (ex: Lubumbashi)" />
           <input type="number" step="0.01" name="min_price" value="{{ filters.min_price }}" placeholder="Prix min" />
           <input type="number" step="0.01" name="max_price" value="{{ filters.max_price }}" placeholder="Prix max" />
           <button class="btn btn-main" type="submit">Appliquer</button>
@@ -117,7 +119,7 @@
       </aside>
 
       <section>
-        <div class="grid">
+        <div class="grid" id="cars-grid">
           {% for car, badges in car_items %}
             <article class="card">
               {% with first_image=car.images.first %}
@@ -155,14 +157,125 @@
           {% endfor %}
         </div>
 
-        {% if page_obj.paginator.num_pages > 1 %}
-          <div class="pager">
-            {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}&q={{ filters.q }}&brand={{ filters.brand }}&vehicle_type={{ filters.vehicle_type }}&year={{ filters.year }}&max_mileage={{ filters.max_mileage }}&min_price={{ filters.min_price }}&max_price={{ filters.max_price }}">Precedent</a>{% endif %}
-            <span class="active">Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
-            {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}&q={{ filters.q }}&brand={{ filters.brand }}&vehicle_type={{ filters.vehicle_type }}&year={{ filters.year }}&max_mileage={{ filters.max_mileage }}&min_price={{ filters.min_price }}&max_price={{ filters.max_price }}">Suivant</a>{% endif %}
+        {% if user_city and nearby_cars %}
+          <div style="margin-top: 22px;">
+            <h3>Voitures proches de {{ user_city }}</h3>
+            <div class="grid">
+              {% for car, badges in nearby_cars %}
+                <article class="card">
+                  {% with first_image=car.images.first %}
+                    <div class="media">
+                      {% if first_image %}
+                        <img src="{{ first_image.image.url }}" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />
+                      {% else %}
+                        <img src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ car.brand|urlencode }}+{{ car.model|urlencode }}" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />
+                      {% endif %}
+                      <div class="overlay">{% for badge in badges %}<span class="badge">{{ badge }}</span>{% endfor %}</div>
+                    </div>
+                  {% endwith %}
+                  <div class="body">
+                    <h3 class="title">{{ car.brand }} {{ car.model }}</h3>
+                    <div class="price">{{ car.price }} $</div>
+                    <div class="meta">{{ car.city|default:"Ville non precisee" }}</div>
+                    <div class="actions"><a class="btn btn-ghost" href="{{ car.get_absolute_url }}">Voir details</a></div>
+                  </div>
+                </article>
+              {% endfor %}
+            </div>
           </div>
+        {% endif %}
+
+        {% if page_obj.paginator.num_pages > 1 %}
+          <div class="pager" id="cars-pager">
+            {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}&q={{ filters.q }}&brand={{ filters.brand }}&vehicle_type={{ filters.vehicle_type }}&year={{ filters.year }}&max_mileage={{ filters.max_mileage }}&city={{ filters.city }}&min_price={{ filters.min_price }}&max_price={{ filters.max_price }}">Precedent</a>{% endif %}
+            <span class="active">Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+            {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}&q={{ filters.q }}&brand={{ filters.brand }}&vehicle_type={{ filters.vehicle_type }}&year={{ filters.year }}&max_mileage={{ filters.max_mileage }}&city={{ filters.city }}&min_price={{ filters.min_price }}&max_price={{ filters.max_price }}">Suivant</a>{% endif %}
+          </div>
+          <div id="infinite-loader">Chargement automatique en cours...</div>
+          <div id="infinite-sentinel"></div>
         {% endif %}
       </section>
     </main>
+
+    <script>
+      (function () {
+        const grid = document.getElementById("cars-grid");
+        const pager = document.getElementById("cars-pager");
+        const sentinel = document.getElementById("infinite-sentinel");
+        const loader = document.getElementById("infinite-loader");
+        if (!grid || !sentinel || !loader) return;
+
+        const query = new URLSearchParams(window.location.search);
+        let page = Number(query.get("page") || "1");
+        let loading = false;
+        let hasNext = {{ page_obj.has_next|yesno:"true,false" }};
+
+        function cardHtml(item) {
+          const imageUrl = item.image_url || "https://dummyimage.com/1200x750/171717/ffffff.png&text=" + encodeURIComponent(item.title);
+          const badgeHtml = (item.badges || []).map((label) => `<span class=\"badge\">${label}</span>`).join("");
+          const favoriteHtml = item.is_favorite
+            ? `<form method=\"post\" action=\"/favoris/toggle/car/${item.id}/\"><input type=\"hidden\" name=\"csrfmiddlewaretoken\" value=\"{{ csrf_token }}\" /><input type=\"hidden\" name=\"next\" value=\"${window.location.pathname + window.location.search}\" /><button class=\"heart-btn active\" type=\"submit\">&#10084;</button></form>`
+            : `<a class=\"btn btn-ghost\" href=\"/connexion/?next=${encodeURIComponent(window.location.pathname)}\">&#10084;</a>`;
+          return `
+            <article class=\"card\">
+              <div class=\"media\">
+                <img src=\"${imageUrl}\" alt=\"${item.title}\" loading=\"lazy\" decoding=\"async\" />
+                <div class=\"overlay\">${badgeHtml}</div>
+              </div>
+              <div class=\"body\">
+                <h3 class=\"title\">${item.title}</h3>
+                <div class=\"price\">${item.price} $</div>
+                <div class=\"meta\">${item.year} - ${item.mileage} km - ${item.vehicle_type}</div>
+                <div class=\"views\">${item.view_count} vues</div>
+                <div class=\"actions\">
+                  <a class=\"btn btn-ghost\" href=\"${item.url}\">Voir details</a>
+                  <a class=\"btn btn-main\" href=\"https://wa.me/243000000000?text=${encodeURIComponent('Bonjour, je suis interesse par ' + item.title)}\" target=\"_blank\" rel=\"noopener noreferrer\">WhatsApp</a>
+                  ${favoriteHtml}
+                </div>
+              </div>
+            </article>
+          `;
+        }
+
+        async function loadNext() {
+          if (loading || !hasNext) return;
+          loading = true;
+          loader.textContent = "Chargement...";
+          const nextPage = page + 1;
+          const params = new URLSearchParams(window.location.search);
+          params.set("page", String(nextPage));
+          params.set("format", "json");
+
+          try {
+            const response = await fetch(`/voitures/?${params.toString()}`);
+            if (!response.ok) throw new Error("load_failed");
+            const data = await response.json();
+            (data.results || []).forEach((item) => {
+              grid.insertAdjacentHTML("beforeend", cardHtml(item));
+            });
+            page = data.page || nextPage;
+            hasNext = Boolean(data.has_next);
+            if (!hasNext) {
+              loader.textContent = "Fin des resultats.";
+              if (pager) pager.style.display = "none";
+            } else {
+              loader.textContent = "Defilez pour charger plus...";
+            }
+          } catch (_error) {
+            loader.textContent = "Erreur de chargement. Utilisez la pagination.";
+          } finally {
+            loading = false;
+          }
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) loadNext();
+          });
+        }, { rootMargin: "220px" });
+
+        observer.observe(sentinel);
+      })();
+    </script>
   </body>
 </html>

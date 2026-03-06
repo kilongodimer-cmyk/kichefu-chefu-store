@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notifications | KICHEFU-CHEFU STORE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet" />
+    <style>
+      :root { --black:#111111; --orange:#ff6b00; --white:#ffffff; --line:rgba(255,255,255,.12); --muted:rgba(255,255,255,.72); }
+      * { box-sizing: border-box; }
+      body { margin:0; font-family:"Inter",system-ui,sans-serif; color:var(--white); background:var(--black); }
+      .container { width:min(980px,92vw); margin:0 auto; padding:30px 0; }
+      .top { display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between; }
+      a.btn { text-decoration:none; border:1px solid var(--line); border-radius:999px; color:var(--white); padding:9px 13px; }
+      a.btn.main { background:var(--orange); border-color:transparent; color:#111; font-weight:700; }
+      .list { margin-top:16px; display:grid; gap:10px; }
+      .item { border:1px solid var(--line); border-radius:12px; background:#171717; padding:12px; }
+      .item.unread { border-color:rgba(255,107,0,.45); }
+      .meta { color:var(--muted); font-size:.86rem; margin-top:6px; }
+      .item a { color:#ffd4b4; }
+    </style>
+  </head>
+  <body>
+    <main class="container">
+      <div class="top">
+        <h1>Notifications</h1>
+        <div>
+          <a class="btn" href="/">Accueil</a>
+          <a class="btn main" href="?mark_read=1">Tout marquer lu</a>
+        </div>
+      </div>
+      <div class="list">
+        {% for item in notifications %}
+          <article class="item{% if not item.is_read %} unread{% endif %}">
+            <strong>{{ item.title }}</strong>
+            <p>{{ item.message }}</p>
+            <div class="meta">
+              {{ item.get_notification_type_display }} - {{ item.created_at }}
+              {% if item.content_object %}- <a href="{{ item.content_object.get_absolute_url }}">Voir annonce</a>{% endif %}
+            </div>
+          </article>
+        {% empty %}
+          <p>Aucune notification pour le moment.</p>
+        {% endfor %}
+      </div>
+    </main>
+  </body>
+</html>

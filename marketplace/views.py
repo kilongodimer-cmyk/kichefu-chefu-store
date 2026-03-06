@@ -26,12 +26,15 @@ from .models import (
 	Car,
 	CarImage,
 	Favorite,
+	PriceDropAlert,
 	Phone,
 	PhoneImage,
 	Proposal,
 	ProposalImage,
 	RealEstate,
 	RealEstateImage,
+	UserMarketplaceProfile,
+	UserNotification,
 )
 from .permissions import ProposalPermission
 from .serializers import (
@@ -50,6 +53,7 @@ from .serializers import (
 WHATSAPP_DEFAULT = "+243000000000"
 LUBUMBASHI_NEIGHBORHOODS = ["Kenya", "Kamalondo", "Katuba", "Ruashi", "Golf", "Bel-Air", "Kalubwe"]
 RECENT_SESSION_KEY = "recently_viewed"
+USER_CITY_SESSION_KEY = "user_city"
 
 
 def ensure_seeded_data_safe():
@@ -217,6 +221,52 @@ def get_favorite_id_map(user):
 	return result
 
 
+def get_user_city(request):
+	city = (request.GET.get("city") or "").strip()
+	if city:
+		request.session[USER_CITY_SESSION_KEY] = city
+		if request.user.is_authenticated:
+			profile, _ = UserMarketplaceProfile.objects.get_or_create(user=request.user)
+			if profile.city != city:
+				profile.city = city
+				profile.save(update_fields=["city", "updated_at"])
+		return city
+
+	if request.user.is_authenticated:
+		profile, _ = UserMarketplaceProfile.objects.get_or_create(user=request.user)
+		if profile.city:
+			return profile.city
+
+	return request.session.get(USER_CITY_SESSION_KEY, "")
+
+
+def _serialize_car_cards(car_queryset, request, favorite_ids=None):
+	if favorite_ids is None:
+		favorite_ids = get_favorite_id_map(request.user)["cars"]
+	items = []
+	for index, car in enumerate(car_queryset):
+		first_image = car.images.first()
+		items.append(
+			{
+				"id": car.pk,
+				"title": f"{car.brand} {car.model}",
+				"brand": car.brand,
+				"model": car.model,
+				"price": str(car.price),
+				"year": car.year,
+				"mileage": car.mileage,
+				"vehicle_type": car.get_vehicle_type_display(),
+				"view_count": car.view_count,
+				"city": car.city,
+				"url": car.get_absolute_url(),
+				"image_url": first_image.image.url if first_image and first_image.image else "",
+				"badges": build_badges(car, index),
+				"is_favorite": car.pk in favorite_ids,
+			}
+		)
+	return items
+
+
 def _first_image_url(item):
 	first_image = item.images.first()
 	if first_image and first_image.image:
@@ -335,6 +385,7 @@ class HomePageView(SiteLoginRequiredMixin, View):
 		phones = Phone.objects.prefetch_related("images").all()
 		accessories = Accessory.objects.all()
 		real_estates = RealEstate.objects.prefetch_related("images").all()
+		user_city = get_user_city(request)
 		available_cars_count = cars.filter(availability="available").count()
 
 		popular_cars = list(cars.filter(availability="available")[:6])
@@ -348,6 +399,35 @@ class HomePageView(SiteLoginRequiredMixin, View):
 		latest_cars = list(cars.order_by("-date_added")[:4])
 		latest_phones = list(phones.order_by("-date_added")[:4])
 		latest_real_estate = list(real_estates.order_by("-date_added")[:4])
+		most_viewed_items = []
+		for car in cars.order_by("-view_count", "-date_added")[:4]:
+			most_viewed_items.append({"kind": "Voiture", "title": f"{car.brand} {car.model}", "price": car.price, "url": car.get_absolute_url()})
+		for phone in phones.order_by("-view_count", "-date_added")[:4]:
+			most_viewed_items.append({"kind": "Telephone", "title": f"{phone.brand} {phone.model}", "price": phone.price, "url": phone.get_absolute_url()})
+		for listing in real_estates.order_by("-view_count", "-date_added")[:4]:
+			most_viewed_items.append(
+				{
+					"kind": "Immobilier",
+					"title": f"{listing.get_real_estate_type_display()} - {listing.location}",
+					"price": listing.price,
+					"url": listing.get_absolute_url(),
+				}
+			)
+
+		most_sold_items = []
+		for car in cars.filter(availability="sold").order_by("-date_added")[:5]:
+			most_sold_items.append({"kind": "Voiture", "title": f"{car.brand} {car.model}", "price": car.price, "url": car.get_absolute_url()})
+		for phone in phones.filter(availability="sold").order_by("-date_added")[:5]:
+			most_sold_items.append({"kind": "Telephone", "title": f"{phone.brand} {phone.model}", "price": phone.price, "url": phone.get_absolute_url()})
+		for listing in real_estates.filter(availability="sold").order_by("-date_added")[:5]:
+			most_sold_items.append(
+				{
+					"kind": "Immobilier",
+					"title": f"{listing.get_real_estate_type_display()} - {listing.location}",
+					"price": listing.price,
+					"url": listing.get_absolute_url(),
+				}
+			)
 		new_products = []
 		for car in latest_cars:
 			new_products.append({"kind": "Voiture", "title": f"{car.brand} {car.model}", "price": car.price, "url": car.get_absolute_url()})
@@ -363,6 +443,10 @@ class HomePageView(SiteLoginRequiredMixin, View):
 				}
 			)
 		new_products = sorted(new_products, key=lambda item: item["price"])[:12]
+
+		nearby_cars = []
+		if user_city:
+			nearby_cars = list(cars.filter(city__iexact=user_city, availability="available").order_by("-view_count", "-date_added")[:8])
 
 		best_offers = []
 		for car in cars.filter(availability="available").order_by("price")[:4]:
@@ -395,7 +479,11 @@ class HomePageView(SiteLoginRequiredMixin, View):
 				"real_estate": [(item, build_badges(item, idx)) for idx, item in enumerate(hot_real_estate)],
 			},
 			"recommended_for_you": recommended_for_you,
+			"most_viewed_items": most_viewed_items[:10],
+			"most_sold_items": most_sold_items[:10],
 			"new_products": new_products,
+			"nearby_cars": [(item, build_badges(item, idx)) for idx, item in enumerate(nearby_cars)],
+			"user_city": user_city,
 			"available_cars_count": available_cars_count,
 			"favorite_car_ids": favorite_map["cars"],
 			"favorite_phone_ids": favorite_map["phones"],
@@ -552,6 +640,7 @@ class CarMarketplaceListView(SiteLoginRequiredMixin, View):
 
 	def get(self, request):
 		ensure_seeded_data_safe()
+		user_city = get_user_city(request)
 		image_queryset = CarImage.objects.only("id", "car_id", "image", "created_at").order_by("-created_at")
 		cars = (
 			Car.objects.only(
@@ -577,6 +666,7 @@ class CarMarketplaceListView(SiteLoginRequiredMixin, View):
 		vehicle_type = request.GET.get("vehicle_type", "").strip()
 		year = request.GET.get("year", "").strip()
 		max_mileage = request.GET.get("max_mileage", "").strip()
+		city = request.GET.get("city", "").strip() or user_city
 		min_price = request.GET.get("min_price", "").strip()
 		max_price = request.GET.get("max_price", "").strip()
 
@@ -590,6 +680,8 @@ class CarMarketplaceListView(SiteLoginRequiredMixin, View):
 			cars = cars.filter(year=int(year))
 		if max_mileage.isdigit():
 			cars = cars.filter(mileage__lte=int(max_mileage))
+		if city:
+			cars = cars.filter(city__icontains=city)
 
 		try:
 			if min_price:
@@ -601,19 +693,41 @@ class CarMarketplaceListView(SiteLoginRequiredMixin, View):
 
 		paginator = Paginator(cars, 12)
 		page_obj = paginator.get_page(request.GET.get("page", 1))
+		favorite_ids = get_favorite_id_map(request.user)["cars"]
+
+		if request.GET.get("format") == "json":
+			return JsonResponse(
+				{
+					"results": _serialize_car_cards(page_obj.object_list, request, favorite_ids=favorite_ids),
+					"page": page_obj.number,
+					"has_next": page_obj.has_next(),
+					"next_page": page_obj.next_page_number() if page_obj.has_next() else None,
+				}
+			)
+
+		nearby_cars = []
+		if user_city:
+			nearby_cars = list(
+				cars.filter(city__iexact=user_city)
+				.exclude(pk__in=[item.pk for item in page_obj.object_list])
+				.order_by("-view_count", "-date_added")[:6]
+			)
 
 		context = {
 			"page_obj": page_obj,
 			"brands": Car.objects.values_list("brand", flat=True).distinct().order_by("brand"),
 			"vehicle_types": Car.VehicleType.choices,
 			"car_items": [(item, build_badges(item, idx)) for idx, item in enumerate(page_obj.object_list)],
-			"favorite_car_ids": get_favorite_id_map(request.user)["cars"],
+			"favorite_car_ids": favorite_ids,
+			"nearby_cars": [(item, build_badges(item, idx)) for idx, item in enumerate(nearby_cars)],
+			"user_city": user_city,
 			"filters": {
 				"q": search,
 				"brand": brand,
 				"vehicle_type": vehicle_type,
 				"year": year,
 				"max_mileage": max_mileage,
+				"city": city,
 				"min_price": min_price,
 				"max_price": max_price,
 			},
@@ -654,6 +768,14 @@ class CarDetailView(SiteLoginRequiredMixin, View):
 			item=car,
 			category_filters={"vehicle_type": car.vehicle_type},
 		)
+		car_alert_active = False
+		if request.user.is_authenticated:
+			car_alert_active = PriceDropAlert.objects.filter(
+				user=request.user,
+				content_type=ContentType.objects.get_for_model(Car),
+				object_id=car.pk,
+				is_active=True,
+			).exists()
 
 		return render(
 			request,
@@ -663,6 +785,7 @@ class CarDetailView(SiteLoginRequiredMixin, View):
 				"contact_phone": contact_phone,
 				"whatsapp_link": whatsapp_link,
 				"is_favorite": car.pk in favorite_map["cars"],
+				"price_alert_active": car_alert_active,
 				"similar_cars": similar_cars,
 				"recommended_cars": recommended_cars,
 			},
@@ -738,6 +861,14 @@ class PhoneDetailView(SiteLoginRequiredMixin, View):
 			item=phone,
 			category_filters={"storage": phone.storage},
 		)
+		phone_alert_active = False
+		if request.user.is_authenticated:
+			phone_alert_active = PriceDropAlert.objects.filter(
+				user=request.user,
+				content_type=ContentType.objects.get_for_model(Phone),
+				object_id=phone.pk,
+				is_active=True,
+			).exists()
 		return render(
 			request,
 			self.template_name,
@@ -745,6 +876,7 @@ class PhoneDetailView(SiteLoginRequiredMixin, View):
 				"phone": phone,
 				"whatsapp_link": whatsapp_link,
 				"is_favorite": phone.pk in favorite_map["phones"],
+				"price_alert_active": phone_alert_active,
 				"similar_phones": similar_phones,
 				"recommended_phones": recommended_phones,
 			},
@@ -835,6 +967,14 @@ class RealEstateDetailView(SiteLoginRequiredMixin, View):
 			item=listing,
 			category_filters={"real_estate_type": listing.real_estate_type},
 		)
+		listing_alert_active = False
+		if request.user.is_authenticated:
+			listing_alert_active = PriceDropAlert.objects.filter(
+				user=request.user,
+				content_type=ContentType.objects.get_for_model(RealEstate),
+				object_id=listing.pk,
+				is_active=True,
+			).exists()
 		return render(
 			request,
 			self.template_name,
@@ -842,6 +982,7 @@ class RealEstateDetailView(SiteLoginRequiredMixin, View):
 				"listing": listing,
 				"whatsapp_link": whatsapp_link,
 				"is_favorite": listing.pk in favorite_map["real_estate"],
+				"price_alert_active": listing_alert_active,
 				"similar_listings": similar_listings,
 				"recommended_listings": recommended_listings,
 			},
@@ -953,6 +1094,59 @@ class FavoritesView(LoginRequiredMixin, View):
 				"real_estates": real_estates,
 			},
 		)
+
+
+class TogglePriceAlertView(LoginRequiredMixin, View):
+	login_url = "/connexion/"
+
+	def post(self, request, model_name, pk):
+		model_map = {"car": Car, "phone": Phone, "real_estate": RealEstate}
+		model_class = model_map.get(model_name)
+		if model_class is None:
+			return redirect("home")
+
+		instance = get_object_or_404(model_class, pk=pk)
+		content_type = ContentType.objects.get_for_model(model_class)
+		target_price = request.POST.get("target_price", "").strip()
+		try:
+			alert_price = Decimal(target_price) if target_price else instance.price
+		except Exception:
+			alert_price = instance.price
+
+		alert, created = PriceDropAlert.objects.get_or_create(
+			user=request.user,
+			content_type=content_type,
+			object_id=instance.pk,
+			defaults={"target_price": alert_price, "is_active": True},
+		)
+		if not created:
+			if alert.is_active:
+				alert.is_active = False
+				alert.save(update_fields=["is_active"])
+				messages.info(request, "Alerte de prix desactivee.")
+			else:
+				alert.is_active = True
+				alert.target_price = alert_price
+				alert.save(update_fields=["is_active", "target_price"])
+				messages.success(request, "Alerte de prix activee.")
+		else:
+			messages.success(request, "Alerte de prix activee.")
+
+		next_url = request.POST.get("next") or request.GET.get("next")
+		if next_url:
+			return redirect(next_url)
+		return redirect(instance.get_absolute_url())
+
+
+class NotificationsView(LoginRequiredMixin, View):
+	login_url = "/connexion/"
+	template_name = "notifications.html"
+
+	def get(self, request):
+		notifications = UserNotification.objects.filter(user=request.user).order_by("-created_at")
+		if request.GET.get("mark_read") == "1":
+			notifications.filter(is_read=False).update(is_read=True)
+		return render(request, self.template_name, {"notifications": notifications[:100]})
 
 
 class SellWithUsView(SiteLoginRequiredMixin, View):

@@ -12,12 +12,15 @@ from .models import (
 	CarSellRequest,
 	CarSellRequestImage,
 	Favorite,
+	PriceDropAlert,
 	Phone,
 	PhoneImage,
 	Proposal,
 	ProposalImage,
 	RealEstate,
 	RealEstateImage,
+	UserMarketplaceProfile,
+	UserNotification,
 )
 
 
@@ -157,6 +160,30 @@ class FavoriteAdmin(admin.ModelAdmin):
 	list_display = ("user", "content_type", "object_id", "created_at")
 	list_filter = ("content_type", "created_at")
 	search_fields = ("user__username",)
+	ordering = ("-created_at",)
+
+
+@admin.register(PriceDropAlert)
+class PriceDropAlertAdmin(admin.ModelAdmin):
+	list_display = ("user", "content_type", "object_id", "target_price", "is_active", "created_at")
+	list_filter = ("content_type", "is_active", "created_at")
+	search_fields = ("user__username",)
+	ordering = ("-created_at",)
+
+
+@admin.register(UserMarketplaceProfile)
+class UserMarketplaceProfileAdmin(admin.ModelAdmin):
+	list_display = ("user", "city", "notify_new_listings", "updated_at")
+	list_filter = ("notify_new_listings", "city")
+	search_fields = ("user__username", "city")
+	ordering = ("-updated_at",)
+
+
+@admin.register(UserNotification)
+class UserNotificationAdmin(admin.ModelAdmin):
+	list_display = ("user", "notification_type", "title", "is_read", "created_at")
+	list_filter = ("notification_type", "is_read", "created_at")
+	search_fields = ("user__username", "title", "message")
 	ordering = ("-created_at",)
 
 # Register your models here.

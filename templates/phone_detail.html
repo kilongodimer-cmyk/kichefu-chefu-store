@@ -90,6 +90,11 @@
         <div class="actions">
           <a class="btn btn-main" href="{{ whatsapp_link }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
           {% if user.is_authenticated %}
+            <form method="post" action="{% url 'marketplace:toggle_price_alert' 'phone' phone.pk %}">
+              {% csrf_token %}
+              <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+              <button class="btn" type="submit">{% if price_alert_active %}Desactiver alerte prix{% else %}Alerte baisse de prix{% endif %}</button>
+            </form>
             <form method="post" action="{% url 'marketplace:toggle_favorite' 'phone' phone.pk %}">
               {% csrf_token %}
               <input type="hidden" name="next" value="{{ request.get_full_path }}" />
