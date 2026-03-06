@@ -28,13 +28,19 @@
       .btn-ghost { border-color:var(--line); color:#fff; }
       .grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; padding-bottom:56px; }
       .card { border:1px solid var(--line); border-radius:14px; overflow:hidden; background:linear-gradient(180deg,#101010,#0a0a0a); }
+      .media { position: relative; }
       .card img { width:100%; aspect-ratio:16/10; object-fit:cover; display:block; }
+      .overlay-badges { position:absolute; top:10px; left:10px; right:10px; display:flex; gap:6px; flex-wrap:wrap; }
       .body { padding:12px; }
       .title { margin:0; }
       .price { margin-top:8px; color:var(--gold); font-weight:700; }
       .meta { margin-top:8px; color:var(--muted); font-size:.9rem; display:grid; gap:4px; }
       .badges { margin-top:8px; display:flex; gap:6px; flex-wrap:wrap; }
       .badge { border:1px solid rgba(201,162,39,.45); border-radius:999px; padding:4px 8px; font-size:.72rem; color:#eedb98; }
+      .views { margin-top:8px; color:var(--muted); font-size:.84rem; }
+      .heart-form { margin-left:auto; }
+      .heart-btn { border:1px solid var(--line); background:rgba(0,0,0,.55); color:#fff; border-radius:999px; padding:5px 10px; cursor:pointer; }
+      .heart-btn.active { border-color:rgba(201,162,39,.6); color:#eedb98; }
       .actions { margin-top:10px; display:flex; gap:8px; flex-wrap:wrap; }
       .pager { margin:22px 0 56px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
       .pager a,.pager span { color:#fff; text-decoration:none; border:1px solid var(--line); border-radius:999px; padding:7px 12px; }
@@ -68,16 +74,24 @@
         {% for phone, badges in phone_items %}
           <article class="card">
             {% with img=phone.images.first %}
-              {% if img %}<img src="{{ img.image.url }}" alt="{{ phone.brand }} {{ phone.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1200&q=80" alt="{{ phone.brand }} {{ phone.model }}" loading="lazy" decoding="async" />{% endif %}
+              <div class="media">
+                {% if img %}<img src="{{ img.image.url }}" alt="{{ phone.brand }} {{ phone.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1200&q=80" alt="{{ phone.brand }} {{ phone.model }}" loading="lazy" decoding="async" />{% endif %}
+                <div class="overlay-badges">{% for badge in badges %}<span class="badge">{{ badge }}</span>{% endfor %}</div>
+              </div>
             {% endwith %}
             <div class="body">
               <h3 class="title">{{ phone.brand }} {{ phone.model }}</h3>
               <div class="price">{{ phone.price }} $</div>
               <div class="meta"><span>Stockage: {{ phone.storage }}</span><span>{{ phone.get_availability_display }}</span></div>
-              <div class="badges">{% for badge in badges %}<span class="badge">{{ badge }}</span>{% endfor %}</div>
+              <div class="views">{{ phone.view_count }} personnes ont consulte ce telephone</div>
               <div class="actions">
                 <a class="btn btn-ghost" href="{% url 'marketplace:phone_detail' phone.pk %}">Voir details</a>
                 <a class="btn btn-gold" href="https://wa.me/243000000000?text=Bonjour,%20je%20veux%20le%20telephone%20{{ phone.brand }}%20{{ phone.model }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                {% if user.is_authenticated %}
+                  <form class="heart-form" method="post" action="{% url 'marketplace:toggle_favorite' 'phone' phone.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}" /><button class="heart-btn{% if phone.pk in favorite_phone_ids %} active{% endif %}" type="submit">&#10084;</button></form>
+                {% else %}
+                  <a class="btn btn-ghost" href="/admin/login/?next={{ request.path }}">&#10084;</a>
+                {% endif %}
               </div>
             </div>
           </article>

@@ -34,7 +34,9 @@
       .search input { width:100%; border:1px solid var(--line); background:#101010; color:#fff; border-radius:12px; padding:12px 14px; }
       .grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
       .card { border:1px solid var(--line); border-radius:14px; overflow:hidden; background:linear-gradient(180deg,#111,#0b0b0b); }
+      .media { position: relative; }
       .card img { width:100%; aspect-ratio:16/10; object-fit:cover; display:block; }
+      .overlay-badges { position:absolute; top:10px; left:10px; right:10px; display:flex; gap:6px; flex-wrap:wrap; }
       .body { padding:12px; }
       .title { margin:0; font-size:1rem; }
       .price { margin-top:7px; color:var(--gold); font-weight:700; }
@@ -43,6 +45,10 @@
       .badge { border:1px solid var(--line); border-radius:999px; padding:4px 8px; font-size:.72rem; }
       .badge-gold { border-color:rgba(201,162,39,.45); color:#efdc9a; }
       .badge-green { border-color:rgba(52,199,89,.4); color:#b6eec2; }
+      .views { margin-top:8px; color:var(--muted); font-size:.84rem; }
+      .heart-form { margin-left:auto; }
+      .heart-btn { border:1px solid var(--line); background:rgba(0,0,0,.55); color:#fff; border-radius:999px; padding:5px 10px; cursor:pointer; }
+      .heart-btn.active { border-color:rgba(201,162,39,.6); color:#efdc9a; }
       .actions { margin-top:10px; display:flex; gap:8px; flex-wrap:wrap; }
       .pager { margin-top:20px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
       .pager a,.pager span { border:1px solid var(--line); border-radius:999px; color:#fff; text-decoration:none; padding:7px 12px; }
@@ -94,11 +100,17 @@
           {% for car, badges in car_items %}
             <article class="card">
               {% with first_image=car.images.first %}
-                {% if first_image %}
-                  <img src="{{ first_image.image.url }}" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />
-                {% else %}
-                  <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1200&q=80" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />
-                {% endif %}
+                <div class="media">
+                  {% if first_image %}
+                    <img src="{{ first_image.image.url }}" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />
+                  {% else %}
+                    <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1200&q=80" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />
+                  {% endif %}
+                  <div class="overlay-badges">
+                    {% for badge in badges %}<span class="badge badge-gold">{{ badge }}</span>{% endfor %}
+                    {% if car.is_commission %}<span class="badge badge-green">Commission</span>{% endif %}
+                  </div>
+                </div>
               {% endwith %}
               <div class="body">
                 <h3 class="title">{{ car.brand }} {{ car.model }}</h3>
@@ -107,13 +119,15 @@
                   <span>{{ car.year }}  -  {{ car.mileage }} km  -  {{ car.get_vehicle_type_display }}</span>
                   <span>{{ car.get_availability_display }}</span>
                 </div>
-                <div class="badges">
-                  {% for badge in badges %}<span class="badge badge-gold">{{ badge }}</span>{% endfor %}
-                  {% if car.is_commission %}<span class="badge badge-green">Vente en commission par KICHEFU-CHEFU STORE</span>{% endif %}
-                </div>
+                <div class="views">{{ car.view_count }} personnes ont consulte ce vehicule</div>
                 <div class="actions">
                   <a class="btn btn-ghost" href="{% url 'marketplace:car_detail' car.pk %}">Voir details</a>
                   <a class="btn btn-gold" target="_blank" rel="noopener noreferrer" href="https://wa.me/243000000000?text=Bonjour,%20je%20suis%20interesse%20par%20{{ car.brand }}%20{{ car.model }}">WhatsApp</a>
+                  {% if user.is_authenticated %}
+                    <form class="heart-form" method="post" action="{% url 'marketplace:toggle_favorite' 'car' car.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}" /><button class="heart-btn{% if car.pk in favorite_car_ids %} active{% endif %}" type="submit">&#10084;</button></form>
+                  {% else %}
+                    <a class="btn btn-ghost" href="/admin/login/?next={{ request.path }}">&#10084;</a>
+                  {% endif %}
                 </div>
               </div>
             </article>

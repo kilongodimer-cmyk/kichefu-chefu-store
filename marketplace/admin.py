@@ -6,6 +6,7 @@ from .models import (
 	CarImage,
 	CarSellRequest,
 	CarSellRequestImage,
+	Favorite,
 	Phone,
 	PhoneImage,
 	Proposal,
@@ -22,7 +23,7 @@ class CarImageInline(admin.TabularInline):
 
 @admin.register(Car)
 class CarAdmin(admin.ModelAdmin):
-	list_display = ("brand", "model", "vehicle_type", "year", "mileage", "price", "is_commission", "availability", "date_added")
+	list_display = ("brand", "model", "vehicle_type", "year", "mileage", "price", "view_count", "is_commission", "availability", "date_added")
 	list_filter = ("availability", "is_commission", "vehicle_type", "year", "brand", "fuel_type", "transmission")
 	search_fields = ("brand", "model", "description")
 	ordering = ("-date_added",)
@@ -36,7 +37,7 @@ class PhoneImageInline(admin.TabularInline):
 
 @admin.register(Phone)
 class PhoneAdmin(admin.ModelAdmin):
-	list_display = ("brand", "model", "storage", "price", "availability", "date_added")
+	list_display = ("brand", "model", "storage", "price", "view_count", "availability", "date_added")
 	list_filter = ("availability", "brand")
 	search_fields = ("brand", "model", "description")
 	ordering = ("-date_added",)
@@ -58,7 +59,7 @@ class RealEstateImageInline(admin.TabularInline):
 
 @admin.register(RealEstate)
 class RealEstateAdmin(admin.ModelAdmin):
-	list_display = ("real_estate_type", "location", "price", "is_commission", "availability", "date_added")
+	list_display = ("real_estate_type", "location", "price", "view_count", "is_commission", "availability", "date_added")
 	list_filter = ("real_estate_type", "is_commission", "availability")
 	search_fields = ("location", "description")
 	ordering = ("-date_added",)
@@ -91,5 +92,13 @@ class CarSellRequestAdmin(admin.ModelAdmin):
 	search_fields = ("name", "phone_number", "model")
 	ordering = ("-created_at",)
 	inlines = [CarSellRequestImageInline]
+
+
+@admin.register(Favorite)
+class FavoriteAdmin(admin.ModelAdmin):
+	list_display = ("user", "content_type", "object_id", "created_at")
+	list_filter = ("content_type", "created_at")
+	search_fields = ("user__username",)
+	ordering = ("-created_at",)
 
 # Register your models here.

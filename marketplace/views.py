@@ -1,6 +1,8 @@
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import F, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views import View
@@ -8,12 +10,14 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, permissions, viewsets
 from urllib.parse import quote
 from datetime import timedelta
+from decimal import Decimal
 
 from .forms import ProposalSellForm
 from .models import (
 	Accessory,
 	Car,
 	CarImage,
+	Favorite,
 	Phone,
 	PhoneImage,
 	Proposal,
@@ -37,6 +41,7 @@ from .serializers import (
 
 WHATSAPP_DEFAULT = "+243000000000"
 LUBUMBASHI_NEIGHBORHOODS = ["Kenya", "Kamalondo", "Katuba", "Ruashi", "Golf", "Bel-Air", "Kalubwe"]
+RECENT_SESSION_KEY = "recently_viewed"
 
 
 def make_whatsapp_link(phone_number, message):
@@ -50,9 +55,75 @@ def build_badges(item, index=0):
 		badges.append("Nouveau")
 	if index < 3:
 		badges.append("Populaire")
+	if str(getattr(item, "availability", "")) == "reserved":
+		badges.append("Stock limite")
 	if str(getattr(item, "availability", "")) == "available" and index % 4 == 0:
 		badges.append("Bonne affaire")
 	return badges
+
+
+def _price_range(item):
+	return item.price * Decimal("0.20")
+
+
+def similar_by_price(queryset, item, limit=6):
+	price_delta = _price_range(item)
+	return queryset.filter(price__gte=item.price - price_delta, price__lte=item.price + price_delta).exclude(pk=item.pk)[:limit]
+
+
+def _get_recent_session_map(request):
+	return request.session.get(RECENT_SESSION_KEY, {"cars": [], "phones": [], "real_estate": []})
+
+
+def track_recent_view(request, bucket, object_id):
+	recent_map = _get_recent_session_map(request)
+	bucket_items = [obj_id for obj_id in recent_map.get(bucket, []) if obj_id != object_id]
+	bucket_items.insert(0, object_id)
+	recent_map[bucket] = bucket_items[:12]
+	request.session[RECENT_SESSION_KEY] = recent_map
+	request.session.modified = True
+
+
+def get_recommended_from_history(request):
+	recent_map = _get_recent_session_map(request)
+	cars = list(Car.objects.prefetch_related("images").filter(pk__in=recent_map.get("cars", [])[:3]))
+	phones = list(Phone.objects.prefetch_related("images").filter(pk__in=recent_map.get("phones", [])[:3]))
+	real_estate = list(RealEstate.objects.prefetch_related("images").filter(pk__in=recent_map.get("real_estate", [])[:3]))
+
+	recommendations = []
+	for item in cars:
+		recommendations.append({"kind": "Voiture", "title": f"{item.brand} {item.model}", "price": item.price, "url": f"/voitures/{item.pk}/"})
+	for item in phones:
+		recommendations.append({"kind": "Telephone", "title": f"{item.brand} {item.model}", "price": item.price, "url": f"/telephones/{item.pk}/"})
+	for item in real_estate:
+		recommendations.append(
+			{
+				"kind": "Immobilier",
+				"title": f"{item.get_real_estate_type_display()} - {item.location}",
+				"price": item.price,
+				"url": f"/immobilier/{item.pk}/",
+			}
+		)
+	return recommendations[:8]
+
+
+def get_favorite_id_map(user):
+	if not user.is_authenticated:
+		return {"cars": set(), "phones": set(), "real_estate": set()}
+
+	car_ct = ContentType.objects.get_for_model(Car)
+	phone_ct = ContentType.objects.get_for_model(Phone)
+	real_estate_ct = ContentType.objects.get_for_model(RealEstate)
+	favorites = Favorite.objects.filter(user=user, content_type__in=[car_ct, phone_ct, real_estate_ct])
+	result = {"cars": set(), "phones": set(), "real_estate": set()}
+	for favorite in favorites:
+		if favorite.content_type_id == car_ct.id:
+			result["cars"].add(favorite.object_id)
+		elif favorite.content_type_id == phone_ct.id:
+			result["phones"].add(favorite.object_id)
+		elif favorite.content_type_id == real_estate_ct.id:
+			result["real_estate"].add(favorite.object_id)
+	return result
 
 
 class CarViewSet(viewsets.ModelViewSet):
@@ -138,6 +209,9 @@ class HomePageView(View):
 		new_cars = list(cars.filter(date_added__gte=timezone.now() - timedelta(days=30))[:6])
 		popular_phones = list(phones.filter(availability="available")[:6])
 		recent_real_estates = list(real_estates.filter(location__in=LUBUMBASHI_NEIGHBORHOODS)[:6])
+		hot_cars = list(cars.order_by("-view_count", "-date_added")[:6])
+		hot_phones = list(phones.order_by("-view_count", "-date_added")[:6])
+		hot_real_estate = list(real_estates.order_by("-view_count", "-date_added")[:6])
 
 		best_offers = []
 		for car in cars.filter(availability="available").order_by("price")[:4]:
@@ -154,6 +228,8 @@ class HomePageView(View):
 				}
 			)
 		best_offers = sorted(best_offers, key=lambda x: x["price"])[:8]
+		recommended_for_you = get_recommended_from_history(request)
+		favorite_map = get_favorite_id_map(request.user)
 
 		context = {
 			"popular_cars": [(item, build_badges(item, idx)) for idx, item in enumerate(popular_cars)],
@@ -162,6 +238,15 @@ class HomePageView(View):
 			"top_accessories": [(item, build_badges(item, idx)) for idx, item in enumerate(accessories.filter(availability="available")[:6])],
 			"recent_real_estates": [(item, build_badges(item, idx)) for idx, item in enumerate(recent_real_estates)],
 			"best_offers": best_offers,
+			"popular_products": {
+				"cars": [(item, build_badges(item, idx)) for idx, item in enumerate(hot_cars)],
+				"phones": [(item, build_badges(item, idx)) for idx, item in enumerate(hot_phones)],
+				"real_estate": [(item, build_badges(item, idx)) for idx, item in enumerate(hot_real_estate)],
+			},
+			"recommended_for_you": recommended_for_you,
+			"favorite_car_ids": favorite_map["cars"],
+			"favorite_phone_ids": favorite_map["phones"],
+			"favorite_real_estate_ids": favorite_map["real_estate"],
 			"lubumbashi_areas": LUBUMBASHI_NEIGHBORHOODS,
 		}
 		return render(request, self.template_name, context)
@@ -208,6 +293,7 @@ class CarMarketplaceListView(View):
 			"brands": Car.objects.values_list("brand", flat=True).distinct().order_by("brand"),
 			"vehicle_types": Car.VehicleType.choices,
 			"car_items": [(item, build_badges(item, idx)) for idx, item in enumerate(page_obj.object_list)],
+			"favorite_car_ids": get_favorite_id_map(request.user)["cars"],
 			"filters": {
 				"q": search,
 				"brand": brand,
@@ -226,10 +312,16 @@ class CarDetailView(View):
 
 	def get(self, request, pk):
 		car = get_object_or_404(Car.objects.prefetch_related("images"), pk=pk)
+		Car.objects.filter(pk=car.pk).update(view_count=F("view_count") + 1)
+		car.refresh_from_db(fields=["view_count"])
+		track_recent_view(request, "cars", car.pk)
+		favorite_map = get_favorite_id_map(request.user)
 		contact_phone = car.seller_phone or "+243000000000"
 		whatsapp_message = f"Bonjour, je suis interesse par {car.brand} {car.model} sur KICHEFU-CHEFU STORE."
 		whatsapp_link = make_whatsapp_link(contact_phone, whatsapp_message)
-		similar_cars = Car.objects.prefetch_related("images").filter(brand=car.brand).exclude(pk=car.pk)[:6]
+		similar_cars = similar_by_price(
+			Car.objects.prefetch_related("images").filter(brand=car.brand, vehicle_type=car.vehicle_type), car
+		)
 		recommended_cars = Car.objects.prefetch_related("images").filter(vehicle_type=car.vehicle_type).exclude(pk=car.pk)[:6]
 
 		return render(
@@ -239,6 +331,7 @@ class CarDetailView(View):
 				"car": car,
 				"contact_phone": contact_phone,
 				"whatsapp_link": whatsapp_link,
+				"is_favorite": car.pk in favorite_map["cars"],
 				"similar_cars": similar_cars,
 				"recommended_cars": recommended_cars,
 			},
@@ -274,6 +367,7 @@ class PhoneMarketplaceListView(View):
 		context = {
 			"page_obj": page_obj,
 			"phone_items": [(item, build_badges(item, idx)) for idx, item in enumerate(page_obj.object_list)],
+			"favorite_phone_ids": get_favorite_id_map(request.user)["phones"],
 			"brands": Phone.objects.values_list("brand", flat=True).distinct().order_by("brand"),
 			"filters": {"q": search, "brand": brand, "min_price": min_price, "max_price": max_price},
 		}
@@ -285,9 +379,13 @@ class PhoneDetailView(View):
 
 	def get(self, request, pk):
 		phone = get_object_or_404(Phone.objects.prefetch_related("images"), pk=pk)
+		Phone.objects.filter(pk=phone.pk).update(view_count=F("view_count") + 1)
+		phone.refresh_from_db(fields=["view_count"])
+		track_recent_view(request, "phones", phone.pk)
+		favorite_map = get_favorite_id_map(request.user)
 		whatsapp_message = f"Bonjour, je veux le {phone.brand} {phone.model} vu sur KICHEFU-CHEFU STORE."
 		whatsapp_link = make_whatsapp_link(WHATSAPP_DEFAULT, whatsapp_message)
-		similar_phones = Phone.objects.prefetch_related("images").filter(brand=phone.brand).exclude(pk=phone.pk)[:6]
+		similar_phones = similar_by_price(Phone.objects.prefetch_related("images").filter(brand=phone.brand), phone)
 		recommended_phones = Phone.objects.prefetch_related("images").filter(storage=phone.storage).exclude(pk=phone.pk)[:6]
 		return render(
 			request,
@@ -295,6 +393,7 @@ class PhoneDetailView(View):
 			{
 				"phone": phone,
 				"whatsapp_link": whatsapp_link,
+				"is_favorite": phone.pk in favorite_map["phones"],
 				"similar_phones": similar_phones,
 				"recommended_phones": recommended_phones,
 			},
@@ -342,6 +441,7 @@ class RealEstateMarketplaceListView(View):
 		context = {
 			"page_obj": page_obj,
 			"estate_items": [(item, build_badges(item, idx)) for idx, item in enumerate(page_obj.object_list)],
+			"favorite_real_estate_ids": get_favorite_id_map(request.user)["real_estate"],
 			"estate_types": RealEstate._meta.get_field("real_estate_type").choices,
 			"lubumbashi_areas": LUBUMBASHI_NEIGHBORHOODS,
 			"filters": {"real_estate_type": estate_type, "location": location, "q": search},
@@ -354,14 +454,18 @@ class RealEstateDetailView(View):
 
 	def get(self, request, pk):
 		listing = get_object_or_404(RealEstate.objects.prefetch_related("images"), pk=pk)
+		RealEstate.objects.filter(pk=listing.pk).update(view_count=F("view_count") + 1)
+		listing.refresh_from_db(fields=["view_count"])
+		track_recent_view(request, "real_estate", listing.pk)
+		favorite_map = get_favorite_id_map(request.user)
 		whatsapp_message = (
 			f"Bonjour, je suis interesse par cette annonce {listing.get_real_estate_type_display()} a {listing.location}."
 		)
 		whatsapp_link = make_whatsapp_link(WHATSAPP_DEFAULT, whatsapp_message)
-		similar_listings = RealEstate.objects.prefetch_related("images").filter(
+		similar_listings = similar_by_price(RealEstate.objects.prefetch_related("images").filter(
 			real_estate_type=listing.real_estate_type,
 			location=listing.location,
-		).exclude(pk=listing.pk)[:6]
+		), listing)
 		recommended_listings = RealEstate.objects.prefetch_related("images").filter(
 			real_estate_type=listing.real_estate_type
 		).exclude(pk=listing.pk)[:6]
@@ -371,8 +475,54 @@ class RealEstateDetailView(View):
 			{
 				"listing": listing,
 				"whatsapp_link": whatsapp_link,
+				"is_favorite": listing.pk in favorite_map["real_estate"],
 				"similar_listings": similar_listings,
 				"recommended_listings": recommended_listings,
+			},
+		)
+
+
+class ToggleFavoriteView(LoginRequiredMixin, View):
+	login_url = "/admin/login/"
+
+	def post(self, request, model_name, pk):
+		model_map = {"car": Car, "phone": Phone, "real_estate": RealEstate}
+		model_class = model_map.get(model_name)
+		if model_class is None:
+			return redirect("home")
+
+		object_instance = get_object_or_404(model_class, pk=pk)
+		content_type = ContentType.objects.get_for_model(model_class)
+		favorite, created = Favorite.objects.get_or_create(
+			user=request.user,
+			content_type=content_type,
+			object_id=object_instance.pk,
+		)
+		if not created:
+			favorite.delete()
+
+		next_url = request.POST.get("next", "")
+		if next_url:
+			return redirect(next_url)
+		return redirect("home")
+
+
+class FavoritesView(LoginRequiredMixin, View):
+	login_url = "/admin/login/"
+	template_name = "favorites.html"
+
+	def get(self, request):
+		favorite_map = get_favorite_id_map(request.user)
+		cars = Car.objects.prefetch_related("images").filter(pk__in=favorite_map["cars"])
+		phones = Phone.objects.prefetch_related("images").filter(pk__in=favorite_map["phones"])
+		real_estates = RealEstate.objects.prefetch_related("images").filter(pk__in=favorite_map["real_estate"])
+		return render(
+			request,
+			self.template_name,
+			{
+				"cars": cars,
+				"phones": phones,
+				"real_estates": real_estates,
 			},
 		)
 

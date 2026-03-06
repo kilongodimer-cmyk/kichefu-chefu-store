@@ -31,6 +31,9 @@
       .spec b { display:block; font-size:.8rem; color:var(--muted); font-weight:500; }
       .spec span { margin-top:4px; display:block; font-weight:600; }
       .actions { margin-top:16px; display:flex; gap:8px; flex-wrap:wrap; }
+      .views { margin-top:10px; color:var(--muted); font-size:.9rem; }
+      .heart-btn { border:1px solid var(--line); background:rgba(0,0,0,.45); color:#fff; border-radius:999px; padding:10px 14px; cursor:pointer; }
+      .heart-btn.active { border-color:rgba(201,162,39,.6); color:#efdc9a; }
       .section { margin:22px auto 56px; }
       .section h2 { margin:0 0 12px; }
       .grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
@@ -55,6 +58,7 @@
       <section class="panel">
         <h1>{{ phone.brand }} {{ phone.model }}</h1>
         <div class="price">{{ phone.price }} $</div>
+        <div class="views">{{ phone.view_count }} personnes ont consulte ce telephone</div>
         <p class="desc">{{ phone.description|default:"Aucune description fournie." }}</p>
         <div class="specs">
           <div class="spec"><b>Marque</b><span>{{ phone.brand }}</span></div>
@@ -62,7 +66,14 @@
           <div class="spec"><b>Stockage</b><span>{{ phone.storage }}</span></div>
           <div class="spec"><b>Disponibilite</b><span>{{ phone.get_availability_display }}</span></div>
         </div>
-        <div class="actions"><a class="btn btn-gold" href="{{ whatsapp_link }}" target="_blank" rel="noopener noreferrer">Contacter sur WhatsApp</a></div>
+        <div class="actions">
+          <a class="btn btn-gold" href="{{ whatsapp_link }}" target="_blank" rel="noopener noreferrer">Contacter sur WhatsApp</a>
+          {% if user.is_authenticated %}
+            <form method="post" action="{% url 'marketplace:toggle_favorite' 'phone' phone.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}" /><button class="heart-btn{% if is_favorite %} active{% endif %}" type="submit">&#10084; Favori</button></form>
+          {% else %}
+            <a class="btn" href="/admin/login/?next={{ request.path }}">&#10084; Favori</a>
+          {% endif %}
+        </div>
       </section>
     </main>
 

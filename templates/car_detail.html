@@ -32,6 +32,9 @@
       .spec b { display:block; font-size:.8rem; color:var(--muted); font-weight:500; }
       .spec span { display:block; margin-top:3px; font-weight:600; }
       .actions { margin-top:16px; display:flex; gap:8px; flex-wrap:wrap; }
+      .views { margin-top:10px; color:var(--muted); font-size:.9rem; }
+      .heart-btn { border:1px solid var(--line); background:rgba(0,0,0,.45); color:#fff; border-radius:999px; padding:10px 14px; cursor:pointer; }
+      .heart-btn.active { border-color:rgba(201,162,39,.6); color:#efdc9a; }
       .similar { margin-top:26px; }
       .similar h2 { margin:0 0 12px; }
       .grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
@@ -72,6 +75,7 @@
         <h1>{{ car.brand }} {{ car.model }}</h1>
         <div class="price">{{ car.price }} $</div>
         {% if car.is_commission %}<div class="commission">Vente en commission par KICHEFU-CHEFU STORE</div>{% endif %}
+        <div class="views">{{ car.view_count }} personnes ont consulte ce vehicule</div>
         <p class="desc">{{ car.description|default:"Aucune description fournie pour ce vehicule." }}</p>
         <div class="specs">
           <div class="spec"><b>Marque</b><span>{{ car.brand }}</span></div>
@@ -86,6 +90,11 @@
         <div class="actions">
           <a class="btn btn-gold" href="{{ whatsapp_link }}" target="_blank" rel="noopener noreferrer">Contacter sur WhatsApp</a>
           <a class="btn" href="tel:{{ contact_phone }}">Appeler</a>
+          {% if user.is_authenticated %}
+            <form method="post" action="{% url 'marketplace:toggle_favorite' 'car' car.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}" /><button class="heart-btn{% if is_favorite %} active{% endif %}" type="submit">&#10084; Favori</button></form>
+          {% else %}
+            <a class="btn" href="/admin/login/?next={{ request.path }}">&#10084; Favori</a>
+          {% endif %}
         </div>
       </section>
     </main>

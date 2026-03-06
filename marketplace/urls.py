@@ -4,11 +4,13 @@ from .views import (
     AccessoryMarketplaceListView,
     CarDetailView,
     CarMarketplaceListView,
+    FavoritesView,
     PhoneDetailView,
     PhoneMarketplaceListView,
     RealEstateDetailView,
     RealEstateMarketplaceListView,
     SellWithUsView,
+    ToggleFavoriteView,
 )
 
 app_name = "marketplace"
@@ -22,4 +24,6 @@ urlpatterns = [
     path("immobilier/", RealEstateMarketplaceListView.as_view(), name="real_estate_list"),
     path("immobilier/<int:pk>/", RealEstateDetailView.as_view(), name="real_estate_detail"),
     path("vendre-avec-nous/", SellWithUsView.as_view(), name="sell_with_us"),
+    path("favoris/", FavoritesView.as_view(), name="favorites"),
+    path("favoris/toggle/<str:model_name>/<int:pk>/", ToggleFavoriteView.as_view(), name="toggle_favorite"),
 ]

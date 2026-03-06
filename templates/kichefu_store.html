@@ -99,7 +99,17 @@
         background: linear-gradient(180deg, #111, #0b0b0b);
       }
       .card:hover { border-color: var(--gold); transform: translateY(-4px); transition: 0.22s ease; }
+      .media { position: relative; }
       .card img { width: 100%; aspect-ratio: 16/10; object-fit: cover; display: block; }
+      .overlay-badges {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        right: 10px;
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
       .body { padding: 14px; }
       .title { margin: 0; font-size: 1rem; }
       .price { margin-top: 7px; color: var(--gold); font-weight: 700; }
@@ -108,6 +118,17 @@
       .badge { border: 1px solid var(--line); border-radius: 999px; padding: 4px 8px; font-size: 0.72rem; }
       .badge-gold { border-color: rgba(201, 162, 39, 0.5); color: #f0dc9b; }
       .badge-ok { border-color: rgba(52, 199, 89, 0.45); color: #b6efc4; }
+      .heart-form { margin-left: auto; }
+      .heart-btn {
+        border: 1px solid var(--line);
+        background: rgba(0, 0, 0, 0.55);
+        color: #fff;
+        border-radius: 999px;
+        padding: 5px 10px;
+        cursor: pointer;
+      }
+      .heart-btn.active { border-color: rgba(201, 162, 39, 0.6); color: #f0dc9b; }
+      .views { margin-top: 8px; color: var(--muted); font-size: 0.84rem; }
       .actions { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
       .offer {
         border: 1px solid var(--line);
@@ -147,6 +168,7 @@
           <a href="/accessoires/">Accessoires</a>
           <a href="/immobilier/">Parcelles & maisons</a>
           <a href="/vendre-avec-nous/">Vendre avec nous</a>
+          <a href="/favoris/">Mes favoris</a>
         </nav>
         <a class="btn btn-gold" href="https://wa.me/243000000000" target="_blank" rel="noopener noreferrer">WhatsApp</a>
       </div>
@@ -188,7 +210,54 @@
       <div class="container">
         <div class="head">
           <div>
-            <h2>Les meilleures offres du moment</h2>
+            <h2>Produits populaires</h2>
+            <p>Classement des annonces les plus vues pour guider les visiteurs vers les produits tendance.</p>
+          </div>
+        </div>
+        <div class="grid grid-3">
+          {% for car, badges in popular_products.cars %}
+            <article class="card">
+              {% with image=car.images.first %}
+                <div class="media">
+                  {% if image %}<img src="{{ image.image.url }}" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1200&q=80" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />{% endif %}
+                  <div class="overlay-badges">{% for badge in badges %}<span class="badge badge-gold">{{ badge }}</span>{% endfor %}</div>
+                </div>
+              {% endwith %}
+              <div class="body"><h3 class="title">{{ car.brand }} {{ car.model }}</h3><div class="price">{{ car.price }} $</div><div class="views">{{ car.view_count }} personnes ont consulte ce vehicule</div><a class="btn btn-ghost" href="/voitures/{{ car.pk }}/">Voir details</a></div>
+            </article>
+          {% empty %}
+            <p>Aucune donnee de popularite disponible pour le moment.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="head">
+          <div>
+            <h2>Recommande pour vous</h2>
+            <p>Suggestions personnalisees basees sur vos annonces recemment consultees.</p>
+          </div>
+        </div>
+        <div class="grid grid-3">
+          {% for item in recommended_for_you %}
+            <article class="offer">
+              <div><strong>{{ item.title }}</strong><small>{{ item.kind }}</small></div>
+              <div><strong>{{ item.price }} $</strong> <a class="btn btn-ghost" href="{{ item.url }}">Explorer</a></div>
+            </article>
+          {% empty %}
+            <p>Consultez quelques produits et nous vous proposerons des recommandations personnalisees.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="head">
+          <div>
+            <h2>Offres du moment</h2>
             <p>Selection prix attractifs pour augmenter l'engagement et la conversion.</p>
           </div>
         </div>
@@ -218,19 +287,27 @@
           {% for car, badges in popular_cars %}
             <article class="card">
               {% with image=car.images.first %}
-                {% if image %}<img src="{{ image.image.url }}" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1200&q=80" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />{% endif %}
+                <div class="media">
+                  {% if image %}<img src="{{ image.image.url }}" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1200&q=80" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />{% endif %}
+                  <div class="overlay-badges">
+                    {% for badge in badges %}<span class="badge badge-gold">{{ badge }}</span>{% endfor %}
+                    {% if car.is_commission %}<span class="badge badge-ok">Commission</span>{% endif %}
+                  </div>
+                </div>
               {% endwith %}
               <div class="body">
                 <h3 class="title">{{ car.brand }} {{ car.model }}</h3>
                 <div class="price">{{ car.price }} $</div>
                 <div class="meta"><span>{{ car.year }}  -  {{ car.mileage }} km</span><span>{{ car.get_availability_display }}</span></div>
-                <div class="badges">
-                  {% for badge in badges %}<span class="badge badge-gold">{{ badge }}</span>{% endfor %}
-                  {% if car.is_commission %}<span class="badge badge-ok">Vente en commission par KICHEFU-CHEFU STORE</span>{% endif %}
-                </div>
+                <div class="views">{{ car.view_count }} personnes ont consulte ce vehicule</div>
                 <div class="actions">
                   <a class="btn btn-ghost" href="/voitures/{{ car.pk }}/">Voir details</a>
                   <a class="btn btn-gold" href="https://wa.me/243000000000?text=Bonjour,%20je%20veux%20ce%20vehicule%20{{ car.brand }}%20{{ car.model }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                  {% if user.is_authenticated %}
+                    <form class="heart-form" method="post" action="{% url 'marketplace:toggle_favorite' 'car' car.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}" /><button class="heart-btn{% if car.pk in favorite_car_ids %} active{% endif %}" type="submit">&#10084;</button></form>
+                  {% else %}
+                    <a class="btn btn-ghost" href="/admin/login/?next={{ request.path }}">&#10084;</a>
+                  {% endif %}
                 </div>
               </div>
             </article>
@@ -271,16 +348,24 @@
           {% for phone, badges in popular_phones %}
             <article class="card">
               {% with image=phone.images.first %}
-                {% if image %}<img src="{{ image.image.url }}" alt="{{ phone.brand }} {{ phone.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1200&q=80" alt="{{ phone.brand }} {{ phone.model }}" loading="lazy" decoding="async" />{% endif %}
+                <div class="media">
+                  {% if image %}<img src="{{ image.image.url }}" alt="{{ phone.brand }} {{ phone.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1200&q=80" alt="{{ phone.brand }} {{ phone.model }}" loading="lazy" decoding="async" />{% endif %}
+                  <div class="overlay-badges">{% for badge in badges %}<span class="badge badge-gold">{{ badge }}</span>{% endfor %}</div>
+                </div>
               {% endwith %}
               <div class="body">
                 <h3 class="title">{{ phone.brand }} {{ phone.model }}</h3>
                 <div class="price">{{ phone.price }} $</div>
                 <div class="meta"><span>Stockage: {{ phone.storage }}</span><span>{{ phone.get_availability_display }}</span></div>
-                <div class="badges">{% for badge in badges %}<span class="badge badge-gold">{{ badge }}</span>{% endfor %}</div>
+                <div class="views">{{ phone.view_count }} personnes ont consulte ce telephone</div>
                 <div class="actions">
                   <a class="btn btn-ghost" href="/telephones/{{ phone.pk }}/">Voir details</a>
                   <a class="btn btn-gold" href="https://wa.me/243000000000?text=Bonjour,%20je%20veux%20le%20telephone%20{{ phone.brand }}%20{{ phone.model }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                  {% if user.is_authenticated %}
+                    <form class="heart-form" method="post" action="{% url 'marketplace:toggle_favorite' 'phone' phone.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}" /><button class="heart-btn{% if phone.pk in favorite_phone_ids %} active{% endif %}" type="submit">&#10084;</button></form>
+                  {% else %}
+                    <a class="btn btn-ghost" href="/admin/login/?next={{ request.path }}">&#10084;</a>
+                  {% endif %}
                 </div>
               </div>
             </article>
@@ -299,19 +384,27 @@
           {% for listing, badges in recent_real_estates %}
             <article class="card">
               {% with image=listing.images.first %}
-                {% if image %}<img src="{{ image.image.url }}" alt="{{ listing.location }}" loading="lazy" decoding="async" />{% else %}<img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80" alt="{{ listing.location }}" loading="lazy" decoding="async" />{% endif %}
+                <div class="media">
+                  {% if image %}<img src="{{ image.image.url }}" alt="{{ listing.location }}" loading="lazy" decoding="async" />{% else %}<img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80" alt="{{ listing.location }}" loading="lazy" decoding="async" />{% endif %}
+                  <div class="overlay-badges">
+                    {% for badge in badges %}<span class="badge badge-gold">{{ badge }}</span>{% endfor %}
+                    {% if listing.is_commission %}<span class="badge badge-ok">Commission</span>{% endif %}
+                  </div>
+                </div>
               {% endwith %}
               <div class="body">
                 <h3 class="title">{{ listing.get_real_estate_type_display }} - {{ listing.location }}</h3>
                 <div class="price">{{ listing.price }} $</div>
                 <div class="meta"><span>{{ listing.get_availability_display }}</span></div>
-                <div class="badges">
-                  {% for badge in badges %}<span class="badge badge-gold">{{ badge }}</span>{% endfor %}
-                  {% if listing.is_commission %}<span class="badge badge-ok">Vente en commission par KICHEFU-CHEFU STORE</span>{% endif %}
-                </div>
+                <div class="views">{{ listing.view_count }} personnes ont consulte cette annonce</div>
                 <div class="actions">
                   <a class="btn btn-ghost" href="/immobilier/{{ listing.pk }}/">Voir details</a>
                   <a class="btn btn-gold" href="https://wa.me/243000000000?text=Bonjour,%20je%20suis%20interesse%20par%20ce%20bien%20{{ listing.location }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                  {% if user.is_authenticated %}
+                    <form class="heart-form" method="post" action="{% url 'marketplace:toggle_favorite' 'real_estate' listing.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}" /><button class="heart-btn{% if listing.pk in favorite_real_estate_ids %} active{% endif %}" type="submit">&#10084;</button></form>
+                  {% else %}
+                    <a class="btn btn-ghost" href="/admin/login/?next={{ request.path }}">&#10084;</a>
+                  {% endif %}
                 </div>
               </div>
             </article>
