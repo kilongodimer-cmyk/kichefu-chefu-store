@@ -311,6 +311,45 @@
         padding: 34px;
       }
 
+      .testimonials {
+        background: linear-gradient(180deg, rgba(10, 10, 10, 0.95), rgba(6, 6, 6, 0.95));
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .quote-grid {
+        margin-top: 28px;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .quote-card {
+        border: 1px solid var(--line);
+        border-radius: var(--radius-md);
+        background: linear-gradient(180deg, #101010, #0b0b0b);
+        padding: 18px;
+        box-shadow: var(--shadow-soft);
+      }
+
+      .quote-stars {
+        color: var(--gold);
+        letter-spacing: 0.08em;
+        font-size: 0.82rem;
+      }
+
+      .quote-text {
+        margin-top: 10px;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      .quote-author {
+        margin-top: 12px;
+        font-weight: 600;
+        font-size: 0.88rem;
+      }
+
       footer {
         border-top: 1px solid var(--line);
         padding: 70px 0 34px;
@@ -363,8 +402,13 @@
         .section { padding: 68px 0; }
         .grid-4,
         .grid-3,
-        .footer-grid { grid-template-columns: 1fr; }
+        .footer-grid,
+        .quote-grid { grid-template-columns: 1fr; }
         .commission-box { padding: 24px; }
+      }
+
+      @media (max-width: 1080px) {
+        .quote-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       }
     </style>
   </head>
@@ -535,6 +579,30 @@
             <div class="hero-actions" style="margin-top:20px;">
               <a class="btn btn-gold" href="/voitures/vendre/">Proposer un bien</a>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section testimonials" id="avis">
+        <div class="container">
+          <h2 class="section-title">Avis Clients</h2>
+          <p class="section-subtitle">Des retours concrets de clients qui ont acheté ou vendu via KICHEFU-CHEFU STORE.</p>
+          <div class="quote-grid">
+            <article class="quote-card">
+              <div class="quote-stars">★★★★★</div>
+              <p class="quote-text">"Processus rapide et transparent. J'ai trouvé mon véhicule en moins d'une semaine."</p>
+              <p class="quote-author">M. Kabasele - Acheteur automobile</p>
+            </article>
+            <article class="quote-card">
+              <div class="quote-stars">★★★★★</div>
+              <p class="quote-text">"Design clair, prix visibles, contact WhatsApp immédiat. Très professionnel."</p>
+              <p class="quote-author">Mme Mbuyi - Cliente smartphones</p>
+            </article>
+            <article class="quote-card">
+              <div class="quote-stars">★★★★★</div>
+              <p class="quote-text">"J'ai vendu ma parcelle rapidement grâce au service de commission du store."</p>
+              <p class="quote-author">M. Ilunga - Vendeur immobilier</p>
+            </article>
           </div>
         </div>
       </section>
