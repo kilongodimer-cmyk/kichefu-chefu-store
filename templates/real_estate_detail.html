@@ -119,7 +119,34 @@
     </section>
 
     <section class="container section">
-      <h2>Produits recommandes</h2>
+      <h2>Meme gamme de prix</h2>
+      <div class="grid">
+        {% for item in same_price_listings %}
+          <article class="mini">{% with img=item.images.first %}{% if img %}<img src="{{ img.image.url }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.location|urlencode }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% endif %}{% endwith %}<div class="body"><h3>{{ item.get_real_estate_type_display }} - {{ item.location }}</h3><div class="p">{{ item.price }} $</div><a class="btn" href="{{ item.get_absolute_url }}">Voir details</a></div></article>
+        {% empty %}<p>Pas encore de produits dans la meme gamme de prix.</p>{% endfor %}
+      </div>
+    </section>
+
+    <section class="container section">
+      <h2>Les plus consultes aujourd'hui</h2>
+      <div class="grid">
+        {% for item in popular_today_listings %}
+          <article class="mini">{% with img=item.images.first %}{% if img %}<img src="{{ img.image.url }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.location|urlencode }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% endif %}{% endwith %}<div class="body"><h3>{{ item.get_real_estate_type_display }} - {{ item.location }}</h3><div class="p">{{ item.price }} $</div><a class="btn" href="{{ item.get_absolute_url }}">Voir details</a></div></article>
+        {% empty %}<p>Pas encore de tendance aujourd'hui.</p>{% endfor %}
+      </div>
+    </section>
+
+    <section class="container section">
+      <h2>Nouveaux arrivages</h2>
+      <div class="grid">
+        {% for item in new_arrivals_listings %}
+          <article class="mini">{% with img=item.images.first %}{% if img %}<img src="{{ img.image.url }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.location|urlencode }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% endif %}{% endwith %}<div class="body"><h3>{{ item.get_real_estate_type_display }} - {{ item.location }}</h3><div class="p">{{ item.price }} $</div><a class="btn" href="{{ item.get_absolute_url }}">Voir details</a></div></article>
+        {% empty %}<p>Pas de nouveaux arrivages pour le moment.</p>{% endfor %}
+      </div>
+    </section>
+
+    <section class="container section">
+      <h2>Vous pourriez aussi aimer</h2>
       <div class="grid">
         {% for item in recommended_listings %}
           <article class="mini">{% with img=item.images.first %}{% if img %}<img src="{{ img.image.url }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.location|urlencode }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% endif %}{% endwith %}<div class="body"><h3>{{ item.get_real_estate_type_display }} - {{ item.location }}</h3><div class="p">{{ item.price }} $</div><a class="btn" href="{{ item.get_absolute_url }}">Voir details</a></div></article>

@@ -166,6 +166,84 @@ def recommended_items_for_you(base_queryset, item, category_filters, min_items=4
 	return items[:max_items]
 
 
+def build_smart_recommendations(
+	base_queryset,
+	item,
+	category_filters,
+	brand_filter_key=None,
+	location_filter_key=None,
+	location_value=None,
+	max_items=6,
+):
+	price_delta = _price_range(item)
+	price_filter = {
+		"price__gte": item.price - price_delta,
+		"price__lte": item.price + price_delta,
+	}
+
+	tier_filters = [dict(category_filters)]
+	if brand_filter_key and hasattr(item, brand_filter_key):
+		brand_value = getattr(item, brand_filter_key)
+		if brand_value:
+			brand_map = dict(category_filters)
+			brand_map[brand_filter_key] = brand_value
+			tier_filters.insert(0, brand_map)
+
+	if location_filter_key and location_value:
+		location_map = dict(category_filters)
+		location_map[location_filter_key] = location_value
+		tier_filters.insert(0, location_map)
+
+	similar_items = similar_items_by_rules(
+		base_queryset=base_queryset,
+		item=item,
+		tier_filters=tier_filters,
+		max_items=max_items,
+	)
+
+	same_price_queryset = (
+		base_queryset
+		.exclude(pk=item.pk)
+		.filter(**price_filter)
+		.order_by("-view_count", "-date_added")[:max_items]
+	)
+
+	today_start = timezone.now() - timedelta(days=1)
+	popular_today_queryset = (
+		base_queryset
+		.exclude(pk=item.pk)
+		.filter(date_added__gte=today_start)
+		.order_by("-view_count", "-date_added")[:max_items]
+	)
+	if not popular_today_queryset:
+		popular_today_queryset = (
+			base_queryset
+			.exclude(pk=item.pk)
+			.order_by("-view_count", "-date_added")[:max_items]
+		)
+
+	new_arrivals_queryset = (
+		base_queryset
+		.exclude(pk=item.pk)
+		.order_by("-date_added")[:max_items]
+	)
+
+	you_might_like = recommended_items_for_you(
+		base_queryset=base_queryset,
+		item=item,
+		category_filters=category_filters,
+		max_items=max_items,
+	)
+
+	return {
+		"similar": similar_items,
+		"same_price": _collect_unique_candidates([same_price_queryset], max_items=max_items),
+		"popular_today": _collect_unique_candidates([popular_today_queryset], max_items=max_items),
+		"new_arrivals": _collect_unique_candidates([new_arrivals_queryset], max_items=max_items),
+		"you_might_like": you_might_like,
+	}
+
+
 def _get_recent_session_map(request):
 	return request.session.get(RECENT_SESSION_KEY, {"cars": [], "phones": [], "real_estate": []})
 
@@ -750,23 +828,18 @@ class CarDetailView(SiteLoginRequiredMixin, View):
 		car.refresh_from_db(fields=["view_count"])
 		track_recent_view(request, "cars", car.pk)
 		favorite_map = get_favorite_id_map(request.user)
+		user_city = get_user_city(request)
 		contact_phone = car.seller_phone or "+243000000000"
 		whatsapp_message = f"Bonjour, je suis interesse par {car.brand} {car.model} sur KICHEFU-CHEFU STORE."
 		whatsapp_link = make_whatsapp_link(contact_phone, whatsapp_message)
 		car_base_queryset = Car.objects.prefetch_related("images").all()
-		similar_cars = similar_items_by_rules(
-			base_queryset=car_base_queryset,
-			item=car,
-			tier_filters=[
-				{"brand__iexact": car.brand, "vehicle_type": car.vehicle_type},
-				{"brand__iexact": car.brand},
-				{"vehicle_type": car.vehicle_type},
-			],
-		)
-		recommended_cars = recommended_items_for_you(
+		reco = build_smart_recommendations(
 			base_queryset=car_base_queryset,
 			item=car,
 			category_filters={"vehicle_type": car.vehicle_type},
+			brand_filter_key="brand",
+			location_filter_key="city__iexact",
+			location_value=car.city or user_city,
 		)
 		car_alert_active = False
 		if request.user.is_authenticated:
@@ -786,8 +859,11 @@ class CarDetailView(SiteLoginRequiredMixin, View):
 				"whatsapp_link": whatsapp_link,
 				"is_favorite": car.pk in favorite_map["cars"],
 				"price_alert_active": car_alert_active,
-				"similar_cars": similar_cars,
-				"recommended_cars": recommended_cars,
+				"similar_cars": reco["similar"],
+				"same_price_cars": reco["same_price"],
+				"popular_today_cars": reco["popular_today"],
+				"new_arrivals_cars": reco["new_arrivals"],
+				"recommended_cars": reco["you_might_like"],
 			},
 		)
 
@@ -847,19 +923,11 @@ class PhoneDetailView(SiteLoginRequiredMixin, View):
 		whatsapp_message = f"Bonjour, je veux le {phone.brand} {phone.model} vu sur KICHEFU-CHEFU STORE."
 		whatsapp_link = make_whatsapp_link(WHATSAPP_DEFAULT, whatsapp_message)
 		phone_base_queryset = Phone.objects.prefetch_related("images").all()
-		similar_phones = similar_items_by_rules(
-			base_queryset=phone_base_queryset,
-			item=phone,
-			tier_filters=[
-				{"brand__iexact": phone.brand, "storage": phone.storage},
-				{"brand__iexact": phone.brand},
-				{"storage": phone.storage},
-			],
-		)
-		recommended_phones = recommended_items_for_you(
+		reco = build_smart_recommendations(
 			base_queryset=phone_base_queryset,
 			item=phone,
 			category_filters={"storage": phone.storage},
+			brand_filter_key="brand",
 		)
 		phone_alert_active = False
 		if request.user.is_authenticated:
@@ -877,8 +945,11 @@ class PhoneDetailView(SiteLoginRequiredMixin, View):
 				"whatsapp_link": whatsapp_link,
 				"is_favorite": phone.pk in favorite_map["phones"],
 				"price_alert_active": phone_alert_active,
-				"similar_phones": similar_phones,
-				"recommended_phones": recommended_phones,
+				"similar_phones": reco["similar"],
+				"same_price_phones": reco["same_price"],
+				"popular_today_phones": reco["popular_today"],
+				"new_arrivals_phones": reco["new_arrivals"],
+				"recommended_phones": reco["you_might_like"],
 			},
 		)
 
@@ -954,18 +1025,12 @@ class RealEstateDetailView(SiteLoginRequiredMixin, View):
 		)
 		whatsapp_link = make_whatsapp_link(WHATSAPP_DEFAULT, whatsapp_message)
 		real_estate_base_queryset = RealEstate.objects.prefetch_related("images").all()
-		similar_listings = similar_items_by_rules(
-			base_queryset=real_estate_base_queryset,
-			item=listing,
-			tier_filters=[
-				{"real_estate_type": listing.real_estate_type, "location__iexact": listing.location},
-				{"real_estate_type": listing.real_estate_type},
-			],
-		)
-		recommended_listings = recommended_items_for_you(
+		reco = build_smart_recommendations(
 			base_queryset=real_estate_base_queryset,
 			item=listing,
 			category_filters={"real_estate_type": listing.real_estate_type},
+			location_filter_key="location__iexact",
+			location_value=listing.location,
 		)
 		listing_alert_active = False
 		if request.user.is_authenticated:
@@ -983,8 +1048,11 @@ class RealEstateDetailView(SiteLoginRequiredMixin, View):
 				"whatsapp_link": whatsapp_link,
 				"is_favorite": listing.pk in favorite_map["real_estate"],
 				"price_alert_active": listing_alert_active,
-				"similar_listings": similar_listings,
-				"recommended_listings": recommended_listings,
+				"similar_listings": reco["similar"],
+				"same_price_listings": reco["same_price"],
+				"popular_today_listings": reco["popular_today"],
+				"new_arrivals_listings": reco["new_arrivals"],
+				"recommended_listings": reco["you_might_like"],
 			},
 		)
 
