@@ -3,611 +3,609 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="google-site-verification" content="pGdf0_FJHKS3t-gbexnQb8Gp3Me7L11B6kHPYlo2na4" />
-    <title>Marketplace premium Congo | KICHEFU-CHEFU STORE</title>
-    <meta
-      name="description"
-      content="Plateforme premium pour voitures, telephones et parcelles a Lubumbashi et Kinshasa."
-    />
+    <title>Kichefu Chefu Store | Marketplace Premium</title>
+    <meta name="description" content="Kichefu Chefu Store: voitures, telephones et parcelles disponibles immediatement." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet" />
     <style>
       :root {
         --black: #111111;
         --orange: #ff6b00;
         --white: #ffffff;
-        --light: #f5f5f5;
+        --gray-light: #f5f5f5;
+        --gray-text: #555555;
         --line: rgba(255, 255, 255, 0.12);
-        --muted: rgba(255, 255, 255, 0.72);
+        --muted: rgba(255, 255, 255, 0.78);
       }
       * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
       body {
         margin: 0;
         font-family: "Inter", system-ui, sans-serif;
         color: var(--white);
-        background:
-          radial-gradient(circle at 12% -4%, rgba(255, 107, 0, 0.35), transparent 30%),
-          radial-gradient(circle at 86% 0%, rgba(255, 107, 0, 0.18), transparent 30%),
-          var(--black);
+        background: var(--black);
       }
       .container { width: min(1240px, 92vw); margin: 0 auto; }
+
       .topbar {
         position: sticky;
         top: 0;
-        z-index: 40;
-        background: rgba(17, 17, 17, 0.92);
+        z-index: 80;
+        background: rgba(17, 17, 17, 0.9);
         border-bottom: 1px solid var(--line);
-        backdrop-filter: blur(8px);
+        backdrop-filter: blur(9px);
       }
       .nav {
         min-height: 78px;
-        display: flex;
+        display: grid;
+        grid-template-columns: auto 1fr auto;
         align-items: center;
-        justify-content: space-between;
         gap: 14px;
       }
-      .brand {
+      .logo {
         color: var(--white);
         text-decoration: none;
         font-weight: 900;
         letter-spacing: 0.08em;
         font-size: 0.9rem;
+        white-space: nowrap;
       }
-      .menu { display: flex; gap: 14px; flex-wrap: wrap; }
-      .menu a { color: var(--white); text-decoration: none; font-weight: 400; opacity: 0.92; }
+      .menu {
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+      .menu a {
+        color: var(--white);
+        text-decoration: none;
+        font-weight: 400;
+        opacity: 0.92;
+      }
       .menu a:hover { color: var(--orange); }
-      .auth-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-      .inline-form { margin: 0; }
+      .right-zone {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .header-search {
+        width: min(270px, 100%);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 9px 13px;
+        background: #1a1a1a;
+        color: var(--white);
+        font-family: inherit;
+      }
+      .icon-btn,
       .btn {
-        border: 1px solid transparent;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.03);
+        color: var(--white);
         border-radius: 999px;
         text-decoration: none;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        padding: 10px 15px;
-        font-weight: 700;
         font-family: inherit;
+        font-weight: 700;
         cursor: pointer;
       }
-      .btn-main { background: var(--orange); color: #111; }
-      .btn-ghost { border-color: var(--line); color: var(--white); background: rgba(255, 255, 255, 0.02); }
+      .icon-btn { width: 38px; height: 38px; font-size: 1rem; }
+      .btn { padding: 10px 15px; }
+      .btn-main { background: var(--orange); color: #111; border-color: transparent; }
 
       .hero {
-        padding: 92px 0 50px;
+        position: relative;
+        min-height: 84vh;
         display: grid;
-        grid-template-columns: 1.1fr 0.9fr;
-        gap: 24px;
         align-items: center;
+        overflow: hidden;
+        border-bottom: 1px solid var(--line);
       }
-      .pill {
-        display: inline-flex;
-        border-radius: 999px;
-        border: 1px solid rgba(255, 107, 0, 0.45);
-        background: rgba(255, 107, 0, 0.15);
-        color: #ffd4b4;
-        font-size: 0.78rem;
-        padding: 7px 12px;
-        text-transform: uppercase;
+      .hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(120deg, rgba(0, 0, 0, 0.75), rgba(17, 17, 17, 0.5)),
+          url("https://images.unsplash.com/photo-1485291571150-772bcfc10da5?auto=format&fit=crop&w=1800&q=80") center/cover no-repeat;
+        z-index: 0;
       }
-      h1 {
-        margin: 14px 0 0;
-        font-size: clamp(2rem, 4.8vw, 4.2rem);
+      .watermark {
+        position: absolute;
+        right: -6%;
+        bottom: 8%;
+        font-size: clamp(3rem, 12vw, 11rem);
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        color: rgba(255, 255, 255, 0.06);
+        transform: rotate(-10deg);
+        user-select: none;
+        pointer-events: none;
+        z-index: 1;
+      }
+      .hero-inner {
+        position: relative;
+        z-index: 2;
+        width: min(1240px, 92vw);
+        margin: 0 auto;
+        padding: 88px 0 78px;
+      }
+      .hero h1 {
+        margin: 0;
+        font-size: clamp(2.2rem, 5.8vw, 5.2rem);
         line-height: 1.03;
         font-weight: 900;
       }
-      .lead { margin-top: 12px; color: var(--muted); max-width: 680px; }
+      .hero p {
+        margin: 14px 0 0;
+        max-width: 780px;
+        color: var(--muted);
+        font-size: clamp(1rem, 1.7vw, 1.25rem);
+      }
       .counter {
-        margin-top: 16px;
+        margin-top: 18px;
         display: inline-flex;
+        align-items: center;
         gap: 8px;
-        border: 1px solid rgba(255, 107, 0, 0.35);
-        background: rgba(255, 107, 0, 0.08);
+        border: 1px solid rgba(255, 107, 0, 0.48);
+        background: rgba(255, 107, 0, 0.15);
         border-radius: 999px;
-        padding: 9px 14px;
-        font-size: 0.9rem;
+        padding: 10px 14px;
       }
-      .city-form { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
-      .city-form input {
+      .search-box {
+        margin-top: 22px;
         border: 1px solid var(--line);
-        border-radius: 999px;
-        padding: 10px 12px;
-        background: #0f0f0f;
-        color: var(--white);
-        font-family: inherit;
-        min-width: 220px;
+        background: rgba(17, 17, 17, 0.76);
+        border-radius: 18px;
+        padding: 14px;
       }
-      .hero-visual {
-        border: 1px solid var(--line);
-        border-radius: 20px;
-        overflow: hidden;
-        box-shadow: 0 22px 45px rgba(0, 0, 0, 0.38);
+      .search-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr auto;
+        gap: 10px;
       }
-      .hero-visual img {
-        width: 100%;
-        min-height: 320px;
-        object-fit: cover;
-        display: block;
+      .input-icon {
+        position: relative;
       }
-
-      .search-wrap {
-        border: 1px solid var(--line);
-        border-radius: 16px;
-        background: linear-gradient(180deg, #181818, #121212);
-        padding: 16px;
+      .input-icon span {
+        position: absolute;
+        left: 11px;
+        top: 50%;
+        transform: translateY(-50%);
+        opacity: 0.8;
       }
-      .search-title { margin: 0 0 8px; font-size: 1.05rem; font-weight: 700; }
-      .search-form { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; }
-      .search-form input {
+      .input-icon input {
         width: 100%;
         border: 1px solid var(--line);
         border-radius: 10px;
-        padding: 12px;
-        background: #0f0f0f;
+        background: #161616;
         color: var(--white);
+        padding: 12px 12px 12px 36px;
         font-family: inherit;
       }
 
-      .section { padding: 58px 0; border-top: 1px solid var(--line); }
-      .section-head { display: flex; align-items: end; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-      .section-head h2 { margin: 0; font-size: clamp(1.35rem, 2.5vw, 2rem); font-weight: 800; }
-      .section-head p { margin: 8px 0 0; color: var(--muted); }
+      .section {
+        padding: 64px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .fade-in {
+        opacity: 0;
+        transform: translateY(22px);
+        transition: opacity 0.55s ease, transform 0.55s ease;
+      }
+      .fade-in.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .section-head {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .section h2 {
+        margin: 0;
+        font-size: clamp(1.35rem, 2.8vw, 2.1rem);
+        font-weight: 800;
+      }
+      .section p.head-sub {
+        margin: 7px 0 0;
+        color: var(--muted);
+      }
 
-      .cards { margin-top: 20px; display: grid; gap: 16px; }
+      .cards {
+        margin-top: 20px;
+        display: grid;
+        gap: 16px;
+      }
       .cards-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
       .cards-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
       .card {
         border: 1px solid var(--line);
         border-radius: 14px;
         overflow: hidden;
-        background: #151515;
-        transform: translateY(10px);
-        opacity: 0;
-        animation: reveal 0.45s ease forwards;
+        background: #171717;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
       }
       .card:hover {
-        border-color: rgba(255, 107, 0, 0.48);
-        transform: translateY(-4px) scale(1.01);
-        transition: transform 0.2s ease, border-color 0.2s ease;
+        transform: translateY(-5px);
+        box-shadow: 0 20px 34px rgba(0, 0, 0, 0.36);
+        border-color: rgba(255, 107, 0, 0.45);
       }
-      @keyframes reveal {
-        to {
-          transform: translateY(0);
-          opacity: 1;
-        }
+      .card .media {
+        position: relative;
+        overflow: hidden;
       }
-      .media { position: relative; }
-      .card img { width: 100%; aspect-ratio: 16/10; object-fit: cover; display: block; }
-      .badges { position: absolute; top: 10px; left: 10px; right: 10px; display: flex; gap: 6px; flex-wrap: wrap; }
+      .card .media img {
+        width: 100%;
+        aspect-ratio: 16/10;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.32s ease;
+      }
+      .card:hover .media img { transform: scale(1.05); }
       .badge {
-        border: 1px solid rgba(255, 107, 0, 0.4);
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        border: 1px solid rgba(255, 107, 0, 0.45);
         background: rgba(255, 107, 0, 0.18);
         color: #ffd4b4;
-        font-size: 0.72rem;
         border-radius: 999px;
-        padding: 4px 8px;
+        padding: 4px 9px;
+        font-size: 0.72rem;
+        font-weight: 700;
       }
       .body { padding: 12px; }
       .title { margin: 0; font-size: 1rem; font-weight: 700; }
       .meta { margin-top: 7px; color: var(--muted); font-size: 0.9rem; }
-      .price { margin-top: 8px; font-size: 1.04rem; font-weight: 800; color: #ff8a3c; }
-      .actions { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
-      .heart-btn {
-        margin-left: auto;
-        border: 1px solid var(--line);
-        border-radius: 999px;
-        background: rgba(0, 0, 0, 0.45);
-        color: var(--white);
-        padding: 6px 10px;
-        cursor: pointer;
-      }
-      .heart-btn.active { border-color: rgba(255, 107, 0, 0.55); color: #ffd4b4; }
+      .price { margin-top: 8px; font-weight: 900; color: #ff8a3c; font-size: 1.06rem; }
+      .card-actions { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+      .card-actions .btn { padding: 8px 12px; font-size: 0.86rem; }
+      .fav-anim { transition: transform 0.15s ease; }
+      .fav-anim:hover { transform: scale(1.12); }
 
       .simple-list { margin-top: 18px; display: grid; gap: 10px; }
       .simple-item {
         border: 1px solid var(--line);
         border-radius: 11px;
-        background: #151515;
+        background: #181818;
         padding: 12px;
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 10px;
       }
-      .simple-item small { color: var(--muted); display: block; }
 
-      footer { border-top: 1px solid var(--line); padding: 40px 0 26px; background: #0d0d0d; }
-      .foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-      .foot a { color: var(--muted); text-decoration: none; }
-      .foot a:hover { color: var(--orange); }
-      .copy { color: rgba(255, 255, 255, 0.58); font-size: 0.86rem; }
+      .location {
+        background: #141414;
+      }
+      .location-grid {
+        margin-top: 18px;
+        display: grid;
+        grid-template-columns: 1fr 1.3fr;
+        gap: 16px;
+      }
+      .location-card,
+      .map-card {
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: #1a1a1a;
+        padding: 16px;
+      }
+      .map-frame {
+        width: 100%;
+        min-height: 320px;
+        border: 0;
+        border-radius: 10px;
+      }
 
-      @media (max-width: 1080px) {
-        .hero { grid-template-columns: 1fr; }
+      footer {
+        padding: 52px 0 34px;
+        background: #0f0f0f;
+      }
+      .footer-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 20px;
+      }
+      footer h4 { margin: 0 0 10px; font-size: 1rem; }
+      footer a,
+      footer p {
+        margin: 0;
+        color: #c7c7c7;
+        text-decoration: none;
+        line-height: 1.8;
+      }
+      footer a:hover { color: var(--orange); }
+      .copy {
+        margin-top: 14px;
+        color: #9a9a9a;
+        font-size: 0.85rem;
+      }
+
+      @media (max-width: 1120px) {
+        .nav { grid-template-columns: 1fr; padding: 12px 0; }
+        .menu { justify-content: flex-start; }
+        .right-zone { justify-content: flex-start; }
         .cards-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         .cards-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-        .search-form { grid-template-columns: 1fr 1fr; }
+        .search-grid { grid-template-columns: 1fr 1fr; }
+        .location-grid { grid-template-columns: 1fr; }
+        .footer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       }
       @media (max-width: 760px) {
-        .nav { flex-direction: column; align-items: flex-start; padding: 12px 0; }
         .cards-4, .cards-3 { grid-template-columns: 1fr; }
-        .search-form { grid-template-columns: 1fr; }
+        .search-grid { grid-template-columns: 1fr; }
+        .footer-grid { grid-template-columns: 1fr; }
       }
     </style>
   </head>
   <body>
     <header class="topbar">
       <div class="container nav">
-        <a class="brand" href="/">KICHEFU-CHEFU STORE</a>
-        <nav class="menu" aria-label="Menu principal">
+        <a class="logo" href="/">Kichefu Chefu Store</a>
+
+        <nav class="menu" aria-label="Navigation principale">
           <a href="/">Accueil</a>
           <a href="/voitures/">Voitures</a>
           <a href="/telephones/">Telephones</a>
           <a href="/parcelles/">Parcelles</a>
-          <a href="/favoris/">Favoris</a>
-          <a href="/notifications/">Notifications</a>
-          <a href="/vendre-avec-nous/">Vendre</a>
+          <a href="/accessoires/">Accessoires</a>
         </nav>
-        <div class="auth-actions">
+
+        <div class="right-zone">
+          <form action="/recherche/" method="get">
+            <input class="header-search" type="text" name="q" placeholder="Rechercher..." />
+          </form>
+          <a class="icon-btn fav-anim" href="/favoris/" title="Favoris">&#10084;</a>
           {% if user.is_authenticated %}
             <form class="inline-form" method="post" action="{% url 'marketplace:logout' %}">
               {% csrf_token %}
-              <button class="btn btn-ghost" type="submit">Se deconnecter</button>
+              <button class="icon-btn" type="submit" title="Compte">&#128100;</button>
             </form>
           {% else %}
-            <a class="btn btn-ghost" href="/connexion/?next={{ request.path }}">Connexion</a>
-            <a class="btn btn-ghost" href="/inscription/?next={{ request.path }}">Inscription</a>
+            <a class="icon-btn" href="/connexion/?next={{ request.path }}" title="Compte">&#128100;</a>
           {% endif %}
-          <a class="btn btn-main" href="https://wa.me/243000000000" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+          <a class="btn btn-main" href="/vendre-avec-nous/">Publier une annonce</a>
         </div>
       </div>
     </header>
 
     <main>
-      <section class="container hero">
-        <div>
-          <span class="pill">Marketplace nouvelle generation</span>
-          <h1>La reference achat-vente a Lubumbashi et Kinshasa</h1>
-          <p class="lead">
-            Une plateforme fluide inspiree des meilleurs standards marketplace, pensee pour le marche africain: voitures,
-            telephones et immobilier en un seul espace.
-          </p>
-          <div class="counter">
-            <strong>{{ available_cars_count }}</strong>
-            <span>vehicules disponibles</span>
+      <section class="hero">
+        <div class="watermark">KICHEFU</div>
+        <div class="hero-inner fade-in">
+          <h1>Kichefu Chefu Store</h1>
+          <p>Voitures, telephones et parcelles disponibles immediatement</p>
+          <div class="counter"><strong>{{ available_cars_count }}</strong> <span>vehicules disponibles</span></div>
+
+          <div class="search-box">
+            <form id="hero-universal-search" class="search-grid" action="/recherche/" method="get">
+              <label class="input-icon"><span>&#128663;</span><input id="search-car" type="text" placeholder="Rechercher voiture" /></label>
+              <label class="input-icon"><span>&#128241;</span><input id="search-phone" type="text" placeholder="Rechercher telephone" /></label>
+              <label class="input-icon"><span>&#128205;</span><input id="search-land" type="text" placeholder="Rechercher parcelle" /></label>
+              <button class="btn btn-main" type="submit">Rechercher</button>
+              <input id="search-q" type="hidden" name="q" value="" />
+              <input id="search-category" type="hidden" name="category" value="all" />
+            </form>
           </div>
-          <form class="city-form" method="get" action="/">
-            <input type="text" name="city" value="{{ user_city }}" placeholder="Votre ville (Lubumbashi, Kinshasa...)" />
-            <button class="btn btn-ghost" type="submit">Activer la proximite</button>
-          </form>
-        </div>
-        <div class="hero-visual">
-          <img
-            src="https://dummyimage.com/1400x900/151515/ffffff.png&text=KICHEFU-CHEFU+MARKETPLACE"
-            alt="Marketplace Kichefu Chefu"
-            loading="lazy"
-            decoding="async"
-          />
         </div>
       </section>
 
-      <section class="container">
-        <div class="search-wrap">
-          <h2 class="search-title">Recherche universelle</h2>
-          <form id="hero-universal-search" class="search-form" action="/recherche/" method="get">
-            <input id="search-car" type="text" placeholder="Rechercher voiture" />
-            <input id="search-phone" type="text" placeholder="Rechercher telephone" />
-            <input id="search-land" type="text" placeholder="Rechercher parcelle" />
-            <button class="btn btn-main" type="submit">Rechercher</button>
-            <input id="search-q" type="hidden" name="q" value="" />
-            <input id="search-category" type="hidden" name="category" value="all" />
-          </form>
-        </div>
-      </section>
-
-      {% if user_city and nearby_cars %}
-        <section class="container section">
-          <div class="section-head">
-            <div>
-              <h2>Voitures proches de vous</h2>
-              <p>Annonces disponibles autour de {{ user_city }}.</p>
-            </div>
-            <a class="btn btn-ghost" href="/voitures/?city={{ user_city|urlencode }}">Voir tout</a>
-          </div>
+      <section class="section fade-in">
+        <div class="container">
+          <div class="section-head"><div><h2>Voitures populaires</h2><p class="head-sub">Selection des annonces auto les plus attractives.</p></div><a class="btn" href="/voitures/">Voir tout</a></div>
           <div class="cards cards-4">
-            {% for item, item_badges in nearby_cars %}
-              <article class="card" style="animation-delay: {{ forloop.counter0 }}00ms;">
+            {% for item, item_badges in popular_cars %}
+              <article class="card">
                 {% with img=item.images.first %}
                   <div class="media">
-                    {% if img %}
-                      <img src="{{ img.image.url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />
-                    {% else %}
-                      <img src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />
-                    {% endif %}
-                    <div class="badges">{% for label in item_badges %}<span class="badge">{{ label }}</span>{% endfor %}</div>
+                    {% if img %}<img src="{{ img.image.url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}
+                    <span class="badge">voiture</span>
                   </div>
                 {% endwith %}
                 <div class="body">
                   <h3 class="title">{{ item.brand }} {{ item.model }}</h3>
-                  <div class="meta">{{ item.year }} - {{ item.city|default:"Ville non precisee" }}</div>
+                  <div class="meta">{{ item.city|default:"Lubumbashi" }} - {{ item.year }}</div>
                   <div class="price">{{ item.price }} $</div>
-                  <div class="actions"><a class="btn btn-ghost" href="{{ item.get_absolute_url }}">Voir details</a></div>
+                  <div class="card-actions"><a class="btn" href="{{ item.get_absolute_url }}">Voir details</a></div>
                 </div>
               </article>
             {% endfor %}
           </div>
-        </section>
-      {% endif %}
-
-      <section class="container section">
-        <div class="section-head">
-          <div>
-            <h2>Voitures populaires</h2>
-            <p>Selection premium des vehicules les plus consultes.</p>
-          </div>
-          <a class="btn btn-ghost" href="/voitures/">Voir tout</a>
         </div>
-        <div class="cards cards-4">
-          {% for item, item_badges in popular_cars %}
-            <article class="card" style="animation-delay: {{ forloop.counter0 }}00ms;">
-              {% with img=item.images.first %}
-                <div class="media">
-                  {% if img %}
-                    <img src="{{ img.image.url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />
-                  {% else %}
-                    <img src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />
-                  {% endif %}
-                  <div class="badges">
-                    {% for label in item_badges %}<span class="badge">{{ label }}</span>{% endfor %}
+      </section>
+
+      <section class="section fade-in">
+        <div class="container">
+          <div class="section-head"><div><h2>Telephones populaires</h2><p class="head-sub">Les modeles les plus consultes actuellement.</p></div><a class="btn" href="/telephones/">Voir tout</a></div>
+          <div class="cards cards-4">
+            {% for item, item_badges in popular_phones %}
+              <article class="card">
+                {% with img=item.images.first %}
+                  <div class="media">
+                    {% if img %}<img src="{{ img.image.url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}
+                    <span class="badge">telephone</span>
                   </div>
+                {% endwith %}
+                <div class="body">
+                  <h3 class="title">{{ item.brand }} {{ item.model }}</h3>
+                  <div class="meta">Lubumbashi</div>
+                  <div class="price">{{ item.price }} $</div>
+                  <div class="card-actions"><a class="btn" href="{{ item.get_absolute_url }}">Voir details</a></div>
                 </div>
-              {% endwith %}
-              <div class="body">
-                <h3 class="title">{{ item.brand }} {{ item.model }}</h3>
-                <div class="meta">{{ item.year }} - {{ item.mileage }} km</div>
-                <div class="price">{{ item.price }} $</div>
-                <div class="actions">
-                  <a class="btn btn-ghost" href="{{ item.get_absolute_url }}">Voir details</a>
-                  {% if user.is_authenticated %}
-                    <form method="post" action="{% url 'marketplace:toggle_favorite' 'car' item.pk %}">
-                      {% csrf_token %}
-                      <input type="hidden" name="next" value="{{ request.get_full_path }}" />
-                      <button class="heart-btn{% if item.pk in favorite_car_ids %} active{% endif %}" type="submit">&#10084;</button>
-                    </form>
-                  {% else %}
-                    <a class="btn btn-ghost" href="/connexion/?next={{ request.path }}">&#10084;</a>
-                  {% endif %}
-                </div>
-              </div>
-            </article>
-          {% empty %}
-            <p>Aucune voiture disponible.</p>
-          {% endfor %}
+              </article>
+            {% endfor %}
+          </div>
         </div>
       </section>
 
-      <section class="container section">
-        <div class="section-head">
-          <div>
-            <h2>Telephones populaires</h2>
-            <p>Les modeles qui convertissent le plus en ce moment.</p>
-          </div>
-          <a class="btn btn-ghost" href="/telephones/">Voir tout</a>
-        </div>
-        <div class="cards cards-4">
-          {% for item, item_badges in popular_phones %}
-            <article class="card" style="animation-delay: {{ forloop.counter0 }}00ms;">
-              {% with img=item.images.first %}
-                <div class="media">
-                  {% if img %}
-                    <img src="{{ img.image.url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />
-                  {% else %}
-                    <img src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />
-                  {% endif %}
-                  <div class="badges">
-                    {% for label in item_badges %}<span class="badge">{{ label }}</span>{% endfor %}
+      <section class="section fade-in">
+        <div class="container">
+          <div class="section-head"><div><h2>Parcelles disponibles</h2><p class="head-sub">Opportunites immobiliere disponibles immediatement.</p></div><a class="btn" href="/parcelles/">Voir tout</a></div>
+          <div class="cards cards-3">
+            {% for item, item_badges in recent_real_estates %}
+              <article class="card">
+                {% with img=item.images.first %}
+                  <div class="media">
+                    {% if img %}<img src="{{ img.image.url }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.location|urlencode }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% endif %}
+                    <span class="badge">parcelle</span>
                   </div>
+                {% endwith %}
+                <div class="body">
+                  <h3 class="title">{{ item.get_real_estate_type_display }} - {{ item.location }}</h3>
+                  <div class="meta">{{ item.location }}</div>
+                  <div class="price">{{ item.price }} $</div>
+                  <div class="card-actions"><a class="btn" href="{{ item.get_absolute_url }}">Voir details</a></div>
                 </div>
-              {% endwith %}
-              <div class="body">
-                <h3 class="title">{{ item.brand }} {{ item.model }}</h3>
-                <div class="meta">Stockage {{ item.storage }}</div>
-                <div class="price">{{ item.price }} $</div>
-                <div class="actions"><a class="btn btn-ghost" href="{{ item.get_absolute_url }}">Voir details</a></div>
-              </div>
-            </article>
-          {% empty %}
-            <p>Aucun telephone disponible.</p>
-          {% endfor %}
+              </article>
+            {% endfor %}
+          </div>
         </div>
       </section>
 
-      <section class="container section">
-        <div class="section-head">
-          <div>
-            <h2>Parcelles disponibles</h2>
-            <p>Opportunites immobilieres a Lubumbashi.</p>
+      <section class="section fade-in">
+        <div class="container">
+          <div class="section-head"><div><h2>Nouveaux arrivages</h2><p class="head-sub">Dernieres annonces ajoutees sur la plateforme.</p></div></div>
+          <div class="simple-list">
+            {% for item in new_products %}
+              <article class="simple-item"><div><strong>{{ item.title }}</strong><div style="color:#aaa;">{{ item.kind }}</div></div><div><strong>{{ item.price }} $</strong> <a class="btn" href="{{ item.url }}">Voir</a></div></article>
+            {% empty %}<p>Aucun nouvel arrivage pour le moment.</p>{% endfor %}
           </div>
-          <a class="btn btn-ghost" href="/parcelles/">Voir tout</a>
-        </div>
-        <div class="cards cards-3">
-          {% for item, item_badges in recent_real_estates %}
-            <article class="card" style="animation-delay: {{ forloop.counter0 }}00ms;">
-              {% with img=item.images.first %}
-                <div class="media">
-                  {% if img %}
-                    <img src="{{ img.image.url }}" alt="{{ item.location }}" loading="lazy" decoding="async" />
-                  {% else %}
-                    <img src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.location|urlencode }}" alt="{{ item.location }}" loading="lazy" decoding="async" />
-                  {% endif %}
-                  <div class="badges">
-                    {% for label in item_badges %}<span class="badge">{{ label }}</span>{% endfor %}
-                  </div>
-                </div>
-              {% endwith %}
-              <div class="body">
-                <h3 class="title">{{ item.get_real_estate_type_display }} - {{ item.location }}</h3>
-                <div class="price">{{ item.price }} $</div>
-                <div class="actions"><a class="btn btn-ghost" href="{{ item.get_absolute_url }}">Voir details</a></div>
-              </div>
-            </article>
-          {% empty %}
-            <p>Aucune annonce immobiliere.</p>
-          {% endfor %}
         </div>
       </section>
 
-      <section class="container section">
-        <div class="section-head">
-          <div>
-            <h2>Les plus consultes</h2>
-            <p>Produits les plus regardes par la communaute.</p>
+      <section class="section fade-in">
+        <div class="container">
+          <div class="section-head"><div><h2>Produits recommandes</h2><p class="head-sub">Suggestions intelligentes basees sur vos consultations.</p></div></div>
+          <div class="simple-list">
+            {% for item in recommended_for_you %}
+              <article class="simple-item"><div><strong>{{ item.title }}</strong><div style="color:#aaa;">{{ item.kind }}</div></div><div><strong>{{ item.price }} $</strong> <a class="btn" href="{{ item.url }}">Voir</a></div></article>
+            {% empty %}<p>Consultez quelques produits pour activer la recommandation.</p>{% endfor %}
           </div>
-        </div>
-        <div class="simple-list">
-          {% for item in most_viewed_items %}
-            <article class="simple-item">
-              <div>
-                <strong>{{ item.title }}</strong>
-                <small>{{ item.kind }}</small>
-              </div>
-              <div>
-                <strong>{{ item.price }} $</strong>
-                <a class="btn btn-ghost" href="{{ item.url }}">Voir</a>
-              </div>
-            </article>
-          {% empty %}
-            <p>Aucun produit consulte pour le moment.</p>
-          {% endfor %}
         </div>
       </section>
 
-      <section class="container section">
-        <div class="section-head">
-          <div>
-            <h2>Les plus vendus</h2>
-            <p>Articles vendus recemment sur la plateforme.</p>
+      <section class="section fade-in">
+        <div class="container">
+          <div class="section-head"><div><h2>Produits pres de vous</h2><p class="head-sub">Resultats personnalises selon votre ville.</p></div><a class="btn" href="/voitures/?city={{ user_city|default:'Lubumbashi'|urlencode }}">Explorer</a></div>
+          <div class="simple-list">
+            {% if nearby_cars %}
+              {% for item, item_badges in nearby_cars %}
+                <article class="simple-item"><div><strong>{{ item.brand }} {{ item.model }}</strong><div style="color:#aaa;">{{ item.city|default:'Lubumbashi' }}</div></div><div><strong>{{ item.price }} $</strong> <a class="btn" href="{{ item.get_absolute_url }}">Voir</a></div></article>
+              {% endfor %}
+            {% else %}
+              <article class="simple-item"><div><strong>Aucune annonce locale detectee</strong><div style="color:#aaa;">Essayez Kinshasa ou Lubumbashi</div></div><a class="btn" href="/voitures/">Voir toutes les voitures</a></article>
+            {% endif %}
           </div>
-        </div>
-        <div class="simple-list">
-          {% for item in most_sold_items %}
-            <article class="simple-item">
-              <div>
-                <strong>{{ item.title }}</strong>
-                <small>{{ item.kind }}</small>
-              </div>
-              <div>
-                <strong>{{ item.price }} $</strong>
-                <a class="btn btn-ghost" href="{{ item.url }}">Voir</a>
-              </div>
-            </article>
-          {% empty %}
-            <p>Aucun historique de vente pour le moment.</p>
-          {% endfor %}
         </div>
       </section>
 
-      <section class="container section">
-        <div class="section-head">
-          <div>
-            <h2>Nouveaux produits</h2>
-            <p>Dernieres opportunites ajoutees sur la plateforme.</p>
+      <section class="section location fade-in" id="notre-localisation">
+        <div class="container">
+          <div class="section-head"><div><h2>Notre magasin</h2><p class="head-sub">Kichefu Chefu Store<br />Lubumbashi, Republique Democratique du Congo</p></div></div>
+          <div class="location-grid">
+            <div class="location-card">
+              <h3 style="margin-top:0;">Notre localisation</h3>
+              <p style="color:#c8c8c8; line-height:1.7;">Retrouvez notre equipe en magasin pour voir les produits, obtenir des conseils et finaliser vos achats en toute confiance.</p>
+              <a class="btn btn-main" target="_blank" rel="noopener noreferrer" href="https://www.google.com/maps/search/?api=1&query=Lubumbashi%2C+DR+Congo">Voir l'itineraire</a>
+            </div>
+            <div class="map-card">
+              <iframe
+                class="map-frame"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                src="https://maps.google.com/maps?q=Lubumbashi%2C%20Democratic%20Republic%20of%20the%20Congo&t=&z=13&ie=UTF8&iwloc=&output=embed"
+              ></iframe>
+            </div>
           </div>
-        </div>
-        <div class="simple-list">
-          {% for item in new_products %}
-            <article class="simple-item">
-              <div>
-                <strong>{{ item.title }}</strong>
-                <small>{{ item.kind }}</small>
-              </div>
-              <div>
-                <strong>{{ item.price }} $</strong>
-                <a class="btn btn-ghost" href="{{ item.url }}">Voir</a>
-              </div>
-            </article>
-          {% empty %}
-            <p>Aucun nouveau produit.</p>
-          {% endfor %}
-        </div>
-      </section>
-
-      <section class="container section">
-        <div class="section-head">
-          <div>
-            <h2>Produits recommandes</h2>
-            <p>Suggestions basees sur tes consultations recentes.</p>
-          </div>
-        </div>
-        <div class="simple-list">
-          {% for item in recommended_for_you %}
-            <article class="simple-item">
-              <div>
-                <strong>{{ item.title }}</strong>
-                <small>{{ item.kind }}</small>
-              </div>
-              <div>
-                <strong>{{ item.price }} $</strong>
-                <a class="btn btn-ghost" href="{{ item.url }}">Voir</a>
-              </div>
-            </article>
-          {% empty %}
-            <p>Consulte quelques produits pour activer les recommandations.</p>
-          {% endfor %}
         </div>
       </section>
     </main>
 
     <footer>
-      <div class="container foot">
-        <div>
-          <strong>KICHEFU-CHEFU STORE</strong>
-          <div class="copy">Marketplace moderne pour RDC - Lubumbashi - Kinshasa.</div>
+      <div class="container">
+        <div class="footer-grid">
+          <div>
+            <h4>A propos</h4>
+            <p>Kichefu Chefu Store est une plateforme marketplace moderne dediee aux voitures, telephones et parcelles.</p>
+          </div>
+          <div>
+            <h4>Categories</h4>
+            <a href="/voitures/">Voitures</a><br />
+            <a href="/telephones/">Telephones</a><br />
+            <a href="/parcelles/">Parcelles</a><br />
+            <a href="/accessoires/">Accessoires</a>
+          </div>
+          <div>
+            <h4>Contact</h4>
+            <p>WhatsApp: +243 000 000 000</p>
+            <p>Email: kilongodimer@gmail.com</p>
+            <p>Horaires: Lun - Sam, 8h00 - 18h00</p>
+          </div>
+          <div>
+            <h4>Reseaux sociaux</h4>
+            <a target="_blank" rel="noopener noreferrer" href="https://wa.me/243000000000">WhatsApp</a><br />
+            <a target="_blank" rel="noopener noreferrer" href="https://facebook.com">Facebook</a><br />
+            <a target="_blank" rel="noopener noreferrer" href="https://instagram.com">Instagram</a>
+          </div>
         </div>
-        <a href="/agent/connexion/">Espace agent</a>
-        <a href="/admin/">Administration</a>
+        <div class="copy">© {% now "Y" %} Kichefu Chefu Store. Tous droits reserves.</div>
       </div>
     </footer>
 
     <script>
       (function () {
         const form = document.getElementById("hero-universal-search");
-        if (!form) return;
+        if (form) {
+          form.addEventListener("submit", function () {
+            const carInput = document.getElementById("search-car");
+            const phoneInput = document.getElementById("search-phone");
+            const landInput = document.getElementById("search-land");
+            const qInput = document.getElementById("search-q");
+            const categoryInput = document.getElementById("search-category");
 
-        form.addEventListener("submit", function () {
-          const carInput = document.getElementById("search-car");
-          const phoneInput = document.getElementById("search-phone");
-          const landInput = document.getElementById("search-land");
-          const qInput = document.getElementById("search-q");
-          const categoryInput = document.getElementById("search-category");
+            const carValue = (carInput.value || "").trim();
+            const phoneValue = (phoneInput.value || "").trim();
+            const landValue = (landInput.value || "").trim();
 
-          const carValue = (carInput.value || "").trim();
-          const phoneValue = (phoneInput.value || "").trim();
-          const landValue = (landInput.value || "").trim();
+            if (carValue) {
+              qInput.value = carValue;
+              categoryInput.value = "cars";
+            } else if (phoneValue) {
+              qInput.value = phoneValue;
+              categoryInput.value = "phones";
+            } else if (landValue) {
+              qInput.value = landValue;
+              categoryInput.value = "real-estate";
+            } else {
+              qInput.value = "";
+              categoryInput.value = "all";
+            }
+          });
+        }
 
-          if (carValue) {
-            qInput.value = carValue;
-            categoryInput.value = "cars";
-            return;
-          }
-          if (phoneValue) {
-            qInput.value = phoneValue;
-            categoryInput.value = "phones";
-            return;
-          }
-          if (landValue) {
-            qInput.value = landValue;
-            categoryInput.value = "real-estate";
-            return;
-          }
-
-          qInput.value = "";
-          categoryInput.value = "all";
-        });
+        const faders = document.querySelectorAll(".fade-in");
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("visible");
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.14 }
+        );
+        faders.forEach((el) => observer.observe(el));
       })();
     </script>
   </body>

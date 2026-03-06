@@ -729,7 +729,10 @@ class CarMarketplaceListView(SiteLoginRequiredMixin, View):
 				"vehicle_type",
 				"year",
 				"mileage",
+				"fuel_type",
+				"transmission",
 				"price",
+				"city",
 				"is_commission",
 				"availability",
 				"view_count",
@@ -744,6 +747,8 @@ class CarMarketplaceListView(SiteLoginRequiredMixin, View):
 		vehicle_type = request.GET.get("vehicle_type", "").strip()
 		year = request.GET.get("year", "").strip()
 		max_mileage = request.GET.get("max_mileage", "").strip()
+		fuel_type = request.GET.get("fuel_type", "").strip()
+		transmission = request.GET.get("transmission", "").strip()
 		city = request.GET.get("city", "").strip() or user_city
 		min_price = request.GET.get("min_price", "").strip()
 		max_price = request.GET.get("max_price", "").strip()
@@ -758,6 +763,10 @@ class CarMarketplaceListView(SiteLoginRequiredMixin, View):
 			cars = cars.filter(year=int(year))
 		if max_mileage.isdigit():
 			cars = cars.filter(mileage__lte=int(max_mileage))
+		if fuel_type:
+			cars = cars.filter(fuel_type=fuel_type)
+		if transmission:
+			cars = cars.filter(transmission=transmission)
 		if city:
 			cars = cars.filter(city__icontains=city)
 
@@ -795,6 +804,8 @@ class CarMarketplaceListView(SiteLoginRequiredMixin, View):
 			"page_obj": page_obj,
 			"brands": Car.objects.values_list("brand", flat=True).distinct().order_by("brand"),
 			"vehicle_types": Car.VehicleType.choices,
+			"fuel_types": Car.FuelType.choices,
+			"transmission_types": Car.TransmissionType.choices,
 			"car_items": [(item, build_badges(item, idx)) for idx, item in enumerate(page_obj.object_list)],
 			"favorite_car_ids": favorite_ids,
 			"nearby_cars": [(item, build_badges(item, idx)) for idx, item in enumerate(nearby_cars)],
@@ -805,6 +816,8 @@ class CarMarketplaceListView(SiteLoginRequiredMixin, View):
 				"vehicle_type": vehicle_type,
 				"year": year,
 				"max_mileage": max_mileage,
+				"fuel_type": fuel_type,
+				"transmission": transmission,
 				"city": city,
 				"min_price": min_price,
 				"max_price": max_price,
