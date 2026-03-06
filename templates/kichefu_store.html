@@ -143,6 +143,30 @@
       .offer small { color: var(--muted); display: block; }
       .districts { margin-top: 18px; display: flex; gap: 8px; flex-wrap: wrap; }
       .districts span { border: 1px solid var(--line); border-radius: 999px; padding: 6px 10px; font-size: 0.82rem; color: var(--muted); }
+      .global-search { padding: 22px 0 8px; }
+      .search-panel {
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: linear-gradient(180deg, #131313, #0c0c0c);
+        padding: 16px;
+      }
+      .search-title { margin: 0 0 8px; font-size: 1.05rem; }
+      .smart-form { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr auto; gap: 10px; }
+      .field-wrap { position: relative; }
+      .smart-form input, .smart-form select {
+        width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 11px 12px;
+        background: #0f0f0f; color: #fff; font-family: inherit;
+      }
+      .suggestions {
+        position: absolute; z-index: 25; top: calc(100% + 6px); left: 0; right: 0;
+        border: 1px solid var(--line); border-radius: 10px; background: #121212;
+        overflow: hidden; display: none;
+      }
+      .suggestions button {
+        width: 100%; text-align: left; border: 0; background: transparent; color: #fff;
+        padding: 10px 12px; cursor: pointer;
+      }
+      .suggestions button:hover { background: #1a1a1a; }
       footer { border-top: 1px solid var(--line); padding: 52px 0 32px; background: #050505; }
       .foot { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 20px; }
       .foot p, .foot a { color: var(--muted); text-decoration: none; margin: 0; }
@@ -151,10 +175,12 @@
         .hero { grid-template-columns: 1fr; }
         .grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         .grid-3, .foot { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .smart-form { grid-template-columns: 1fr 1fr; }
       }
       @media (max-width: 760px) {
         .nav { flex-direction: column; align-items: flex-start; padding: 10px 0; }
         .grid-4, .grid-3, .foot { grid-template-columns: 1fr; }
+        .smart-form { grid-template-columns: 1fr; }
       }
     </style>
   </head>
@@ -163,6 +189,7 @@
       <div class="container nav">
         <a class="brand" href="/">KICHEFU-CHEFU STORE</a>
         <nav class="menu" aria-label="Navigation principale">
+          <a href="/recherche/">Recherche</a>
           <a href="/voitures/">Voitures</a>
           <a href="/telephones/">Telephones</a>
           <a href="/accessoires/">Accessoires</a>
@@ -173,6 +200,28 @@
         <a class="btn btn-gold" href="https://wa.me/243000000000" target="_blank" rel="noopener noreferrer">WhatsApp</a>
       </div>
     </header>
+
+    <section class="container global-search">
+      <div class="search-panel">
+        <h2 class="search-title">Recherche intelligente</h2>
+        <form class="smart-form" action="/recherche/" method="get">
+          <div class="field-wrap">
+            <input id="global-search-input" type="text" name="q" placeholder="Rechercher une voiture, un telephone ou une parcelle" autocomplete="off" />
+            <div id="search-suggestions" class="suggestions"></div>
+          </div>
+          <select name="category">
+            <option value="all">Toutes categories</option>
+            <option value="cars">Voitures</option>
+            <option value="phones">Telephones</option>
+            <option value="real-estate">Parcelles/Maisons</option>
+          </select>
+          <input type="text" name="brand" placeholder="Marque" />
+          <input type="text" name="model" placeholder="Modele" />
+          <input type="text" name="neighborhood" placeholder="Quartier" />
+          <button class="btn btn-gold" type="submit">Rechercher</button>
+        </form>
+      </div>
+    </section>
 
     <section class="container hero">
       <div>
@@ -464,5 +513,56 @@
         <p class="copy">(c) 2026 KICHEFU-CHEFU STORE - Lubumbashi, RDC.</p>
       </div>
     </footer>
+    <script>
+      (function () {
+        var input = document.getElementById('global-search-input');
+        var box = document.getElementById('search-suggestions');
+        if (!input || !box) return;
+
+        function hideBox() {
+          box.style.display = 'none';
+          box.innerHTML = '';
+        }
+
+        input.addEventListener('input', function () {
+          var q = input.value.trim();
+          if (q.length < 2) {
+            hideBox();
+            return;
+          }
+
+          fetch('/recherche/suggestions/?q=' + encodeURIComponent(q))
+            .then(function (response) { return response.json(); })
+            .then(function (data) {
+              var suggestions = (data && data.suggestions) || [];
+              if (!suggestions.length) {
+                hideBox();
+                return;
+              }
+
+              box.innerHTML = '';
+              suggestions.forEach(function (item) {
+                var button = document.createElement('button');
+                button.type = 'button';
+                button.textContent = item.title + ' - ' + item.category;
+                button.addEventListener('click', function () {
+                  window.location.href = item.url;
+                });
+                box.appendChild(button);
+              });
+              box.style.display = 'block';
+            })
+            .catch(function () {
+              hideBox();
+            });
+        });
+
+        document.addEventListener('click', function (event) {
+          if (!box.contains(event.target) && event.target !== input) {
+            hideBox();
+          }
+        });
+      })();
+    </script>
   </body>
 </html>

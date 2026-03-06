@@ -6,6 +6,7 @@ from django.contrib.auth.views import LoginView
 from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import Paginator
 from django.db.models import F, Q
+from django.http import JsonResponse
 from django.urls import reverse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
@@ -214,6 +215,29 @@ def get_favorite_id_map(user):
 	return result
 
 
+def _first_image_url(item):
+	first_image = item.images.first()
+	if first_image and first_image.image:
+		return first_image.image.url
+	return ""
+
+
+def _normalize_price_filters(request):
+	min_price = request.GET.get("min_price", "").strip()
+	max_price = request.GET.get("max_price", "").strip()
+	parsed_min = None
+	parsed_max = None
+	try:
+		if min_price:
+			parsed_min = Decimal(min_price)
+		if max_price:
+			parsed_max = Decimal(max_price)
+	except Exception:
+		parsed_min = None
+		parsed_max = None
+	return parsed_min, parsed_max
+
+
 class CarViewSet(viewsets.ModelViewSet):
 	serializer_class = CarSerializer
 	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
@@ -353,6 +377,148 @@ class HomePageView(SiteLoginRequiredMixin, View):
 			"favorite_phone_ids": favorite_map["phones"],
 			"favorite_real_estate_ids": favorite_map["real_estate"],
 			"lubumbashi_areas": LUBUMBASHI_NEIGHBORHOODS,
+		}
+		return render(request, self.template_name, context)
+
+
+class SearchSuggestionsView(SiteLoginRequiredMixin, View):
+	def get(self, request):
+		query = request.GET.get("q", "").strip()
+		if len(query) < 2:
+			return JsonResponse({"suggestions": []})
+
+		suggestions = []
+
+		cars = Car.objects.filter(Q(brand__icontains=query) | Q(model__icontains=query)).order_by("-view_count", "-date_added")[:4]
+		for item in cars:
+			suggestions.append(
+				{
+					"title": f"{item.brand} {item.model}",
+					"category": "Voiture",
+					"url": f"/voitures/{item.pk}/",
+				}
+			)
+
+		phones = Phone.objects.filter(Q(brand__icontains=query) | Q(model__icontains=query)).order_by("-view_count", "-date_added")[:4]
+		for item in phones:
+			suggestions.append(
+				{
+					"title": f"{item.brand} {item.model}",
+					"category": "Telephone",
+					"url": f"/telephones/{item.pk}/",
+				}
+			)
+
+		estates = RealEstate.objects.filter(Q(location__icontains=query) | Q(description__icontains=query)).order_by("-view_count", "-date_added")[:4]
+		for item in estates:
+			suggestions.append(
+				{
+					"title": f"{item.get_real_estate_type_display()} {item.location}",
+					"category": "Parcelle/Maison",
+					"url": f"/immobilier/{item.pk}/",
+				}
+			)
+
+		return JsonResponse({"suggestions": suggestions[:10]})
+
+
+class GlobalSearchView(SiteLoginRequiredMixin, View):
+	template_name = "search_results.html"
+
+	def get(self, request):
+		query = request.GET.get("q", "").strip()
+		category = request.GET.get("category", "all").strip() or "all"
+		brand = request.GET.get("brand", "").strip()
+		model = request.GET.get("model", "").strip()
+		neighborhood = request.GET.get("neighborhood", "").strip()
+		min_price, max_price = _normalize_price_filters(request)
+
+		results = []
+
+		if category in {"all", "cars"}:
+			cars = Car.objects.prefetch_related("images").all()
+			if query:
+				cars = cars.filter(Q(brand__icontains=query) | Q(model__icontains=query) | Q(description__icontains=query))
+			if brand:
+				cars = cars.filter(brand__icontains=brand)
+			if model:
+				cars = cars.filter(model__icontains=model)
+			if min_price is not None:
+				cars = cars.filter(price__gte=min_price)
+			if max_price is not None:
+				cars = cars.filter(price__lte=max_price)
+			for item in cars.order_by("-view_count", "-date_added")[:80]:
+				results.append(
+					{
+						"category": "Voiture",
+						"title": f"{item.brand} {item.model}",
+						"price": item.price,
+						"url": f"/voitures/{item.pk}/",
+						"image_url": _first_image_url(item),
+					}
+				)
+
+		if category in {"all", "phones"}:
+			phones = Phone.objects.prefetch_related("images").all()
+			if query:
+				phones = phones.filter(Q(brand__icontains=query) | Q(model__icontains=query) | Q(description__icontains=query))
+			if brand:
+				phones = phones.filter(brand__icontains=brand)
+			if model:
+				phones = phones.filter(model__icontains=model)
+			if min_price is not None:
+				phones = phones.filter(price__gte=min_price)
+			if max_price is not None:
+				phones = phones.filter(price__lte=max_price)
+			for item in phones.order_by("-view_count", "-date_added")[:80]:
+				results.append(
+					{
+						"category": "Telephone",
+						"title": f"{item.brand} {item.model}",
+						"price": item.price,
+						"url": f"/telephones/{item.pk}/",
+						"image_url": _first_image_url(item),
+					}
+				)
+
+		if category in {"all", "real-estate"}:
+			estates = RealEstate.objects.prefetch_related("images").all()
+			if query:
+				estates = estates.filter(Q(location__icontains=query) | Q(description__icontains=query))
+			if neighborhood:
+				estates = estates.filter(location__icontains=neighborhood)
+			if min_price is not None:
+				estates = estates.filter(price__gte=min_price)
+			if max_price is not None:
+				estates = estates.filter(price__lte=max_price)
+			for item in estates.order_by("-view_count", "-date_added")[:80]:
+				results.append(
+					{
+						"category": item.get_real_estate_type_display(),
+						"title": f"{item.get_real_estate_type_display()} - {item.location}",
+						"price": item.price,
+						"url": f"/immobilier/{item.pk}/",
+						"image_url": _first_image_url(item),
+					}
+				)
+
+		results.sort(key=lambda result: result["price"])
+
+		paginator = Paginator(results, 18)
+		page_obj = paginator.get_page(request.GET.get("page", 1))
+
+		context = {
+			"page_obj": page_obj,
+			"total_results": len(results),
+			"filters": {
+				"q": query,
+				"category": category,
+				"brand": brand,
+				"model": model,
+				"neighborhood": neighborhood,
+				"min_price": request.GET.get("min_price", "").strip(),
+				"max_price": request.GET.get("max_price", "").strip(),
+			},
 		}
 		return render(request, self.template_name, context)
 
