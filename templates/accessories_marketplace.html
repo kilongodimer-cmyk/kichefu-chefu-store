@@ -3,77 +3,101 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Accessoires | KICHEFU-CHEFU STORE</title>
+    <title>Accessoires | Kichefu Chefu Store</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet" />
     <style>
-      :root { --bg:#080808; --line:rgba(255,255,255,.13); --muted:rgba(255,255,255,.74); --gold:#c9a227; --text:#fff; }
+      :root { --black:#0f0f0f; --orange:#ff6b00; --white:#fff; --gray-light:#f3f3f3; --gray-text:#666; --line:rgba(255,255,255,.14); --muted:rgba(255,255,255,.75); }
       * { box-sizing:border-box; }
-      body { margin:0; color:var(--text); font-family:"Poppins",system-ui,sans-serif; background:var(--bg); }
-      .container { width:min(1180px,92vw); margin:0 auto; }
-      .top { border-bottom:1px solid var(--line); background:#050505; }
-      .nav { min-height:74px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
-      .brand { color:#fff; text-decoration:none; font-weight:700; }
-      .menu { display:flex; gap:12px; flex-wrap:wrap; }
-      .menu a { color:#fff; text-decoration:none; opacity:.86; }
-      .hero { padding:46px 0 26px; }
+      body { margin:0; color:var(--white); font-family:"Inter",system-ui,sans-serif; background:var(--black); animation:fade .38s ease; }
+      @keyframes fade { from { opacity:0; transform:translateY(8px);} to { opacity:1; transform:translateY(0);} }
+      .container { width:min(1240px,92vw); margin:0 auto; }
+      .topbar { position:sticky; top:0; z-index:70; background:rgba(15,15,15,.92); border-bottom:1px solid var(--line); backdrop-filter:blur(10px); }
+      .nav { min-height:78px; display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:12px; }
+      .logo { color:#fff; text-decoration:none; font-weight:900; letter-spacing:.08em; font-size:.9rem; }
+      .menu { display:flex; justify-content:center; gap:14px; flex-wrap:wrap; }
+      .menu a { color:#fff; text-decoration:none; opacity:.92; }
+      .menu a:hover { color:var(--orange); }
+      .right-zone { display:flex; justify-content:flex-end; align-items:center; gap:8px; flex-wrap:wrap; }
+      .header-search { width:min(220px,100%); border:1px solid var(--line); border-radius:999px; background:#1a1a1a; color:#fff; padding:9px 12px; font-family:inherit; }
+      .btn,.icon-btn { border:1px solid var(--line); border-radius:999px; text-decoration:none; color:#fff; background:rgba(255,255,255,.03); font-family:inherit; font-weight:700; display:inline-flex; align-items:center; justify-content:center; }
+      .btn { padding:10px 14px; }
+      .btn-main { background:var(--orange); color:#111; border-color:transparent; }
+      .icon-btn { width:38px; height:38px; }
+
+      .hero { padding:42px 0 20px; }
       h1 { margin:0; font-size:clamp(1.9rem,4vw,3rem); }
-      .sub { margin-top:10px; color:var(--muted); }
-      .search { margin-top:14px; display:grid; grid-template-columns:1fr auto; gap:10px; }
-      .search input { width:100%; border:1px solid var(--line); background:#111; color:#fff; border-radius:10px; padding:10px 12px; font-family:inherit; }
-      .btn { border:1px solid transparent; border-radius:999px; padding:10px 14px; text-decoration:none; font-weight:600; display:inline-flex; }
-      .btn-gold { background:linear-gradient(135deg,#c9a227,#e2c363); color:#000; }
-      .btn-ghost { border-color:var(--line); color:#fff; }
+      .sub { margin-top:10px; color:var(--muted); max-width:760px; }
+      .search { margin-top:16px; display:grid; grid-template-columns:1fr auto; gap:10px; }
+      .search input { width:100%; border:1px solid var(--line); background:#111; color:#fff; border-radius:11px; padding:10px 12px; font-family:inherit; }
       .grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; padding-bottom:56px; }
-      .card { border:1px solid var(--line); border-radius:14px; overflow:hidden; background:linear-gradient(180deg,#101010,#0a0a0a); }
-      .card img { width:100%; aspect-ratio:16/10; object-fit:cover; display:block; }
+      .card { border:1px solid var(--line); border-radius:14px; overflow:hidden; background:#161616; transition:.2s ease; }
+      .card:hover { border-color:rgba(255,107,0,.45); transform:translateY(-4px); box-shadow:0 20px 30px rgba(0,0,0,.32); }
+      .media { overflow:hidden; }
+      .card img { width:100%; aspect-ratio:16/10; object-fit:cover; display:block; transition:transform .3s ease; }
+      .card:hover img { transform:scale(1.05); }
       .body { padding:12px; }
-      .title { margin:0; }
-      .price { margin-top:8px; color:var(--gold); font-weight:700; }
+      .title { margin:0; font-size:1rem; }
+      .price { margin-top:8px; color:#ff8a3c; font-weight:800; }
       .meta { margin-top:8px; color:var(--muted); font-size:.9rem; }
       .badges { margin-top:8px; display:flex; gap:6px; flex-wrap:wrap; }
-      .badge { border:1px solid rgba(201,162,39,.45); border-radius:999px; padding:4px 8px; font-size:.72rem; color:#eedb98; }
+      .badge { border:1px solid rgba(255,107,0,.45); border-radius:999px; padding:4px 8px; font-size:.72rem; color:#ffd4b4; background:rgba(255,107,0,.14); }
       .actions { margin-top:10px; display:flex; gap:8px; flex-wrap:wrap; }
       .pager { margin:22px 0 56px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
       .pager a,.pager span { color:#fff; text-decoration:none; border:1px solid var(--line); border-radius:999px; padding:7px 12px; }
-      .pager .active { background:var(--gold); color:#000; border-color:transparent; }
-      @media (max-width:1020px) { .grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
-      @media (max-width:760px) { .nav { flex-direction:column; align-items:flex-start; padding:10px 0; } .search,.grid { grid-template-columns:1fr; } }
+      .pager .active { background:var(--orange); color:#111; border-color:transparent; font-weight:800; }
+      @media (max-width:1120px) { .nav { grid-template-columns:1fr; padding:10px 0; } .menu { justify-content:flex-start; } .right-zone { justify-content:flex-start; } .grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+      @media (max-width:760px) { .search,.grid { grid-template-columns:1fr; } }
     </style>
   </head>
   <body>
-    <header class="top">
+    <header class="topbar">
       <div class="container nav">
-        <a class="brand" href="/">KICHEFU-CHEFU STORE</a>
-        <nav class="menu"><a href="/voitures/">Voitures</a><a href="/telephones/">Telephones</a><a href="/accessoires/">Accessoires</a><a href="/parcelles/">Immobilier</a><a href="/vendre-avec-nous/">Vendre avec nous</a></nav>
+        <a class="logo" href="/">Kichefu Chefu Store</a>
+        <nav class="menu"><a href="/">Accueil</a><a href="/voitures/">Voitures</a><a href="/telephones/">Telephones</a><a href="/parcelles/">Parcelles</a><a href="/accessoires/">Accessoires</a></nav>
+        <div class="right-zone">
+          <form action="/recherche/" method="get"><input class="header-search" type="text" name="q" placeholder="Rechercher..." /></form>
+          <a class="icon-btn" href="/favoris/" title="Favoris">&#10084;</a>
+          <a class="btn btn-main" href="/vendre-avec-nous/">Publier une annonce</a>
+          {% if user.is_authenticated %}
+            <form class="inline-form" method="post" action="{% url 'marketplace:logout' %}">{% csrf_token %}<button class="btn" type="submit">Deconnexion</button></form>
+          {% else %}
+            <a class="btn" href="/connexion/?next={{ request.path }}">Connexion</a>
+            <a class="btn" href="/inscription/?next={{ request.path }}">Inscription</a>
+          {% endif %}
+        </div>
       </div>
     </header>
 
     <main class="container">
       <section class="hero">
-        <h1>Accessoires telephoniques</h1>
-        <p class="sub">Produits populaires et bonnes affaires pour augmenter les ventes complementaires.</p>
+        <h1>Accessoires populaires</h1>
+        <p class="sub">Selection premium d'accessoires smartphone avec presentation moderne et navigation fluide.</p>
         <form method="get" class="search">
           <input type="text" name="q" value="{{ filters.q }}" placeholder="Rechercher un accessoire" />
-          <button class="btn btn-gold" type="submit">Rechercher</button>
+          <button class="btn btn-main" type="submit">Rechercher</button>
         </form>
       </section>
 
       <section class="grid">
         {% for item, badges in accessory_items %}
           <article class="card">
-            {% if item.image %}
-              <img src="{{ item.image.url }}" alt="{{ item.name }}" loading="lazy" decoding="async" />
-            {% else %}
-              <img src="https://dummyimage.com/1200x750/0f1117/e8edf6.png&text={{ item.name|urlencode }}" alt="{{ item.name }}" loading="lazy" decoding="async" />
-            {% endif %}
+            <div class="media">
+              {% if item.image %}
+                <img src="{{ item.image.url }}" alt="{{ item.name }}" loading="lazy" decoding="async" />
+              {% else %}
+                <img src="https://dummyimage.com/1200x750/0f1117/e8edf6.png&text={{ item.name|urlencode }}" alt="{{ item.name }}" loading="lazy" decoding="async" />
+              {% endif %}
+            </div>
             <div class="body">
               <h3 class="title">{{ item.name }}</h3>
               <div class="price">{{ item.price }} $</div>
               <div class="meta">{{ item.get_availability_display }}</div>
-              <div class="badges">{% for badge in badges %}<span class="badge">{{ badge }}</span>{% endfor %}</div>
-              <div class="actions"><a class="btn btn-gold" href="https://wa.me/243000000000?text=Bonjour,%20je%20veux%20cet%20accessoire%20{{ item.name }}" target="_blank" rel="noopener noreferrer">WhatsApp</a></div>
+              <div class="badges">{% for badge in badges %}<span class="badge">{{ badge }}</span>{% endfor %}<span class="badge">accessoire</span></div>
+              <div class="actions">
+                <a class="btn btn-main" href="https://wa.me/243000000000?text=Bonjour,%20je%20veux%20cet%20accessoire%20{{ item.name }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+              </div>
             </div>
           </article>
         {% empty %}<p>Aucun accessoire trouve.</p>{% endfor %}

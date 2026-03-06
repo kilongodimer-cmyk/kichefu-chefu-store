@@ -10,11 +10,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet" />
     <style>
       :root {
-        --black: #111111;
+        --black: #0f0f0f;
         --orange: #ff6b00;
         --white: #ffffff;
-        --gray-light: #f5f5f5;
-        --gray-text: #555555;
+        --gray-light: #f3f3f3;
+        --gray-text: #666666;
         --line: rgba(255, 255, 255, 0.12);
         --muted: rgba(255, 255, 255, 0.78);
       }
@@ -369,10 +369,11 @@
           {% if user.is_authenticated %}
             <form class="inline-form" method="post" action="{% url 'marketplace:logout' %}">
               {% csrf_token %}
-              <button class="icon-btn" type="submit" title="Compte">&#128100;</button>
+              <button class="btn" type="submit">Deconnexion</button>
             </form>
           {% else %}
-            <a class="icon-btn" href="/connexion/?next={{ request.path }}" title="Compte">&#128100;</a>
+            <a class="btn" href="/connexion/?next={{ request.path }}">Connexion</a>
+            <a class="btn" href="/inscription/?next={{ request.path }}">Inscription</a>
           {% endif %}
           <a class="btn btn-main" href="/vendre-avec-nous/">Publier une annonce</a>
         </div>
@@ -384,7 +385,7 @@
         <div class="watermark">KICHEFU</div>
         <div class="hero-inner fade-in">
           <h1>Kichefu Chefu Store</h1>
-          <p>Voitures, telephones et parcelles disponibles immediatement</p>
+          <p>Marketplace de voitures, telephones et parcelles a Lubumbashi</p>
           <div class="counter"><strong>{{ available_cars_count }}</strong> <span>vehicules disponibles</span></div>
 
           <div class="search-box">

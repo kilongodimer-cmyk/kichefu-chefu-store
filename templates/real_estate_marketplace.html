@@ -10,9 +10,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet" />
     <style>
       :root {
-        --black: #111111;
+        --black: #0f0f0f;
         --orange: #ff6b00;
         --white: #ffffff;
+        --gray-light: #f3f3f3;
+        --gray-text: #666666;
         --line: rgba(255, 255, 255, 0.12);
         --muted: rgba(255, 255, 255, 0.72);
       }
@@ -20,12 +22,14 @@
       body { margin: 0; font-family: "Inter", system-ui, sans-serif; color: var(--white); background: var(--black); }
       .container { width: min(1240px, 92vw); margin: 0 auto; }
       .topbar { position: sticky; top: 0; z-index: 40; background: rgba(17, 17, 17, 0.92); border-bottom: 1px solid var(--line); backdrop-filter: blur(8px); }
-      .nav { min-height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+      .nav { min-height: 76px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; }
       .brand { color: var(--white); text-decoration: none; font-weight: 900; letter-spacing: 0.07em; font-size: 0.88rem; }
-      .menu { display: flex; gap: 12px; flex-wrap: wrap; }
+      .menu { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
       .menu a { color: var(--white); text-decoration: none; opacity: 0.92; }
       .menu a:hover { color: var(--orange); }
-      .auth-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+      .auth-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; justify-content: flex-end; }
+      .header-search { width: min(220px, 100%); border: 1px solid var(--line); border-radius: 999px; background: #1a1a1a; color: #fff; padding: 9px 12px; font-family: inherit; }
+      .icon-btn { width: 38px; height: 38px; border: 1px solid var(--line); border-radius: 999px; color: var(--white); text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
       .inline-form { margin: 0; }
       .btn { border: 1px solid transparent; border-radius: 999px; padding: 10px 14px; text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; font-family: inherit; cursor: pointer; }
       .btn-main { background: var(--orange); color: #111; }
@@ -61,7 +65,7 @@
       .pager a,.pager span { border: 1px solid var(--line); color: var(--white); border-radius: 999px; text-decoration: none; padding: 7px 12px; }
       .pager .active { border-color: transparent; background: var(--orange); color: #111; font-weight: 700; }
       @media (max-width: 1080px) { .filters { grid-template-columns: 1fr 1fr; } .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-      @media (max-width: 760px) { .nav { flex-direction: column; align-items: flex-start; padding: 10px 0; } .filters { grid-template-columns: 1fr; } .grid { grid-template-columns: 1fr; } }
+      @media (max-width: 760px) { .nav { grid-template-columns: 1fr; align-items: flex-start; padding: 10px 0; } .menu { justify-content: flex-start; } .auth-actions { justify-content: flex-start; } .filters { grid-template-columns: 1fr; } .grid { grid-template-columns: 1fr; } }
     </style>
   </head>
   <body>
@@ -73,13 +77,16 @@
           <a href="/voitures/">Voitures</a>
           <a href="/telephones/">Telephones</a>
           <a href="/parcelles/">Parcelles</a>
-          <a href="/favoris/">Favoris</a>
+          <a href="/accessoires/">Accessoires</a>
         </nav>
         <div class="auth-actions">
+          <form action="/recherche/" method="get"><input class="header-search" type="text" name="q" placeholder="Rechercher..." /></form>
+          <a class="icon-btn" href="/favoris/" title="Favoris">&#10084;</a>
+          <a class="btn btn-main" href="/vendre-avec-nous/">Publier une annonce</a>
           {% if user.is_authenticated %}
             <form class="inline-form" method="post" action="{% url 'marketplace:logout' %}">
               {% csrf_token %}
-              <button class="btn btn-ghost" type="submit">Se deconnecter</button>
+              <button class="btn btn-ghost" type="submit">Deconnexion</button>
             </form>
           {% else %}
             <a class="btn btn-ghost" href="/connexion/?next={{ request.path }}">Connexion</a>

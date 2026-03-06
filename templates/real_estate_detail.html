@@ -14,9 +14,13 @@
       body { margin:0; font-family:"Inter",system-ui,sans-serif; color:var(--white); background:var(--black); }
       .container { width:min(1220px,92vw); margin:0 auto; }
       .topbar { position:sticky; top:0; z-index:40; background:rgba(17,17,17,.92); border-bottom:1px solid var(--line); backdrop-filter:blur(8px); }
-      .nav { min-height:76px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+      .nav { min-height:76px; display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:12px; }
       .brand { color:var(--white); text-decoration:none; font-weight:900; letter-spacing:.07em; font-size:.88rem; }
-      .auth-actions { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+      .menu { display:flex; justify-content:center; gap:12px; flex-wrap:wrap; }
+      .menu a { color:var(--white); text-decoration:none; opacity:.92; }
+      .menu a:hover { color:var(--orange); }
+      .auth-actions { display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:flex-end; }
+      .icon-btn { width:38px; height:38px; border:1px solid var(--line); border-radius:999px; color:var(--white); text-decoration:none; display:inline-flex; align-items:center; justify-content:center; }
       .inline-form { margin:0; }
       .btn { border:1px solid var(--line); border-radius:999px; color:var(--white); text-decoration:none; padding:10px 14px; display:inline-flex; align-items:center; justify-content:center; font-family:inherit; font-weight:700; background:rgba(255,255,255,.02); cursor:pointer; }
       .btn-main { border-color:transparent; background:var(--orange); color:#111; }
@@ -48,22 +52,26 @@
       .mini h3 { margin:0; font-size:.95rem; }
       .mini .p { margin-top:6px; color:#ff8a3c; font-weight:800; }
       @media (max-width:980px) { .hero { grid-template-columns:1fr; } .grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
-      @media (max-width:760px) { .thumbs,.specs,.grid { grid-template-columns:1fr; } .nav { flex-direction:column; align-items:flex-start; padding:10px 0; } }
+      @media (max-width:760px) { .thumbs,.specs,.grid { grid-template-columns:1fr; } .nav { grid-template-columns:1fr; align-items:flex-start; padding:10px 0; } .menu, .auth-actions { justify-content:flex-start; } }
     </style>
   </head>
   <body>
     <header class="topbar">
       <div class="container nav">
         <a class="brand" href="/">KICHEFU-CHEFU STORE</a>
+        <nav class="menu"><a href="/">Accueil</a><a href="/voitures/">Voitures</a><a href="/telephones/">Telephones</a><a href="/parcelles/">Parcelles</a><a href="/accessoires/">Accessoires</a></nav>
         <div class="auth-actions">
+          <a class="icon-btn" href="/favoris/" title="Favoris">&#10084;</a>
+          <a class="btn btn-main" href="/vendre-avec-nous/">Publier une annonce</a>
           <a class="btn" href="{% url 'marketplace:real_estate_list' %}">Retour</a>
           {% if user.is_authenticated %}
             <form class="inline-form" method="post" action="{% url 'marketplace:logout' %}">
               {% csrf_token %}
-              <button class="btn" type="submit">Se deconnecter</button>
+              <button class="btn" type="submit">Deconnexion</button>
             </form>
           {% else %}
             <a class="btn" href="/connexion/?next={{ request.path }}">Connexion</a>
+            <a class="btn" href="/inscription/?next={{ request.path }}">Inscription</a>
           {% endif %}
         </div>
       </div>
