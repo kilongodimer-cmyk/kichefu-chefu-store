@@ -58,6 +58,8 @@
         align-items: center;
         justify-content: center;
       }
+      .auth-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+      .inline-form { margin: 0; }
       .btn-gold { background: linear-gradient(135deg, #c9a227, #e1c15d); color: #000; }
       .btn-ghost { border-color: var(--line); color: #fff; background: rgba(255, 255, 255, 0.02); }
       .hero {
@@ -199,7 +201,18 @@
           <a href="/vendre-avec-nous/">Vendre avec nous</a>
           <a href="/favoris/">Mes favoris</a>
         </nav>
-        <a class="btn btn-gold" href="https://wa.me/243000000000" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+        <div class="auth-actions">
+          {% if user.is_authenticated %}
+            <form class="inline-form" method="post" action="{% url 'marketplace:logout' %}">
+              {% csrf_token %}
+              <button class="btn btn-ghost" type="submit">Se deconnecter</button>
+            </form>
+          {% else %}
+            <a class="btn btn-ghost" href="/connexion/?next={{ request.path }}">Connexion</a>
+            <a class="btn btn-ghost" href="/inscription/?next={{ request.path }}">Inscription</a>
+          {% endif %}
+          <a class="btn btn-gold" href="https://wa.me/243000000000" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+        </div>
       </div>
     </header>
 

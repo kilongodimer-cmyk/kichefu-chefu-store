@@ -16,6 +16,8 @@
       .nav { min-height:74px; display:flex; align-items:center; justify-content:space-between; }
       .brand { color:#fff; text-decoration:none; font-weight:700; }
       .btn { border:1px solid var(--line); border-radius:999px; color:#fff; text-decoration:none; padding:10px 14px; display:inline-flex; }
+      .inline-form { margin:0; }
+      .logout-btn { border:1px solid var(--line); border-radius:999px; color:#fff; background:transparent; padding:10px 14px; cursor:pointer; font-family:inherit; }
       .section { padding:30px 0 12px; }
       h1,h2 { margin:0; }
       .sub { margin-top:8px; color:var(--muted); }
@@ -29,7 +31,20 @@
     </style>
   </head>
   <body>
-    <header class="top"><div class="container nav"><a class="brand" href="/">KICHEFU-CHEFU STORE</a><a class="btn" href="/">Retour accueil</a></div></header>
+    <header class="top">
+      <div class="container nav">
+        <a class="brand" href="/">KICHEFU-CHEFU STORE</a>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <a class="btn" href="/">Retour accueil</a>
+          {% if user.is_authenticated %}
+            <form class="inline-form" method="post" action="{% url 'marketplace:logout' %}">
+              {% csrf_token %}
+              <button class="logout-btn" type="submit">Se deconnecter</button>
+            </form>
+          {% endif %}
+        </div>
+      </div>
+    </header>
 
     <main class="container">
       <section class="section">

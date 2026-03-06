@@ -17,6 +17,9 @@
       .top .inner { min-height:74px; display:flex; align-items:center; justify-content:space-between; }
       .brand { color:#fff; text-decoration:none; font-weight:700; }
       .btn { border:1px solid var(--line); border-radius:999px; color:#fff; text-decoration:none; padding:10px 14px; display:inline-flex; }
+      .auth-actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+      .inline-form { margin:0; }
+      .logout-btn { border:1px solid var(--line); border-radius:999px; color:#fff; background:transparent; padding:10px 14px; display:inline-flex; cursor:pointer; font-family:inherit; }
       .btn-gold { border-color:transparent; background:linear-gradient(135deg,#c9a227,#e2c363); color:#000; font-weight:700; }
       .wrap { padding:30px 0 50px; display:grid; grid-template-columns:1.05fr .95fr; gap:20px; }
       .card,.panel { border:1px solid var(--line); border-radius:14px; background:#101010; }
@@ -49,7 +52,23 @@
     </style>
   </head>
   <body>
-    <header class="top"><div class="container inner"><a class="brand" href="/">KICHEFU-CHEFU STORE</a><a class="btn" href="{% url 'marketplace:real_estate_list' %}">Retour a l'immobilier</a></div></header>
+    <header class="top">
+      <div class="container inner">
+        <a class="brand" href="/">KICHEFU-CHEFU STORE</a>
+        <div class="auth-actions">
+          <a class="btn" href="{% url 'marketplace:real_estate_list' %}">Retour a l'immobilier</a>
+          {% if user.is_authenticated %}
+            <form class="inline-form" method="post" action="{% url 'marketplace:logout' %}">
+              {% csrf_token %}
+              <button class="logout-btn" type="submit">Se deconnecter</button>
+            </form>
+          {% else %}
+            <a class="btn" href="/connexion/?next={{ request.path }}">Connexion</a>
+            <a class="btn" href="/inscription/?next={{ request.path }}">Inscription</a>
+          {% endif %}
+        </div>
+      </div>
+    </header>
     <main class="container wrap">
       <section class="card">
         {% with first=listing.images.first %}

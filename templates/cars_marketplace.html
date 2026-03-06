@@ -20,6 +20,8 @@
       .menu a { color:#fff; text-decoration:none; opacity:.86; }
       .menu a:hover { color:var(--gold); opacity:1; }
       .btn { border:1px solid transparent; border-radius:999px; padding:10px 14px; text-decoration:none; display:inline-flex; font-weight:600; }
+      .auth-actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+      .inline-form { margin:0; }
       .btn-gold { background:linear-gradient(135deg,#c9a227,#e2c363); color:#000; }
       .btn-ghost { border-color:var(--line); color:#fff; background:rgba(255,255,255,.03); }
       .hero { padding:52px 0 30px; }
@@ -70,6 +72,17 @@
           <a href="/parcelles/">Immobilier</a>
           <a href="/vendre-avec-nous/">Vendre avec nous</a>
         </nav>
+        <div class="auth-actions">
+          {% if user.is_authenticated %}
+            <form class="inline-form" method="post" action="{% url 'marketplace:logout' %}">
+              {% csrf_token %}
+              <button class="btn btn-ghost" type="submit">Se deconnecter</button>
+            </form>
+          {% else %}
+            <a class="btn btn-ghost" href="/connexion/?next={{ request.path }}">Connexion</a>
+            <a class="btn btn-ghost" href="/inscription/?next={{ request.path }}">Inscription</a>
+          {% endif %}
+        </div>
       </div>
     </header>
 
