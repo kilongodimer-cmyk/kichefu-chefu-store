@@ -104,7 +104,7 @@
                   {% if first_image %}
                     <img src="{{ first_image.image.url }}" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />
                   {% else %}
-                    <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1200&q=80" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />
+                    <img src="https://dummyimage.com/1200x750/0f1117/e8edf6.png&text={{ car.brand|urlencode }}+{{ car.model|urlencode }}" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />
                   {% endif %}
                   <div class="overlay-badges">
                     {% for badge in badges %}<span class="badge badge-gold">{{ badge }}</span>{% endfor %}

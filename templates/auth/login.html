@@ -73,8 +73,8 @@
   </head>
   <body>
     <main class="card">
-      <h1>Connexion</h1>
-      <p>Connectez-vous pour ajouter des favoris et retrouver vos produits.</p>
+      <h1>Connexion obligatoire</h1>
+      <p>Vous devez creer un compte ou vous connecter avant d'acceder au marketplace.</p>
       <form method="post">
         {% csrf_token %}
         {{ form.non_field_errors }}
@@ -87,8 +87,11 @@
         <button class="btn" type="submit">Se connecter</button>
       </form>
       <div class="links">
-        <a href="/inscription/{% if next %}?next={{ next }}{% endif %}">Creer un compte</a>
-        <a href="/">Retour a l'accueil</a>
+        <a href="/inscription/{% if next %}?next={{ next }}{% endif %}">Espace visiteurs: creer un compte</a>
+        <a href="/agent/connexion/">Espace agents</a>
+      </div>
+      <div class="links">
+        <a href="/admin/">Espace administrateur</a>
       </div>
     </main>
   </body>

@@ -41,7 +41,7 @@
         <h2>Voitures favorites</h2>
         <div class="grid">
           {% for item in cars %}
-            <article class="card">{% with img=item.images.first %}{% if img %}<img src="{{ img.image.url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1200&q=80" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}{% endwith %}<div class="body"><strong>{{ item.brand }} {{ item.model }}</strong><div class="price">{{ item.price }} $</div><a class="btn" href="/voitures/{{ item.pk }}/">Voir details</a></div></article>
+            <article class="card">{% with img=item.images.first %}{% if img %}<img src="{{ img.image.url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/0f1117/e8edf6.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}{% endwith %}<div class="body"><strong>{{ item.brand }} {{ item.model }}</strong><div class="price">{{ item.price }} $</div><a class="btn" href="/voitures/{{ item.pk }}/">Voir details</a></div></article>
           {% empty %}<p>Aucune voiture en favori.</p>{% endfor %}
         </div>
       </section>
@@ -50,7 +50,7 @@
         <h2>Telephones favoris</h2>
         <div class="grid">
           {% for item in phones %}
-            <article class="card">{% with img=item.images.first %}{% if img %}<img src="{{ img.image.url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1200&q=80" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}{% endwith %}<div class="body"><strong>{{ item.brand }} {{ item.model }}</strong><div class="price">{{ item.price }} $</div><a class="btn" href="/telephones/{{ item.pk }}/">Voir details</a></div></article>
+            <article class="card">{% with img=item.images.first %}{% if img %}<img src="{{ img.image.url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/0f1117/e8edf6.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}{% endwith %}<div class="body"><strong>{{ item.brand }} {{ item.model }}</strong><div class="price">{{ item.price }} $</div><a class="btn" href="/telephones/{{ item.pk }}/">Voir details</a></div></article>
           {% empty %}<p>Aucun telephone en favori.</p>{% endfor %}
         </div>
       </section>
@@ -59,7 +59,7 @@
         <h2>Parcelles et maisons favorites</h2>
         <div class="grid">
           {% for item in real_estates %}
-            <article class="card">{% with img=item.images.first %}{% if img %}<img src="{{ img.image.url }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% else %}<img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80" alt="{{ item.location }}" loading="lazy" decoding="async" />{% endif %}{% endwith %}<div class="body"><strong>{{ item.get_real_estate_type_display }} - {{ item.location }}</strong><div class="price">{{ item.price }} $</div><a class="btn" href="/immobilier/{{ item.pk }}/">Voir details</a></div></article>
+            <article class="card">{% with img=item.images.first %}{% if img %}<img src="{{ img.image.url }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/0f1117/e8edf6.png&text={{ item.get_real_estate_type_display|urlencode }}+{{ item.location|urlencode }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% endif %}{% endwith %}<div class="body"><strong>{{ item.get_real_estate_type_display }} - {{ item.location }}</strong><div class="price">{{ item.price }} $</div><a class="btn" href="/immobilier/{{ item.pk }}/">Voir details</a></div></article>
           {% empty %}<p>Aucune annonce immobiliere en favori.</p>{% endfor %}
         </div>
       </section>

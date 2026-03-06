@@ -221,7 +221,11 @@ class ProposalImageViewSet(viewsets.ModelViewSet):
 	permission_classes = [permissions.IsAuthenticated]
 
 
-class HomePageView(View):
+class SiteLoginRequiredMixin(LoginRequiredMixin):
+	login_url = "/connexion/"
+
+
+class HomePageView(SiteLoginRequiredMixin, View):
 	template_name = "kichefu_store.html"
 
 	def get(self, request):
@@ -278,7 +282,7 @@ class HomePageView(View):
 		return render(request, self.template_name, context)
 
 
-class CarMarketplaceListView(View):
+class CarMarketplaceListView(SiteLoginRequiredMixin, View):
 	template_name = "cars_marketplace.html"
 
 	def get(self, request):
@@ -334,7 +338,7 @@ class CarMarketplaceListView(View):
 		return render(request, self.template_name, context)
 
 
-class CarDetailView(View):
+class CarDetailView(SiteLoginRequiredMixin, View):
 	template_name = "car_detail.html"
 
 	def get(self, request, pk):
@@ -365,7 +369,7 @@ class CarDetailView(View):
 		)
 
 
-class PhoneMarketplaceListView(View):
+class PhoneMarketplaceListView(SiteLoginRequiredMixin, View):
 	template_name = "phones_marketplace.html"
 
 	def get(self, request):
@@ -402,7 +406,7 @@ class PhoneMarketplaceListView(View):
 		return render(request, self.template_name, context)
 
 
-class PhoneDetailView(View):
+class PhoneDetailView(SiteLoginRequiredMixin, View):
 	template_name = "phone_detail.html"
 
 	def get(self, request, pk):
@@ -428,7 +432,7 @@ class PhoneDetailView(View):
 		)
 
 
-class AccessoryMarketplaceListView(View):
+class AccessoryMarketplaceListView(SiteLoginRequiredMixin, View):
 	template_name = "accessories_marketplace.html"
 
 	def get(self, request):
@@ -448,7 +452,7 @@ class AccessoryMarketplaceListView(View):
 		return render(request, self.template_name, context)
 
 
-class RealEstateMarketplaceListView(View):
+class RealEstateMarketplaceListView(SiteLoginRequiredMixin, View):
 	template_name = "real_estate_marketplace.html"
 
 	def get(self, request):
@@ -479,7 +483,7 @@ class RealEstateMarketplaceListView(View):
 		return render(request, self.template_name, context)
 
 
-class RealEstateDetailView(View):
+class RealEstateDetailView(SiteLoginRequiredMixin, View):
 	template_name = "real_estate_detail.html"
 
 	def get(self, request, pk):
@@ -619,7 +623,7 @@ class FavoritesView(LoginRequiredMixin, View):
 		)
 
 
-class SellWithUsView(View):
+class SellWithUsView(SiteLoginRequiredMixin, View):
 	template_name = "sell_with_us.html"
 
 	def get(self, request):

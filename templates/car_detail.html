@@ -61,7 +61,7 @@
           {% if first_image %}
             <img class="main-img" src="{{ first_image.image.url }}" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />
           {% else %}
-            <img class="main-img" src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1300&q=80" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />
+            <img class="main-img" src="https://dummyimage.com/1300x800/0f1117/e8edf6.png&text={{ car.brand|urlencode }}+{{ car.model|urlencode }}" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />
           {% endif %}
         {% endwith %}
         <div class="thumbs">
@@ -105,7 +105,7 @@
         {% for item in similar_cars %}
           <article class="mini">
             {% with img=item.images.first %}
-              {% if img %}<img src="{{ img.image.url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1200&q=80" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}
+              {% if img %}<img src="{{ img.image.url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/0f1117/e8edf6.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}
             {% endwith %}
             <div class="body"><h3 class="t">{{ item.brand }} {{ item.model }}</h3><div class="p">{{ item.price }} $</div><a class="btn" href="{% url 'marketplace:car_detail' item.pk %}">Voir details</a></div>
           </article>
@@ -119,7 +119,7 @@
         {% for item in recommended_cars %}
           <article class="mini">
             {% with img=item.images.first %}
-              {% if img %}<img src="{{ img.image.url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://images.unsplash.com/photo-1549924231-f129b911e442?auto=format&fit=crop&w=1200&q=80" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}
+              {% if img %}<img src="{{ img.image.url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/0f1117/e8edf6.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}
             {% endwith %}
             <div class="body"><h3 class="t">{{ item.brand }} {{ item.model }}</h3><div class="p">{{ item.price }} $</div><a class="btn" href="{% url 'marketplace:car_detail' item.pk %}">Voir details</a></div>
           </article>

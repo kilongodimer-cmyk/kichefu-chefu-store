@@ -219,7 +219,7 @@
             <article class="card">
               {% with image=car.images.first %}
                 <div class="media">
-                  {% if image %}<img src="{{ image.image.url }}" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1200&q=80" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />{% endif %}
+                  {% if image %}<img src="{{ image.image.url }}" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/0f1117/e8edf6.png&text={{ car.brand|urlencode }}+{{ car.model|urlencode }}" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />{% endif %}
                   <div class="overlay-badges">{% for badge in badges %}<span class="badge badge-gold">{{ badge }}</span>{% endfor %}</div>
                 </div>
               {% endwith %}
@@ -288,7 +288,7 @@
             <article class="card">
               {% with image=car.images.first %}
                 <div class="media">
-                  {% if image %}<img src="{{ image.image.url }}" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1200&q=80" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />{% endif %}
+                  {% if image %}<img src="{{ image.image.url }}" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/0f1117/e8edf6.png&text={{ car.brand|urlencode }}+{{ car.model|urlencode }}" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />{% endif %}
                   <div class="overlay-badges">
                     {% for badge in badges %}<span class="badge badge-gold">{{ badge }}</span>{% endfor %}
                     {% if car.is_commission %}<span class="badge badge-ok">Commission</span>{% endif %}
@@ -325,7 +325,7 @@
           {% for car, badges in new_cars %}
             <article class="card">
               {% with image=car.images.first %}
-                {% if image %}<img src="{{ image.image.url }}" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://images.unsplash.com/photo-1553440569-bcc63803a83d?auto=format&fit=crop&w=1200&q=80" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />{% endif %}
+                {% if image %}<img src="{{ image.image.url }}" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/0f1117/e8edf6.png&text={{ car.brand|urlencode }}+{{ car.model|urlencode }}" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />{% endif %}
               {% endwith %}
               <div class="body">
                 <h3 class="title">{{ car.brand }} {{ car.model }}</h3>
@@ -349,7 +349,7 @@
             <article class="card">
               {% with image=phone.images.first %}
                 <div class="media">
-                  {% if image %}<img src="{{ image.image.url }}" alt="{{ phone.brand }} {{ phone.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1200&q=80" alt="{{ phone.brand }} {{ phone.model }}" loading="lazy" decoding="async" />{% endif %}
+                  {% if image %}<img src="{{ image.image.url }}" alt="{{ phone.brand }} {{ phone.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/0f1117/e8edf6.png&text={{ phone.brand|urlencode }}+{{ phone.model|urlencode }}" alt="{{ phone.brand }} {{ phone.model }}" loading="lazy" decoding="async" />{% endif %}
                   <div class="overlay-badges">{% for badge in badges %}<span class="badge badge-gold">{{ badge }}</span>{% endfor %}</div>
                 </div>
               {% endwith %}
@@ -385,7 +385,7 @@
             <article class="card">
               {% with image=listing.images.first %}
                 <div class="media">
-                  {% if image %}<img src="{{ image.image.url }}" alt="{{ listing.location }}" loading="lazy" decoding="async" />{% else %}<img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80" alt="{{ listing.location }}" loading="lazy" decoding="async" />{% endif %}
+                  {% if image %}<img src="{{ image.image.url }}" alt="{{ listing.location }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/0f1117/e8edf6.png&text={{ listing.get_real_estate_type_display|urlencode }}+{{ listing.location|urlencode }}" alt="{{ listing.location }}" loading="lazy" decoding="async" />{% endif %}
                   <div class="overlay-badges">
                     {% for badge in badges %}<span class="badge badge-gold">{{ badge }}</span>{% endfor %}
                     {% if listing.is_commission %}<span class="badge badge-ok">Commission</span>{% endif %}
