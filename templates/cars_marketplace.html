@@ -3,74 +3,78 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Voitures a vendre a Lubumbashi | KICHEFU-CHEFU STORE</title>
-    <meta name="description" content="Trouvez des voitures a vendre a Lubumbashi: Toyota, Nissan, Mercedes et plus, avec filtres par marque, modele et prix." />
+    <title>Voitures marketplace | KICHEFU-CHEFU STORE</title>
+    <meta name="description" content="Catalogue premium de voitures a Lubumbashi et Kinshasa." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet" />
     <style>
-      :root { --bg:#080808; --line:rgba(255,255,255,.13); --muted:rgba(255,255,255,.74); --gold:#c9a227; --text:#fff; }
-      * { box-sizing:border-box; }
-      body { margin:0; color:var(--text); font-family:"Poppins",system-ui,sans-serif; background:var(--bg); }
-      .container { width:min(1220px,92vw); margin:0 auto; }
-      .top { position:sticky; top:0; z-index:20; background:rgba(5,5,5,.9); border-bottom:1px solid var(--line); }
-      .nav { min-height:76px; display:flex; align-items:center; justify-content:space-between; gap:14px; }
-      .brand { color:#fff; text-decoration:none; font-weight:700; }
-      .menu { display:flex; gap:12px; flex-wrap:wrap; }
-      .menu a { color:#fff; text-decoration:none; opacity:.86; }
-      .menu a:hover { color:var(--gold); opacity:1; }
-      .btn { border:1px solid transparent; border-radius:999px; padding:10px 14px; text-decoration:none; display:inline-flex; font-weight:600; }
-      .auth-actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
-      .inline-form { margin:0; }
-      .btn-gold { background:linear-gradient(135deg,#c9a227,#e2c363); color:#000; }
-      .btn-ghost { border-color:var(--line); color:#fff; background:rgba(255,255,255,.03); }
-      .hero { padding:52px 0 30px; }
-      h1 { margin:0; font-size:clamp(1.95rem,4vw,3.1rem); }
-      .sub { color:var(--muted); margin-top:10px; max-width:760px; }
-      .layout { display:grid; grid-template-columns:300px 1fr; gap:18px; padding:22px 0 68px; }
-      .panel { border:1px solid var(--line); border-radius:14px; background:#111; padding:14px; height:fit-content; }
-      .panel h3 { margin:0 0 12px; }
-      .filters { display:grid; gap:10px; }
-      .filters label { font-size:.83rem; color:var(--muted); }
-      .filters input,.filters select { width:100%; border:1px solid var(--line); background:#0c0c0c; color:#fff; border-radius:10px; padding:10px 12px; font-family:inherit; }
-      .search { margin-top:16px; display:grid; grid-template-columns:1fr auto; gap:10px; }
-      .search input { width:100%; border:1px solid var(--line); background:#101010; color:#fff; border-radius:12px; padding:12px 14px; }
-      .grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
-      .card { border:1px solid var(--line); border-radius:14px; overflow:hidden; background:linear-gradient(180deg,#111,#0b0b0b); }
+      :root {
+        --black: #111111;
+        --orange: #ff6b00;
+        --white: #ffffff;
+        --light: #f5f5f5;
+        --line: rgba(255, 255, 255, 0.12);
+        --muted: rgba(255, 255, 255, 0.72);
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; font-family: "Inter", system-ui, sans-serif; color: var(--white); background: var(--black); }
+      .container { width: min(1240px, 92vw); margin: 0 auto; }
+      .topbar { position: sticky; top: 0; z-index: 40; background: rgba(17, 17, 17, 0.92); border-bottom: 1px solid var(--line); backdrop-filter: blur(8px); }
+      .nav { min-height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+      .brand { color: var(--white); text-decoration: none; font-weight: 900; letter-spacing: 0.07em; font-size: 0.88rem; }
+      .menu { display: flex; gap: 12px; flex-wrap: wrap; }
+      .menu a { color: var(--white); text-decoration: none; opacity: 0.92; }
+      .menu a:hover { color: var(--orange); }
+      .auth-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+      .inline-form { margin: 0; }
+      .btn { border: 1px solid transparent; border-radius: 999px; padding: 10px 14px; text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; font-family: inherit; cursor: pointer; }
+      .btn-main { background: var(--orange); color: #111; }
+      .btn-ghost { border-color: var(--line); color: var(--white); background: rgba(255, 255, 255, 0.02); }
+
+      .hero { padding: 44px 0 18px; }
+      h1 { margin: 0; font-size: clamp(1.8rem, 3.8vw, 3rem); font-weight: 900; }
+      .sub { margin-top: 9px; color: var(--muted); max-width: 760px; }
+      .layout { display: grid; grid-template-columns: 300px 1fr; gap: 18px; padding: 22px 0 64px; }
+      .panel { border: 1px solid var(--line); border-radius: 14px; background: #161616; padding: 14px; height: fit-content; }
+      .panel h3 { margin: 0 0 10px; }
+      .filters { display: grid; gap: 10px; }
+      .filters input,.filters select {
+        width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 10px 11px;
+        background: #0f0f0f; color: var(--white); font-family: inherit;
+      }
+      .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+      .card { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: #151515; }
+      .card:hover { border-color: rgba(255, 107, 0, 0.45); transform: translateY(-4px); transition: 0.2s ease; }
       .media { position: relative; }
-      .card img { width:100%; aspect-ratio:16/10; object-fit:cover; display:block; }
-      .overlay-badges { position:absolute; top:10px; left:10px; right:10px; display:flex; gap:6px; flex-wrap:wrap; }
-      .body { padding:12px; }
-      .title { margin:0; font-size:1rem; }
-      .price { margin-top:7px; color:var(--gold); font-weight:700; }
-      .meta { margin-top:8px; color:var(--muted); font-size:.9rem; display:grid; gap:4px; }
-      .badges { margin-top:8px; display:flex; flex-wrap:wrap; gap:6px; }
-      .badge { border:1px solid var(--line); border-radius:999px; padding:4px 8px; font-size:.72rem; }
-      .badge-gold { border-color:rgba(201,162,39,.45); color:#efdc9a; }
-      .badge-green { border-color:rgba(52,199,89,.4); color:#b6eec2; }
-      .views { margin-top:8px; color:var(--muted); font-size:.84rem; }
-      .heart-form { margin-left:auto; }
-      .heart-btn { border:1px solid var(--line); background:rgba(0,0,0,.55); color:#fff; border-radius:999px; padding:5px 10px; cursor:pointer; }
-      .heart-btn.active { border-color:rgba(201,162,39,.6); color:#efdc9a; }
-      .actions { margin-top:10px; display:flex; gap:8px; flex-wrap:wrap; }
-      .pager { margin-top:20px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-      .pager a,.pager span { border:1px solid var(--line); border-radius:999px; color:#fff; text-decoration:none; padding:7px 12px; }
-      .pager .active { background:var(--gold); color:#000; border-color:transparent; }
-      @media (max-width:1080px) { .layout { grid-template-columns:1fr; } .grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
-      @media (max-width:760px) { .nav { flex-direction:column; align-items:flex-start; padding:10px 0; } .grid { grid-template-columns:1fr; } .search { grid-template-columns:1fr; } }
+      .card img { width: 100%; aspect-ratio: 16/10; object-fit: cover; display: block; }
+      .overlay { position: absolute; top: 10px; left: 10px; right: 10px; display: flex; gap: 6px; flex-wrap: wrap; }
+      .badge { border: 1px solid rgba(255, 107, 0, 0.45); background: rgba(255, 107, 0, 0.16); color: #ffd4b4; border-radius: 999px; padding: 4px 8px; font-size: 0.72rem; }
+      .body { padding: 12px; }
+      .title { margin: 0; font-size: 1rem; font-weight: 700; }
+      .price { margin-top: 8px; color: #ff8a3c; font-weight: 800; }
+      .meta { margin-top: 8px; color: var(--muted); font-size: 0.9rem; }
+      .views { margin-top: 7px; color: var(--muted); font-size: 0.84rem; }
+      .actions { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+      .heart-btn { margin-left: auto; border: 1px solid var(--line); background: rgba(0, 0, 0, 0.5); color: var(--white); border-radius: 999px; padding: 6px 10px; cursor: pointer; }
+      .heart-btn.active { border-color: rgba(255, 107, 0, 0.55); color: #ffd4b4; }
+      .pager { margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+      .pager a,.pager span { border: 1px solid var(--line); color: var(--white); border-radius: 999px; text-decoration: none; padding: 7px 12px; }
+      .pager .active { border-color: transparent; background: var(--orange); color: #111; font-weight: 700; }
+      @media (max-width: 1080px) { .layout { grid-template-columns: 1fr; } .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+      @media (max-width: 760px) { .nav { flex-direction: column; align-items: flex-start; padding: 10px 0; } .grid { grid-template-columns: 1fr; } }
     </style>
   </head>
   <body>
-    <header class="top">
+    <header class="topbar">
       <div class="container nav">
         <a class="brand" href="/">KICHEFU-CHEFU STORE</a>
         <nav class="menu">
           <a href="/">Accueil</a>
           <a href="/voitures/">Voitures</a>
           <a href="/telephones/">Telephones</a>
-          <a href="/accessoires/">Accessoires</a>
-          <a href="/parcelles/">Immobilier</a>
-          <a href="/vendre-avec-nous/">Vendre avec nous</a>
+          <a href="/parcelles/">Parcelles</a>
+          <a href="/favoris/">Favoris</a>
         </nav>
         <div class="auth-actions">
           {% if user.is_authenticated %}
@@ -87,25 +91,28 @@
     </header>
 
     <section class="container hero">
-      <h1>Marketplace automobile RDC</h1>
-      <p class="sub">Explorez Toyota, Nissan, Mercedes, Honda, Hyundai, Kia et Mitsubishi avec filtres avances, badges de decouverte et contact WhatsApp immediat.</p>
-      <form method="get" class="search">
-        <input type="text" name="q" value="{{ filters.q }}" placeholder="Rechercher marque ou modele" />
-        <button class="btn btn-gold" type="submit">Rechercher</button>
-      </form>
+      <h1>Catalogue vehicules premium</h1>
+      <p class="sub">Filtrez rapidement par marque, type, prix et kilometrage pour trouver le vehicule ideal.</p>
     </section>
 
     <main class="container layout">
       <aside class="panel">
         <h3>Filtres</h3>
         <form method="get" class="filters">
-          <div><label>Marque</label><select name="brand"><option value="">Toutes</option>{% for item in brands %}<option value="{{ item }}" {% if filters.brand == item %}selected{% endif %}>{{ item }}</option>{% endfor %}</select></div>
-          <div><label>Type de vehicule</label><select name="vehicle_type"><option value="">Tous</option>{% for value, label in vehicle_types %}<option value="{{ value }}" {% if filters.vehicle_type == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
-          <div><label>Annee</label><input type="number" name="year" value="{{ filters.year }}" /></div>
-          <div><label>Kilometrage max</label><input type="number" name="max_mileage" value="{{ filters.max_mileage }}" /></div>
-          <div><label>Prix min</label><input type="number" step="0.01" name="min_price" value="{{ filters.min_price }}" /></div>
-          <div><label>Prix max</label><input type="number" step="0.01" name="max_price" value="{{ filters.max_price }}" /></div>
-          <button class="btn btn-gold" type="submit">Appliquer</button>
+          <input type="text" name="q" value="{{ filters.q }}" placeholder="Marque ou modele" />
+          <select name="brand">
+            <option value="">Toutes les marques</option>
+            {% for item in brands %}<option value="{{ item }}" {% if filters.brand == item %}selected{% endif %}>{{ item }}</option>{% endfor %}
+          </select>
+          <select name="vehicle_type">
+            <option value="">Tous les types</option>
+            {% for value, label in vehicle_types %}<option value="{{ value }}" {% if filters.vehicle_type == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+          </select>
+          <input type="number" name="year" value="{{ filters.year }}" placeholder="Annee" />
+          <input type="number" name="max_mileage" value="{{ filters.max_mileage }}" placeholder="Kilometrage max" />
+          <input type="number" step="0.01" name="min_price" value="{{ filters.min_price }}" placeholder="Prix min" />
+          <input type="number" step="0.01" name="max_price" value="{{ filters.max_price }}" placeholder="Prix max" />
+          <button class="btn btn-main" type="submit">Appliquer</button>
         </form>
       </aside>
 
@@ -118,27 +125,25 @@
                   {% if first_image %}
                     <img src="{{ first_image.image.url }}" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />
                   {% else %}
-                    <img src="https://dummyimage.com/1200x750/0f1117/e8edf6.png&text={{ car.brand|urlencode }}+{{ car.model|urlencode }}" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />
+                    <img src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ car.brand|urlencode }}+{{ car.model|urlencode }}" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />
                   {% endif %}
-                  <div class="overlay-badges">
-                    {% for badge in badges %}<span class="badge badge-gold">{{ badge }}</span>{% endfor %}
-                    {% if car.is_commission %}<span class="badge badge-green">Commission</span>{% endif %}
-                  </div>
+                  <div class="overlay">{% for badge in badges %}<span class="badge">{{ badge }}</span>{% endfor %}</div>
                 </div>
               {% endwith %}
               <div class="body">
                 <h3 class="title">{{ car.brand }} {{ car.model }}</h3>
                 <div class="price">{{ car.price }} $</div>
-                <div class="meta">
-                  <span>{{ car.year }}  -  {{ car.mileage }} km  -  {{ car.get_vehicle_type_display }}</span>
-                  <span>{{ car.get_availability_display }}</span>
-                </div>
-                <div class="views">{{ car.view_count }} personnes ont consulte ce vehicule</div>
+                <div class="meta">{{ car.year }} - {{ car.mileage }} km - {{ car.get_vehicle_type_display }}</div>
+                <div class="views">{{ car.view_count }} vues</div>
                 <div class="actions">
                   <a class="btn btn-ghost" href="{{ car.get_absolute_url }}">Voir details</a>
-                  <a class="btn btn-gold" target="_blank" rel="noopener noreferrer" href="https://wa.me/243000000000?text=Bonjour,%20je%20suis%20interesse%20par%20{{ car.brand }}%20{{ car.model }}">WhatsApp</a>
+                  <a class="btn btn-main" href="https://wa.me/243000000000?text=Bonjour,%20je%20suis%20interesse%20par%20{{ car.brand }}%20{{ car.model }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
                   {% if user.is_authenticated %}
-                    <form class="heart-form" method="post" action="{% url 'marketplace:toggle_favorite' 'car' car.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}" /><button class="heart-btn{% if car.pk in favorite_car_ids %} active{% endif %}" type="submit">&#10084;</button></form>
+                    <form method="post" action="{% url 'marketplace:toggle_favorite' 'car' car.pk %}">
+                      {% csrf_token %}
+                      <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+                      <button class="heart-btn{% if car.pk in favorite_car_ids %} active{% endif %}" type="submit">&#10084;</button>
+                    </form>
                   {% else %}
                     <a class="btn btn-ghost" href="/connexion/?next={{ request.path }}">&#10084;</a>
                   {% endif %}

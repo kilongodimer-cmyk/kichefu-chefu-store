@@ -3,62 +3,78 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Parcelles et maisons a vendre a Lubumbashi | KICHEFU-CHEFU STORE</title>
-    <meta name="description" content="Consultez les parcelles et maisons a vendre a Lubumbashi, avec recherche par quartier et prix." />
+    <title>Parcelles et maisons | KICHEFU-CHEFU STORE</title>
+    <meta name="description" content="Parcelles et maisons premium a Lubumbashi et Kinshasa." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet" />
     <style>
-      :root { --bg:#080808; --line:rgba(255,255,255,.13); --muted:rgba(255,255,255,.74); --gold:#c9a227; --text:#fff; }
-      * { box-sizing:border-box; }
-      body { margin:0; color:var(--text); font-family:"Poppins",system-ui,sans-serif; background:var(--bg); }
-      .container { width:min(1200px,92vw); margin:0 auto; }
-      .top { border-bottom:1px solid var(--line); background:#050505; }
-      .nav { min-height:74px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
-      .brand { color:#fff; text-decoration:none; font-weight:700; }
-      .menu { display:flex; gap:12px; flex-wrap:wrap; }
-      .menu a { color:#fff; text-decoration:none; opacity:.86; }
-      .hero { padding:46px 0 18px; }
-      h1 { margin:0; font-size:clamp(1.9rem,4vw,3rem); }
-      .sub { margin-top:10px; color:var(--muted); }
-      .districts { margin-top:14px; display:flex; gap:7px; flex-wrap:wrap; }
-      .districts span { border:1px solid var(--line); border-radius:999px; padding:5px 9px; font-size:.8rem; color:var(--muted); }
-      .filters { margin-top:14px; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
-      .filters input,.filters select { width:100%; border:1px solid var(--line); background:#111; color:#fff; border-radius:10px; padding:10px 12px; font-family:inherit; }
-      .btn { border:1px solid transparent; border-radius:999px; padding:10px 14px; text-decoration:none; font-weight:600; display:inline-flex; align-items:center; justify-content:center; }
-      .auth-actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
-      .inline-form { margin:0; }
-      .btn-gold { background:linear-gradient(135deg,#c9a227,#e2c363); color:#000; }
-      .btn-ghost { border-color:var(--line); color:#fff; }
-      .grid { padding:24px 0 56px; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
-      .card { border:1px solid var(--line); border-radius:14px; overflow:hidden; background:linear-gradient(180deg,#101010,#0a0a0a); }
+      :root {
+        --black: #111111;
+        --orange: #ff6b00;
+        --white: #ffffff;
+        --line: rgba(255, 255, 255, 0.12);
+        --muted: rgba(255, 255, 255, 0.72);
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; font-family: "Inter", system-ui, sans-serif; color: var(--white); background: var(--black); }
+      .container { width: min(1240px, 92vw); margin: 0 auto; }
+      .topbar { position: sticky; top: 0; z-index: 40; background: rgba(17, 17, 17, 0.92); border-bottom: 1px solid var(--line); backdrop-filter: blur(8px); }
+      .nav { min-height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+      .brand { color: var(--white); text-decoration: none; font-weight: 900; letter-spacing: 0.07em; font-size: 0.88rem; }
+      .menu { display: flex; gap: 12px; flex-wrap: wrap; }
+      .menu a { color: var(--white); text-decoration: none; opacity: 0.92; }
+      .menu a:hover { color: var(--orange); }
+      .auth-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+      .inline-form { margin: 0; }
+      .btn { border: 1px solid transparent; border-radius: 999px; padding: 10px 14px; text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; font-family: inherit; cursor: pointer; }
+      .btn-main { background: var(--orange); color: #111; }
+      .btn-ghost { border-color: var(--line); color: var(--white); background: rgba(255, 255, 255, 0.02); }
+
+      .hero { padding: 44px 0 18px; }
+      h1 { margin: 0; font-size: clamp(1.8rem, 3.8vw, 3rem); font-weight: 900; }
+      .sub { margin-top: 9px; color: var(--muted); max-width: 760px; }
+      .districts { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
+      .districts span { border: 1px solid var(--line); border-radius: 999px; padding: 5px 9px; color: var(--muted); font-size: 0.8rem; }
+      .filters { margin-top: 15px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+      .filters input,.filters select {
+        width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 11px;
+        background: #0f0f0f; color: var(--white); font-family: inherit;
+      }
+
+      .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; padding: 24px 0 56px; }
+      .card { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: #151515; }
+      .card:hover { border-color: rgba(255, 107, 0, 0.45); transform: translateY(-4px); transition: 0.2s ease; }
       .media { position: relative; }
-      .card img { width:100%; aspect-ratio:16/10; object-fit:cover; display:block; }
-      .overlay-badges { position:absolute; top:10px; left:10px; right:10px; display:flex; gap:6px; flex-wrap:wrap; }
-      .body { padding:12px; }
-      .title { margin:0; }
-      .price { margin-top:8px; color:var(--gold); font-weight:700; }
-      .meta { margin-top:8px; color:var(--muted); font-size:.9rem; display:grid; gap:4px; }
-      .badges { margin-top:8px; display:flex; gap:6px; flex-wrap:wrap; }
-      .badge { border:1px solid rgba(201,162,39,.45); border-radius:999px; padding:4px 8px; font-size:.72rem; color:#eedb98; }
-      .commission { border-color:rgba(52,199,89,.4); color:#b6eec2; }
-      .views { margin-top:8px; color:var(--muted); font-size:.84rem; }
-      .heart-form { margin-left:auto; }
-      .heart-btn { border:1px solid var(--line); background:rgba(0,0,0,.55); color:#fff; border-radius:999px; padding:5px 10px; cursor:pointer; }
-      .heart-btn.active { border-color:rgba(201,162,39,.6); color:#eedb98; }
-      .actions { margin-top:10px; display:flex; gap:8px; flex-wrap:wrap; }
-      .pager { margin:0 0 56px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-      .pager a,.pager span { color:#fff; text-decoration:none; border:1px solid var(--line); border-radius:999px; padding:7px 12px; }
-      .pager .active { background:var(--gold); color:#000; border-color:transparent; }
-      @media (max-width:1020px) { .filters { grid-template-columns:1fr 1fr; } .grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
-      @media (max-width:760px) { .nav { flex-direction:column; align-items:flex-start; padding:10px 0; } .filters,.grid { grid-template-columns:1fr; } }
+      .card img { width: 100%; aspect-ratio: 16/10; object-fit: cover; display: block; }
+      .overlay { position: absolute; top: 10px; left: 10px; right: 10px; display: flex; gap: 6px; flex-wrap: wrap; }
+      .badge { border: 1px solid rgba(255, 107, 0, 0.45); background: rgba(255, 107, 0, 0.16); color: #ffd4b4; border-radius: 999px; padding: 4px 8px; font-size: 0.72rem; }
+      .body { padding: 12px; }
+      .title { margin: 0; font-size: 1rem; font-weight: 700; }
+      .price { margin-top: 8px; color: #ff8a3c; font-weight: 800; }
+      .meta { margin-top: 8px; color: var(--muted); font-size: 0.9rem; }
+      .views { margin-top: 7px; color: var(--muted); font-size: 0.84rem; }
+      .actions { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+      .heart-btn { margin-left: auto; border: 1px solid var(--line); background: rgba(0, 0, 0, 0.5); color: var(--white); border-radius: 999px; padding: 6px 10px; cursor: pointer; }
+      .heart-btn.active { border-color: rgba(255, 107, 0, 0.55); color: #ffd4b4; }
+      .pager { margin: 0 0 56px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+      .pager a,.pager span { border: 1px solid var(--line); color: var(--white); border-radius: 999px; text-decoration: none; padding: 7px 12px; }
+      .pager .active { border-color: transparent; background: var(--orange); color: #111; font-weight: 700; }
+      @media (max-width: 1080px) { .filters { grid-template-columns: 1fr 1fr; } .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+      @media (max-width: 760px) { .nav { flex-direction: column; align-items: flex-start; padding: 10px 0; } .filters { grid-template-columns: 1fr; } .grid { grid-template-columns: 1fr; } }
     </style>
   </head>
   <body>
-    <header class="top">
+    <header class="topbar">
       <div class="container nav">
         <a class="brand" href="/">KICHEFU-CHEFU STORE</a>
-        <nav class="menu"><a href="/voitures/">Voitures</a><a href="/telephones/">Telephones</a><a href="/accessoires/">Accessoires</a><a href="/parcelles/">Immobilier</a><a href="/vendre-avec-nous/">Vendre avec nous</a></nav>
+        <nav class="menu">
+          <a href="/">Accueil</a>
+          <a href="/voitures/">Voitures</a>
+          <a href="/telephones/">Telephones</a>
+          <a href="/parcelles/">Parcelles</a>
+          <a href="/favoris/">Favoris</a>
+        </nav>
         <div class="auth-actions">
           {% if user.is_authenticated %}
             <form class="inline-form" method="post" action="{% url 'marketplace:logout' %}">
@@ -75,14 +91,14 @@
 
     <main class="container">
       <section class="hero">
-        <h1>Parcelles et maisons a Lubumbashi</h1>
-        <p class="sub">Annonces ciblees sur les quartiers: Kenya, Kamalondo, Katuba, Ruashi, Golf, Bel-Air et Kalubwe.</p>
+        <h1>Parcelles et maisons</h1>
+        <p class="sub">Trouve rapidement un bien a Lubumbashi avec filtres intelligents et contact instantane.</p>
         <div class="districts">{% for area in lubumbashi_areas %}<span>{{ area }}</span>{% endfor %}</div>
         <form method="get" class="filters">
           <select name="real_estate_type"><option value="">Type de bien</option>{% for value, label in estate_types %}<option value="{{ value }}" {% if filters.real_estate_type == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select>
           <select name="location"><option value="">Quartier</option>{% for area in lubumbashi_areas %}<option value="{{ area }}" {% if filters.location == area %}selected{% endif %}>{{ area }}</option>{% endfor %}</select>
           <input type="text" name="q" value="{{ filters.q }}" placeholder="Recherche libre" />
-          <button class="btn btn-gold" type="submit">Filtrer</button>
+          <button class="btn btn-main" type="submit">Filtrer</button>
         </form>
       </section>
 
@@ -91,30 +107,33 @@
           <article class="card">
             {% with img=listing.images.first %}
               <div class="media">
-                {% if img %}<img src="{{ img.image.url }}" alt="{{ listing.location }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/0f1117/e8edf6.png&text={{ listing.get_real_estate_type_display|urlencode }}+{{ listing.location|urlencode }}" alt="{{ listing.location }}" loading="lazy" decoding="async" />{% endif %}
-                <div class="overlay-badges">
-                  {% for badge in badges %}<span class="badge">{{ badge }}</span>{% endfor %}
-                  {% if listing.is_commission %}<span class="badge commission">Commission</span>{% endif %}
-                </div>
+                {% if img %}<img src="{{ img.image.url }}" alt="{{ listing.location }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ listing.location|urlencode }}" alt="{{ listing.location }}" loading="lazy" decoding="async" />{% endif %}
+                <div class="overlay">{% for badge in badges %}<span class="badge">{{ badge }}</span>{% endfor %}</div>
               </div>
             {% endwith %}
             <div class="body">
               <h3 class="title">{{ listing.get_real_estate_type_display }} - {{ listing.location }}</h3>
               <div class="price">{{ listing.price }} $</div>
-              <div class="meta"><span>{{ listing.get_availability_display }}</span></div>
-              <div class="views">{{ listing.view_count }} personnes ont consulte cette annonce</div>
+              <div class="meta">{{ listing.get_availability_display }}</div>
+              <div class="views">{{ listing.view_count }} vues</div>
               <div class="actions">
                 <a class="btn btn-ghost" href="{{ listing.get_absolute_url }}">Voir details</a>
-                <a class="btn btn-gold" href="https://wa.me/243000000000?text=Bonjour,%20je%20suis%20interesse%20par%20{{ listing.get_real_estate_type_display }}%20a%20{{ listing.location }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                <a class="btn btn-main" href="https://wa.me/243000000000?text=Bonjour,%20je%20suis%20interesse%20par%20{{ listing.get_real_estate_type_display }}%20a%20{{ listing.location }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
                 {% if user.is_authenticated %}
-                  <form class="heart-form" method="post" action="{% url 'marketplace:toggle_favorite' 'real_estate' listing.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}" /><button class="heart-btn{% if listing.pk in favorite_real_estate_ids %} active{% endif %}" type="submit">&#10084;</button></form>
+                  <form method="post" action="{% url 'marketplace:toggle_favorite' 'real_estate' listing.pk %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+                    <button class="heart-btn{% if listing.pk in favorite_real_estate_ids %} active{% endif %}" type="submit">&#10084;</button>
+                  </form>
                 {% else %}
                   <a class="btn btn-ghost" href="/connexion/?next={{ request.path }}">&#10084;</a>
                 {% endif %}
               </div>
             </div>
           </article>
-        {% empty %}<p>Aucune annonce immobiliere trouvee.</p>{% endfor %}
+        {% empty %}
+          <p>Aucune annonce immobiliere trouvee.</p>
+        {% endfor %}
       </section>
 
       {% if page_obj.paginator.num_pages > 1 %}

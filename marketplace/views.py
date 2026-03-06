@@ -335,6 +335,7 @@ class HomePageView(SiteLoginRequiredMixin, View):
 		phones = Phone.objects.prefetch_related("images").all()
 		accessories = Accessory.objects.all()
 		real_estates = RealEstate.objects.prefetch_related("images").all()
+		available_cars_count = cars.filter(availability="available").count()
 
 		popular_cars = list(cars.filter(availability="available")[:6])
 		new_cars = list(cars.filter(date_added__gte=timezone.now() - timedelta(days=30))[:6])
@@ -343,6 +344,25 @@ class HomePageView(SiteLoginRequiredMixin, View):
 		hot_cars = list(cars.order_by("-view_count", "-date_added")[:6])
 		hot_phones = list(phones.order_by("-view_count", "-date_added")[:6])
 		hot_real_estate = list(real_estates.order_by("-view_count", "-date_added")[:6])
+
+		latest_cars = list(cars.order_by("-date_added")[:4])
+		latest_phones = list(phones.order_by("-date_added")[:4])
+		latest_real_estate = list(real_estates.order_by("-date_added")[:4])
+		new_products = []
+		for car in latest_cars:
+			new_products.append({"kind": "Voiture", "title": f"{car.brand} {car.model}", "price": car.price, "url": car.get_absolute_url()})
+		for phone in latest_phones:
+			new_products.append({"kind": "Telephone", "title": f"{phone.brand} {phone.model}", "price": phone.price, "url": phone.get_absolute_url()})
+		for listing in latest_real_estate:
+			new_products.append(
+				{
+					"kind": "Immobilier",
+					"title": f"{listing.get_real_estate_type_display()} - {listing.location}",
+					"price": listing.price,
+					"url": listing.get_absolute_url(),
+				}
+			)
+		new_products = sorted(new_products, key=lambda item: item["price"])[:12]
 
 		best_offers = []
 		for car in cars.filter(availability="available").order_by("price")[:4]:
@@ -375,6 +395,8 @@ class HomePageView(SiteLoginRequiredMixin, View):
 				"real_estate": [(item, build_badges(item, idx)) for idx, item in enumerate(hot_real_estate)],
 			},
 			"recommended_for_you": recommended_for_you,
+			"new_products": new_products,
+			"available_cars_count": available_cars_count,
 			"favorite_car_ids": favorite_map["cars"],
 			"favorite_phone_ids": favorite_map["phones"],
 			"favorite_real_estate_ids": favorite_map["real_estate"],

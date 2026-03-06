@@ -3,84 +3,85 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{ listing.get_real_estate_type_display }} a vendre {{ listing.location }} Lubumbashi | KICHEFU-CHEFU STORE</title>
-    <meta name="description" content="{{ listing.get_real_estate_type_display }} a vendre a {{ listing.location }} Lubumbashi. Prix: {{ listing.price }} $. Consultez cette annonce immobiliere sur KICHEFU-CHEFU STORE." />
+    <title>{{ listing.get_real_estate_type_display }} {{ listing.location }} | KICHEFU-CHEFU STORE</title>
+    <meta name="description" content="{{ listing.get_real_estate_type_display }} a {{ listing.location }}. Prix: {{ listing.price }} $." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet" />
     <style>
-      :root { --bg:#080808; --line:rgba(255,255,255,.13); --muted:rgba(255,255,255,.74); --gold:#c9a227; --text:#fff; }
-      * { box-sizing:border-box; }
-      body { margin:0; color:var(--text); font-family:"Poppins",system-ui,sans-serif; background:var(--bg); }
-      .container { width:min(1160px,92vw); margin:0 auto; }
-      .top { border-bottom:1px solid var(--line); background:#050505; }
-      .top .inner { min-height:74px; display:flex; align-items:center; justify-content:space-between; }
-      .brand { color:#fff; text-decoration:none; font-weight:700; }
-      .btn { border:1px solid var(--line); border-radius:999px; color:#fff; text-decoration:none; padding:10px 14px; display:inline-flex; }
-      .auth-actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+      :root { --black:#111111; --orange:#ff6b00; --white:#ffffff; --line:rgba(255,255,255,.12); --muted:rgba(255,255,255,.72); }
+      * { box-sizing: border-box; }
+      body { margin:0; font-family:"Inter",system-ui,sans-serif; color:var(--white); background:var(--black); }
+      .container { width:min(1220px,92vw); margin:0 auto; }
+      .topbar { position:sticky; top:0; z-index:40; background:rgba(17,17,17,.92); border-bottom:1px solid var(--line); backdrop-filter:blur(8px); }
+      .nav { min-height:76px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+      .brand { color:var(--white); text-decoration:none; font-weight:900; letter-spacing:.07em; font-size:.88rem; }
+      .auth-actions { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
       .inline-form { margin:0; }
-      .logout-btn { border:1px solid var(--line); border-radius:999px; color:#fff; background:transparent; padding:10px 14px; display:inline-flex; cursor:pointer; font-family:inherit; }
-      .btn-gold { border-color:transparent; background:linear-gradient(135deg,#c9a227,#e2c363); color:#000; font-weight:700; }
-      .wrap { padding:30px 0 50px; display:grid; grid-template-columns:1.05fr .95fr; gap:20px; }
-      .card,.panel { border:1px solid var(--line); border-radius:14px; background:#101010; }
-      .card img { width:100%; aspect-ratio:16/10; object-fit:cover; display:block; border-radius:14px 14px 0 0; }
+      .btn { border:1px solid var(--line); border-radius:999px; color:var(--white); text-decoration:none; padding:10px 14px; display:inline-flex; align-items:center; justify-content:center; font-family:inherit; font-weight:700; background:rgba(255,255,255,.02); cursor:pointer; }
+      .btn-main { border-color:transparent; background:var(--orange); color:#111; }
+      .hero { padding:28px 0 58px; display:grid; grid-template-columns:1.05fr .95fr; gap:20px; }
+      .gallery { border:1px solid var(--line); border-radius:14px; background:#161616; overflow:hidden; }
+      .main-img { width:100%; aspect-ratio:16/10; object-fit:cover; display:block; }
       .thumbs { padding:10px; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; }
-      .thumbs img { width:100%; aspect-ratio:16/10; object-fit:cover; border-radius:8px; }
-      .panel { padding:16px; }
-      h1 { margin:0; }
-      .price { margin-top:10px; color:var(--gold); font-size:1.35rem; font-weight:700; }
-      .commission { margin-top:10px; border:1px solid rgba(52,199,89,.4); background:rgba(52,199,89,.12); color:#b7eec4; border-radius:10px; padding:8px 10px; font-size:.82rem; }
-      .desc { margin-top:12px; color:var(--muted); }
+      .thumbs img { width:100%; aspect-ratio:16/10; object-fit:cover; border-radius:8px; border:1px solid var(--line); }
+      .panel { border:1px solid var(--line); border-radius:14px; background:#161616; padding:16px; }
+      h1 { margin:0; font-size:clamp(1.6rem,3vw,2.5rem); font-weight:900; }
+      .price { margin-top:10px; color:#ff8a3c; font-size:1.45rem; font-weight:900; }
+      .views { margin-top:8px; color:var(--muted); }
+      .commission { margin-top:9px; border:1px solid rgba(255,107,0,.4); background:rgba(255,107,0,.12); color:#ffd4b4; border-radius:10px; padding:8px 10px; font-size:.83rem; }
+      .desc { margin-top:12px; color:var(--muted); line-height:1.6; }
       .specs { margin-top:12px; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
-      .spec { border:1px solid var(--line); border-radius:10px; padding:10px; background:#0b0b0b; }
-      .spec b { display:block; font-size:.8rem; color:var(--muted); font-weight:500; }
-      .spec span { margin-top:4px; display:block; font-weight:600; }
-      .actions { margin-top:16px; display:flex; gap:8px; flex-wrap:wrap; }
-      .views { margin-top:10px; color:var(--muted); font-size:.9rem; }
-      .heart-btn { border:1px solid var(--line); background:rgba(0,0,0,.45); color:#fff; border-radius:999px; padding:10px 14px; cursor:pointer; }
-      .heart-btn.active { border-color:rgba(201,162,39,.6); color:#efdc9a; }
-      .section { margin:22px auto 56px; }
-      .section h2 { margin:0 0 12px; }
+      .spec { border:1px solid var(--line); border-radius:10px; background:#101010; padding:10px; }
+      .spec b { display:block; color:var(--muted); font-size:.8rem; font-weight:400; }
+      .spec span { display:block; margin-top:4px; font-weight:700; }
+      .actions { margin-top:14px; display:flex; gap:8px; flex-wrap:wrap; }
+      .heart-btn { border:1px solid var(--line); background:rgba(0,0,0,.5); color:var(--white); border-radius:999px; padding:10px 14px; cursor:pointer; font-family:inherit; font-weight:700; }
+      .heart-btn.active { border-color:rgba(255,107,0,.55); color:#ffd4b4; }
+      .section { padding-bottom:46px; }
+      .section h2 { margin:0 0 12px; font-size:1.35rem; }
       .grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
-      .mini { border:1px solid var(--line); border-radius:12px; overflow:hidden; background:#101010; }
+      .mini { border:1px solid var(--line); border-radius:12px; overflow:hidden; background:#161616; }
+      .mini:hover { border-color:rgba(255,107,0,.45); transform:translateY(-3px); transition:.2s ease; }
       .mini img { width:100%; aspect-ratio:16/10; object-fit:cover; display:block; }
       .mini .body { padding:10px; }
       .mini h3 { margin:0; font-size:.95rem; }
-      .mini .p { margin-top:6px; color:var(--gold); font-weight:700; }
-      @media (max-width:980px) { .wrap { grid-template-columns:1fr; } .grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
-      @media (max-width:760px) { .grid,.thumbs,.specs { grid-template-columns:1fr; } }
+      .mini .p { margin-top:6px; color:#ff8a3c; font-weight:800; }
+      @media (max-width:980px) { .hero { grid-template-columns:1fr; } .grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+      @media (max-width:760px) { .thumbs,.specs,.grid { grid-template-columns:1fr; } .nav { flex-direction:column; align-items:flex-start; padding:10px 0; } }
     </style>
   </head>
   <body>
-    <header class="top">
-      <div class="container inner">
+    <header class="topbar">
+      <div class="container nav">
         <a class="brand" href="/">KICHEFU-CHEFU STORE</a>
         <div class="auth-actions">
-          <a class="btn" href="{% url 'marketplace:real_estate_list' %}">Retour a l'immobilier</a>
+          <a class="btn" href="{% url 'marketplace:real_estate_list' %}">Retour</a>
           {% if user.is_authenticated %}
             <form class="inline-form" method="post" action="{% url 'marketplace:logout' %}">
               {% csrf_token %}
-              <button class="logout-btn" type="submit">Se deconnecter</button>
+              <button class="btn" type="submit">Se deconnecter</button>
             </form>
           {% else %}
             <a class="btn" href="/connexion/?next={{ request.path }}">Connexion</a>
-            <a class="btn" href="/inscription/?next={{ request.path }}">Inscription</a>
           {% endif %}
         </div>
       </div>
     </header>
-    <main class="container wrap">
-      <section class="card">
+
+    <main class="container hero">
+      <section class="gallery">
         {% with first=listing.images.first %}
-          {% if first %}<img src="{{ first.image.url }}" alt="{{ listing.location }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/0f1117/e8edf6.png&text={{ listing.get_real_estate_type_display|urlencode }}+{{ listing.location|urlencode }}" alt="{{ listing.location }}" loading="lazy" decoding="async" />{% endif %}
+          {% if first %}<img class="main-img" src="{{ first.image.url }}" alt="{{ listing.location }}" loading="lazy" decoding="async" />{% else %}<img class="main-img" src="https://dummyimage.com/1300x800/171717/ffffff.png&text={{ listing.location|urlencode }}" alt="{{ listing.location }}" loading="lazy" decoding="async" />{% endif %}
         {% endwith %}
         <div class="thumbs">{% for img in listing.images.all|slice:':8' %}<img src="{{ img.image.url }}" alt="Image {{ forloop.counter }}" loading="lazy" decoding="async" />{% endfor %}</div>
       </section>
+
       <section class="panel">
         <h1>{{ listing.get_real_estate_type_display }} - {{ listing.location }}</h1>
         <div class="price">{{ listing.price }} $</div>
-        {% if listing.is_commission %}<div class="commission">Vente en commission par KICHEFU-CHEFU STORE</div>{% endif %}
         <div class="views">{{ listing.view_count }} personnes ont consulte cette annonce</div>
+        {% if listing.is_commission %}<div class="commission">Vente en commission par KICHEFU-CHEFU STORE</div>{% endif %}
         <p class="desc">{{ listing.description|default:"Aucune description fournie." }}</p>
         <div class="specs">
           <div class="spec"><b>Type de bien</b><span>{{ listing.get_real_estate_type_display }}</span></div>
@@ -89,9 +90,13 @@
           <div class="spec"><b>Disponibilite</b><span>{{ listing.get_availability_display }}</span></div>
         </div>
         <div class="actions">
-          <a class="btn btn-gold" href="{{ whatsapp_link }}" target="_blank" rel="noopener noreferrer">Contacter sur WhatsApp</a>
+          <a class="btn btn-main" href="{{ whatsapp_link }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
           {% if user.is_authenticated %}
-            <form method="post" action="{% url 'marketplace:toggle_favorite' 'real_estate' listing.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}" /><button class="heart-btn{% if is_favorite %} active{% endif %}" type="submit">&#10084; Favori</button></form>
+            <form method="post" action="{% url 'marketplace:toggle_favorite' 'real_estate' listing.pk %}">
+              {% csrf_token %}
+              <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+              <button class="heart-btn{% if is_favorite %} active{% endif %}" type="submit">&#10084; Favori</button>
+            </form>
           {% else %}
             <a class="btn" href="/connexion/?next={{ request.path }}">&#10084; Favori</a>
           {% endif %}
@@ -103,16 +108,16 @@
       <h2>Produits similaires</h2>
       <div class="grid">
         {% for item in similar_listings %}
-          <article class="mini">{% with img=item.images.first %}{% if img %}<img src="{{ img.image.url }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/0f1117/e8edf6.png&text={{ item.get_real_estate_type_display|urlencode }}+{{ item.location|urlencode }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% endif %}{% endwith %}<div class="body"><h3>{{ item.get_real_estate_type_display }} - {{ item.location }}</h3><div class="p">{{ item.price }} $</div><a class="btn" href="{{ item.get_absolute_url }}">Voir details</a></div></article>
+          <article class="mini">{% with img=item.images.first %}{% if img %}<img src="{{ img.image.url }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.location|urlencode }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% endif %}{% endwith %}<div class="body"><h3>{{ item.get_real_estate_type_display }} - {{ item.location }}</h3><div class="p">{{ item.price }} $</div><a class="btn" href="{{ item.get_absolute_url }}">Voir details</a></div></article>
         {% empty %}<p>Pas d'annonces similaires.</p>{% endfor %}
       </div>
     </section>
 
     <section class="container section">
-      <h2>Vous pourriez aussi aimer</h2>
+      <h2>Produits recommandes</h2>
       <div class="grid">
         {% for item in recommended_listings %}
-          <article class="mini">{% with img=item.images.first %}{% if img %}<img src="{{ img.image.url }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/0f1117/e8edf6.png&text={{ item.get_real_estate_type_display|urlencode }}+{{ item.location|urlencode }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% endif %}{% endwith %}<div class="body"><h3>{{ item.get_real_estate_type_display }} - {{ item.location }}</h3><div class="p">{{ item.price }} $</div><a class="btn" href="{{ item.get_absolute_url }}">Voir details</a></div></article>
+          <article class="mini">{% with img=item.images.first %}{% if img %}<img src="{{ img.image.url }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.location|urlencode }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% endif %}{% endwith %}<div class="body"><h3>{{ item.get_real_estate_type_display }} - {{ item.location }}</h3><div class="p">{{ item.price }} $</div><a class="btn" href="{{ item.get_absolute_url }}">Voir details</a></div></article>
         {% empty %}<p>Pas de recommandations pour ce bien.</p>{% endfor %}
       </div>
     </section>
