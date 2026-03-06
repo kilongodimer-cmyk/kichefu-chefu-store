@@ -1,7 +1,7 @@
 {% extends "admin/base_site.html" %}
 
 {% block content %}
-  <h1>Importer des voitures via CSV</h1>
+  <h1>Importer vehicules via CSV</h1>
   <p>Utilisez cette page pour importer rapidement un grand catalogue de vehicules (jusqu'a 1000+ annonces).</p>
 
   <form method="post" enctype="multipart/form-data" novalidate>
@@ -19,7 +19,7 @@
       {% endfor %}
     </fieldset>
     <div class="submit-row">
-      <input type="submit" value="Lancer l'import" class="default" />
+      <input type="submit" value="Importer vehicules" class="default" />
       <a href="{% url 'admin:marketplace_car_changelist' %}" class="button cancel-link">Annuler</a>
     </div>
   </form>

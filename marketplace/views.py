@@ -6,7 +6,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
 from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import Paginator
-from django.db.models import F, Q
+from django.db.models import F, Prefetch, Q
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.urls import reverse
@@ -530,7 +530,25 @@ class CarMarketplaceListView(SiteLoginRequiredMixin, View):
 
 	def get(self, request):
 		ensure_seeded_data_safe()
-		cars = Car.objects.prefetch_related("images").all()
+		image_queryset = CarImage.objects.only("id", "car_id", "image", "created_at").order_by("-created_at")
+		cars = (
+			Car.objects.only(
+				"id",
+				"brand",
+				"model",
+				"slug",
+				"vehicle_type",
+				"year",
+				"mileage",
+				"price",
+				"is_commission",
+				"availability",
+				"view_count",
+				"date_added",
+			)
+			.prefetch_related(Prefetch("images", queryset=image_queryset))
+			.order_by("-date_added")
+		)
 
 		search = request.GET.get("q", "").strip()
 		brand = request.GET.get("brand", "").strip()

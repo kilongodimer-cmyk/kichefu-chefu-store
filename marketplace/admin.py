@@ -82,7 +82,7 @@ class CarAdmin(admin.ModelAdmin):
 		context = {
 			**self.admin_site.each_context(request),
 			"opts": self.model._meta,
-			"title": "Importer des voitures via CSV",
+			"title": "Importer vehicules via CSV",
 			"form": form,
 		}
 		return render(request, "admin/marketplace/car/import_csv.html", context)
