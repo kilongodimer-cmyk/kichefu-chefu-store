@@ -223,7 +223,7 @@
               <div class="body">
                 <h3 class="title">{{ car.brand }} {{ car.model }}</h3>
                 <div class="price">{{ car.price }} $</div>
-                <div class="meta"><span>{{ car.year }} • {{ car.mileage }} km</span><span>{{ car.get_availability_display }}</span></div>
+                <div class="meta"><span>{{ car.year }}  -  {{ car.mileage }} km</span><span>{{ car.get_availability_display }}</span></div>
                 <div class="badges">
                   {% for badge in badges %}<span class="badge badge-gold">{{ badge }}</span>{% endfor %}
                   {% if car.is_commission %}<span class="badge badge-ok">Vente en commission par KICHEFU-CHEFU STORE</span>{% endif %}
@@ -363,7 +363,7 @@
             <p><a href="/vendre-avec-nous/">Vendre avec nous</a></p>
           </div>
         </div>
-        <p class="copy">© 2026 KICHEFU-CHEFU STORE - Lubumbashi, RDC.</p>
+        <p class="copy">(c) 2026 KICHEFU-CHEFU STORE - Lubumbashi, RDC.</p>
       </div>
     </footer>
   </body>
