@@ -2,9 +2,11 @@ from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import LoginView
 from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import Paginator
 from django.db.models import F, Q
+from django.urls import reverse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views import View
@@ -535,6 +537,41 @@ class RegisterView(View):
 		if next_url:
 			return redirect(next_url)
 		return redirect("home")
+
+
+class AgentLoginView(LoginView):
+	template_name = "auth/agent_login.html"
+	redirect_authenticated_user = True
+
+	def form_valid(self, form):
+		if not form.get_user().is_staff:
+			form.add_error(None, "Acces reserve aux agents autorises.")
+			return self.form_invalid(form)
+		return super().form_valid(form)
+
+	def get_success_url(self):
+		next_url = self.request.GET.get("next") or self.request.POST.get("next")
+		if next_url:
+			return next_url
+		return reverse("marketplace:agent_dashboard")
+
+
+class AgentDashboardView(LoginRequiredMixin, View):
+	template_name = "agent/dashboard.html"
+	login_url = "/agent/connexion/"
+
+	def get(self, request):
+		if not request.user.is_staff:
+			messages.error(request, "Cet espace est reserve aux agents du site.")
+			return redirect("home")
+
+		context = {
+			"cars_count": Car.objects.count(),
+			"phones_count": Phone.objects.count(),
+			"accessories_count": Accessory.objects.count(),
+			"real_estate_count": RealEstate.objects.count(),
+		}
+		return render(request, self.template_name, context)
 
 
 class ToggleFavoriteView(LoginRequiredMixin, View):

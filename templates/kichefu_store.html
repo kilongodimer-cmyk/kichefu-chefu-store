@@ -421,7 +421,11 @@
         <div class="grid grid-3">
           {% for item, badges in top_accessories %}
             <article class="card">
-              {% if item.image %}<img src="{{ item.image.url }}" alt="{{ item.name }}" loading="lazy" decoding="async" />{% else %}<img src="https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=1200&q=80" alt="{{ item.name }}" loading="lazy" decoding="async" />{% endif %}
+              {% if item.image %}
+                <img src="{{ item.image.url }}" alt="{{ item.name }}" loading="lazy" decoding="async" />
+              {% else %}
+                <img src="https://dummyimage.com/1200x750/0f1117/e8edf6.png&text={{ item.name|urlencode }}" alt="{{ item.name }}" loading="lazy" decoding="async" />
+              {% endif %}
               <div class="body">
                 <h3 class="title">{{ item.name }}</h3>
                 <div class="price">{{ item.price }} $</div>
@@ -449,6 +453,7 @@
             <p><a href="/voitures/">Voitures</a></p>
             <p><a href="/telephones/">Telephones</a></p>
             <p><a href="/immobilier/">Immobilier</a></p>
+            <p><a href="/agent/connexion/">Espace agent</a></p>
           </div>
           <div>
             <h4>Contact</h4>

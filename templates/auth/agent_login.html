@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Connexion Agent | KICHEFU-CHEFU STORE</title>
+    <style>
+      :root {
+        --bg: #101319;
+        --panel: #171d28;
+        --line: #313a49;
+        --text: #f7f9ff;
+        --muted: #b7c0d0;
+        --accent: #79d2a6;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: radial-gradient(circle at top right, #1a2437 0%, var(--bg) 55%);
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 22px;
+        color: var(--text);
+      }
+      .card {
+        width: min(460px, 100%);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: var(--panel);
+        padding: 24px;
+      }
+      h1 { margin: 0 0 10px; font-size: 1.45rem; }
+      p { margin: 0 0 14px; color: var(--muted); }
+      label { display: block; margin: 10px 0 6px; font-size: 0.92rem; }
+      input {
+        width: 100%;
+        border: 1px solid var(--line);
+        background: #101620;
+        color: var(--text);
+        border-radius: 10px;
+        padding: 11px 12px;
+      }
+      .errorlist {
+        margin: 8px 0;
+        list-style: none;
+        border: 1px solid #6a3b3b;
+        background: #321f1f;
+        border-radius: 10px;
+        padding: 10px 12px;
+        color: #ffcbcb;
+      }
+      .btn {
+        width: 100%;
+        border: 0;
+        margin-top: 12px;
+        padding: 12px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #53b98a, var(--accent));
+        color: #07120c;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      .links {
+        margin-top: 14px;
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      a { color: var(--accent); text-decoration: none; }
+    </style>
+  </head>
+  <body>
+    <main class="card">
+      <h1>Espace Agent</h1>
+      <p>Connectez-vous avec un compte agent autorise pour modifier et ajouter les elements du site.</p>
+      <form method="post">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {% for field in form %}
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {{ field.errors }}
+        {% endfor %}
+        <input type="hidden" name="next" value="{{ next }}" />
+        <button class="btn" type="submit">Acceder au tableau de bord agent</button>
+      </form>
+      <div class="links">
+        <a href="/admin/">Administration</a>
+        <a href="/">Retour accueil</a>
+      </div>
+    </main>
+  </body>
+</html>
