@@ -15,24 +15,33 @@
         --black: #000000;
         --white: #ffffff;
         --gold: #c9a227;
-        --line: rgba(255, 255, 255, 0.14);
-        --muted: rgba(255, 255, 255, 0.72);
-        --card: #0f0f0f;
+        --ink-1: #080808;
+        --ink-2: #121212;
+        --line: rgba(255, 255, 255, 0.12);
+        --muted: rgba(255, 255, 255, 0.74);
+        --soft-shadow: 0 18px 45px rgba(0, 0, 0, 0.35);
+        --radius-xl: 24px;
         --radius-lg: 18px;
         --radius-md: 14px;
       }
 
-      * { box-sizing: border-box; }
+      * {
+        box-sizing: border-box;
+      }
 
       body {
         margin: 0;
         font-family: "Poppins", system-ui, sans-serif;
-        background: var(--black);
+        background:
+          radial-gradient(circle at 9% 0%, rgba(201, 162, 39, 0.2), transparent 34%),
+          radial-gradient(circle at 91% 14%, rgba(201, 162, 39, 0.11), transparent 30%),
+          linear-gradient(180deg, #050505 0%, #090909 54%, #050505 100%);
         color: var(--white);
+        line-height: 1.55;
       }
 
       .container {
-        width: min(1200px, 92vw);
+        width: min(1220px, 92vw);
         margin: 0 auto;
       }
 
@@ -41,8 +50,8 @@
         top: 0;
         z-index: 20;
         border-bottom: 1px solid var(--line);
-        background: rgba(0, 0, 0, 0.92);
-        backdrop-filter: blur(8px);
+        background: rgba(4, 4, 4, 0.84);
+        backdrop-filter: blur(11px);
       }
 
       .nav {
@@ -58,12 +67,12 @@
         color: var(--white);
         display: inline-flex;
         flex-direction: column;
-        gap: 2px;
+        gap: 4px;
       }
 
       .brand-crown {
         color: var(--gold);
-        font-size: 1.15rem;
+        font-size: 1.2rem;
         line-height: 1;
       }
 
@@ -85,80 +94,187 @@
         color: var(--white);
         text-decoration: none;
         font-size: 0.92rem;
-        opacity: 0.92;
+        opacity: 0.86;
+        transition: color 0.25s ease, opacity 0.25s ease;
       }
 
-      .menu a:hover { color: var(--gold); }
+      .menu a:hover {
+        color: var(--gold);
+        opacity: 1;
+      }
 
       .btn {
         border-radius: 999px;
-        padding: 11px 18px;
+        padding: 11px 19px;
         text-decoration: none;
         font-weight: 600;
         border: 1px solid transparent;
         display: inline-flex;
         align-items: center;
         justify-content: center;
+        transition: transform 0.28s ease, box-shadow 0.28s ease, background 0.28s ease, color 0.28s ease;
       }
 
-      .btn-gold { background: var(--gold); color: var(--black); }
-      .btn-outline { border-color: var(--gold); color: var(--white); }
-      .btn-dark { border-color: var(--line); color: var(--white); }
+      .btn:hover {
+        transform: translateY(-2px);
+      }
+
+      .btn-gold {
+        background: linear-gradient(135deg, #c9a227, #e0bf57);
+        color: var(--black);
+        box-shadow: 0 10px 24px rgba(201, 162, 39, 0.26);
+      }
+
+      .btn-outline {
+        border-color: var(--gold);
+        color: var(--white);
+      }
+
+      .btn-dark {
+        border-color: var(--line);
+        color: var(--white);
+        background: rgba(255, 255, 255, 0.02);
+      }
 
       .hero {
-        padding: 86px 0;
-        background: linear-gradient(130deg, #070707 0%, #141414 68%, #1c1c1c 100%);
+        padding: 116px 0 104px;
+        background: linear-gradient(135deg, rgba(15, 15, 15, 0.9) 0%, rgba(8, 8, 8, 0.95) 100%);
         border-bottom: 1px solid var(--line);
       }
 
       .hero-grid {
         display: grid;
-        grid-template-columns: 1.2fr 1fr;
-        gap: 28px;
+        grid-template-columns: 1.08fr 0.92fr;
+        gap: 34px;
         align-items: center;
       }
 
-      h1 {
-        margin: 0;
-        font-size: clamp(2rem, 5vw, 3.6rem);
-        line-height: 1.1;
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.8rem;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        padding: 8px 14px;
+        border-radius: 999px;
+        border: 1px solid rgba(201, 162, 39, 0.42);
+        color: rgba(255, 255, 255, 0.88);
+        background: rgba(201, 162, 39, 0.1);
       }
 
-      .lead { color: var(--muted); margin-top: 16px; }
-      .actions { margin-top: 24px; display: flex; gap: 12px; flex-wrap: wrap; }
+      .badge::before {
+        content: "";
+        width: 7px;
+        height: 7px;
+        border-radius: 999px;
+        background: var(--gold);
+      }
+
+      h1 {
+        margin: 18px 0 0;
+        font-size: clamp(2.2rem, 5vw, 4.35rem);
+        line-height: 1.05;
+        letter-spacing: 0.02em;
+      }
+
+      .lead {
+        color: var(--muted);
+        margin-top: 18px;
+        max-width: 660px;
+      }
+
+      .actions {
+        margin-top: 28px;
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .hero-stats {
+        margin-top: 24px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .hero-stat {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 8px 14px;
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.83);
+        background: rgba(255, 255, 255, 0.02);
+      }
 
       .hero-media {
-        border-radius: var(--radius-lg);
+        border-radius: var(--radius-xl);
         overflow: hidden;
         border: 1px solid var(--line);
+        box-shadow: var(--soft-shadow);
+        position: relative;
       }
 
-      .hero-media img { width: 100%; height: 100%; min-height: 300px; object-fit: cover; display: block; }
+      .hero-media::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(0deg, rgba(0, 0, 0, 0.42), transparent 50%);
+      }
 
-      .section { padding: 68px 0; }
-      .title { margin: 0 0 8px; font-size: clamp(1.4rem, 2.1vw, 2rem); }
-      .subtitle { margin: 0; color: var(--muted); }
+      .hero-media img {
+        width: 100%;
+        height: 100%;
+        min-height: 330px;
+        object-fit: cover;
+        display: block;
+      }
+
+      .section {
+        padding: 96px 0;
+      }
+
+      .section-head {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+
+      .title {
+        margin: 0 0 10px;
+        font-size: clamp(1.5rem, 2.2vw, 2.15rem);
+      }
+
+      .subtitle {
+        margin: 0;
+        color: var(--muted);
+        max-width: 720px;
+      }
 
       .grid {
-        margin-top: 26px;
+        margin-top: 30px;
         display: grid;
-        gap: 20px;
+        gap: 22px;
       }
 
       .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
       .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 
       .card {
-        background: var(--card);
+        background: linear-gradient(180deg, #101010 0%, #0a0a0a 100%);
         border: 1px solid var(--line);
         border-radius: var(--radius-md);
         overflow: hidden;
-        transition: transform 0.25s ease, border-color 0.25s ease;
+        transition: transform 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease;
+        box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28);
       }
 
       .card:hover {
-        transform: translateY(-5px);
+        transform: translateY(-7px);
         border-color: var(--gold);
+        box-shadow: 0 22px 44px rgba(0, 0, 0, 0.35);
       }
 
       .card img {
@@ -174,29 +290,38 @@
       .price { color: var(--gold); font-weight: 700; }
       .card-actions { margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap; }
 
+      .category-title {
+        margin-top: 10px;
+        font-size: 1.02rem;
+        letter-spacing: 0.01em;
+      }
+
       .commission {
         border-top: 1px solid var(--line);
         border-bottom: 1px solid var(--line);
-        background: #111111;
+        background:
+          radial-gradient(circle at 8% 50%, rgba(201, 162, 39, 0.18), transparent 32%),
+          #0f0f0f;
       }
 
       .commission-box {
         border: 1px solid var(--line);
-        border-radius: var(--radius-lg);
-        padding: 30px;
-        background: linear-gradient(145deg, #0f0f0f, #191919);
+        border-radius: var(--radius-xl);
+        padding: 34px;
+        background: linear-gradient(145deg, rgba(14, 14, 14, 0.96), rgba(24, 24, 24, 0.92));
+        box-shadow: var(--soft-shadow);
       }
 
       footer {
         border-top: 1px solid var(--line);
-        background: #060606;
-        padding: 56px 0 32px;
+        background: #050505;
+        padding: 72px 0 34px;
       }
 
       .footer-grid {
         display: grid;
         grid-template-columns: 1.2fr 1fr 1fr;
-        gap: 24px;
+        gap: 28px;
       }
 
       .footer-grid h4 { margin: 0 0 12px; }
@@ -210,16 +335,41 @@
       .footer-grid ul { margin: 0; padding: 0; display: grid; gap: 8px; }
       .copy { margin-top: 24px; color: rgba(255, 255, 255, 0.56); font-size: 0.88rem; }
 
+      .fade-up {
+        opacity: 0;
+        transform: translateY(16px);
+        animation: fadeUp 0.7s ease forwards;
+      }
+
+      .fade-delay-1 { animation-delay: 0.1s; }
+      .fade-delay-2 { animation-delay: 0.2s; }
+      .fade-delay-3 { animation-delay: 0.3s; }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
       @media (max-width: 1060px) {
         .hero-grid { grid-template-columns: 1fr; }
+        .hero-media { order: -1; }
         .grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         .grid-3, .footer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       }
 
       @media (max-width: 760px) {
         .nav { flex-direction: column; align-items: flex-start; padding: 14px 0; }
+        .menu { gap: 12px; }
         .grid-4, .grid-3, .footer-grid { grid-template-columns: 1fr; }
-        .section { padding: 52px 0; }
+        .section { padding: 68px 0; }
+        .hero { padding: 84px 0 74px; }
+        .commission-box { padding: 24px; }
       }
     </style>
   </head>
@@ -246,15 +396,21 @@
     <main id="accueil">
       <section class="hero">
         <div class="container hero-grid">
-          <div>
+          <div class="fade-up">
+            <span class="badge">Marketplace Premium</span>
             <h1>KICHEFU-CHEFU STORE</h1>
             <p class="lead">Téléphones • Accessoires • Vente et importation de voitures • Commission immobilière</p>
             <div class="actions">
               <a class="btn btn-gold" href="#voitures">Voir les véhicules</a>
               <a class="btn btn-outline" href="#telephones">Voir les téléphones</a>
             </div>
+            <div class="hero-stats">
+              <span class="hero-stat">Voitures récentes</span>
+              <span class="hero-stat">Smartphones populaires</span>
+              <span class="hero-stat">Commission immobilière</span>
+            </div>
           </div>
-          <div class="hero-media">
+          <div class="hero-media fade-up fade-delay-1">
             <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80" alt="Voiture premium" />
           </div>
         </div>
@@ -262,21 +418,29 @@
 
       <section class="section" id="accessoires">
         <div class="container">
-          <h2 class="title">Catégories</h2>
-          <p class="subtitle">Marketplace moderne pour voitures, électronique et immobilier.</p>
+          <div class="section-head">
+            <div>
+              <h2 class="title">Catégories</h2>
+              <p class="subtitle">Explorez nos univers produits avec une présentation claire, moderne et professionnelle.</p>
+            </div>
+          </div>
           <div class="grid grid-4">
-            <article class="card"><img src="https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=1000&q=80" alt="Téléphones" /><div class="card-body"><h3>Téléphones</h3></div></article>
-            <article class="card"><img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=1000&q=80" alt="Accessoires" /><div class="card-body"><h3>Accessoires</h3></div></article>
-            <article class="card"><img src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1000&q=80" alt="Voitures" /><div class="card-body"><h3>Voitures</h3></div></article>
-            <article class="card"><img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1000&q=80" alt="Immobilier" /><div class="card-body"><h3>Immobilier</h3></div></article>
+            <article class="card fade-up"><img src="https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=1000&q=80" alt="Téléphones" /><div class="card-body"><h3 class="category-title">Téléphones</h3></div></article>
+            <article class="card fade-up fade-delay-1"><img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=1000&q=80" alt="Accessoires" /><div class="card-body"><h3 class="category-title">Accessoires</h3></div></article>
+            <article class="card fade-up fade-delay-2"><img src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1000&q=80" alt="Voitures" /><div class="card-body"><h3 class="category-title">Voitures</h3></div></article>
+            <article class="card fade-up fade-delay-3"><img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1000&q=80" alt="Immobilier" /><div class="card-body"><h3 class="category-title">Immobilier</h3></div></article>
           </div>
         </div>
       </section>
 
       <section class="section" id="voitures">
         <div class="container">
-          <h2 class="title">Marketplace Voitures</h2>
-          <p class="subtitle">Des cartes produits claires, rapides à consulter, prêtes pour conversion.</p>
+          <div class="section-head">
+            <div>
+              <h2 class="title">Voitures Récentes</h2>
+              <p class="subtitle">Une sélection premium dans un affichage inspiré des marketplaces automobiles modernes.</p>
+            </div>
+          </div>
           <div class="grid grid-3">
             <article class="card"><img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1100&q=80" alt="Toyota Land Cruiser" /><div class="card-body"><h3>Toyota Land Cruiser</h3><div class="meta"><span>Année: 2022</span><span class="price">Prix: 58 000 $</span><span>Disponibilité: Disponible</span></div><div class="card-actions"><a class="btn btn-dark" href="#">Voir détails</a><a class="btn btn-gold" href="https://wa.me/243000000000" target="_blank" rel="noopener noreferrer">Contacter sur WhatsApp</a></div></div></article>
             <article class="card"><img src="https://images.unsplash.com/photo-1549924231-f129b911e442?auto=format&fit=crop&w=1100&q=80" alt="Mercedes GLE" /><div class="card-body"><h3>Mercedes GLE</h3><div class="meta"><span>Année: 2021</span><span class="price">Prix: 64 500 $</span><span>Disponibilité: Stock limité</span></div><div class="card-actions"><a class="btn btn-dark" href="#">Voir détails</a><a class="btn btn-gold" href="https://wa.me/243000000000" target="_blank" rel="noopener noreferrer">Contacter sur WhatsApp</a></div></div></article>
@@ -287,8 +451,12 @@
 
       <section class="section" id="telephones">
         <div class="container">
-          <h2 class="title">Téléphones</h2>
-          <p class="subtitle">Smartphones et disponibilités affichés en grille moderne.</p>
+          <div class="section-head">
+            <div>
+              <h2 class="title">Téléphones Populaires</h2>
+              <p class="subtitle">Les modèles les plus demandés, présentés avec un design premium orienté conversion.</p>
+            </div>
+          </div>
           <div class="grid grid-3">
             <article class="card"><img src="https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=1100&q=80" alt="iPhone 15 Pro" /><div class="card-body"><h3>iPhone 15 Pro</h3><div class="meta"><span class="price">Prix: 1 240 $</span><span>Disponibilité: Disponible</span></div><div class="card-actions"><a class="btn btn-dark" href="#">Voir détails</a></div></div></article>
             <article class="card"><img src="https://images.unsplash.com/photo-1678652197831-2d180705cd2c?auto=format&fit=crop&w=1100&q=80" alt="Samsung Galaxy S24 Ultra" /><div class="card-body"><h3>Samsung Galaxy S24 Ultra</h3><div class="meta"><span class="price">Prix: 1 180 $</span><span>Disponibilité: Sur commande</span></div><div class="card-actions"><a class="btn btn-dark" href="#">Voir détails</a></div></div></article>
@@ -299,11 +467,11 @@
 
       <section class="section commission" id="vendre">
         <div class="container">
-          <div class="commission-box">
+          <div class="commission-box fade-up">
             <h2 class="title">Vendre avec nous</h2>
-            <p class="subtitle">Vous voulez vendre votre voiture, votre maison ou votre parcelle rapidement ? KICHEFU-CHEFU STORE vous aide à trouver un acheteur rapidement.</p>
+            <p class="subtitle">Vous voulez vendre votre voiture ou votre parcelle rapidement ? KICHEFU-CHEFU STORE vous aide à trouver un acheteur.</p>
             <div class="actions">
-              <a class="btn btn-gold" href="https://wa.me/243000000000" target="_blank" rel="noopener noreferrer">Proposer un bien ou un véhicule</a>
+              <a class="btn btn-gold" href="https://wa.me/243000000000" target="_blank" rel="noopener noreferrer">Proposer un bien</a>
             </div>
           </div>
         </div>
@@ -311,8 +479,12 @@
 
       <section class="section" id="immobilier">
         <div class="container">
-          <h2 class="title">Immobilier</h2>
-          <p class="subtitle">Maisons et parcelles avec contact rapide.</p>
+          <div class="section-head">
+            <div>
+              <h2 class="title">Immobilier</h2>
+              <p class="subtitle">Maisons et parcelles premium avec contact rapide et présentation professionnelle.</p>
+            </div>
+          </div>
           <div class="grid grid-3">
             <article class="card"><img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=1100&q=80" alt="Maison" /><div class="card-body"><h3>Maison</h3><div class="meta"><span>Localisation: Gombe, Kinshasa</span><span class="price">Prix: 185 000 $</span></div><div class="card-actions"><a class="btn btn-gold" href="https://wa.me/243000000000" target="_blank" rel="noopener noreferrer">Contacter</a></div></div></article>
             <article class="card"><img src="https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1100&q=80" alt="Parcelle" /><div class="card-body"><h3>Parcelle</h3><div class="meta"><span>Localisation: Limete, Kinshasa</span><span class="price">Prix: 72 000 $</span></div><div class="card-actions"><a class="btn btn-gold" href="https://wa.me/243000000000" target="_blank" rel="noopener noreferrer">Contacter</a></div></div></article>
@@ -343,7 +515,7 @@
             <ul>
               <li>Téléphone: +243 000 000 000</li>
               <li>WhatsApp: +243 000 000 000</li>
-              <li>Localisation: Kinshasa, RDC</li>
+              <li>Adresse: Kinshasa, RDC</li>
             </ul>
           </div>
         </div>
