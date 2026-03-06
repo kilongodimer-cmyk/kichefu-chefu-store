@@ -1,3 +1,4 @@
+import re
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
@@ -968,3 +969,15 @@ class SitemapXmlView(View):
 			body.append(f"<url><loc>{link}</loc></url>")
 		body.append("</urlset>")
 		return HttpResponse("".join(body), content_type="application/xml")
+
+
+class GoogleSiteVerificationView(View):
+	pattern = re.compile(r"^google[a-zA-Z0-9]+\.html$")
+
+	def get(self, request, filename):
+		if not self.pattern.match(filename):
+			return HttpResponse(status=404)
+		return HttpResponse(
+			f"google-site-verification: {filename}",
+			content_type="text/html",
+		)

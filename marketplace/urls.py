@@ -1,5 +1,5 @@
 from django.contrib.auth import views as auth_views
-from django.urls import path
+from django.urls import path, re_path
 
 from .views import (
     AccessoryMarketplaceListView,
@@ -14,6 +14,7 @@ from .views import (
     GlobalSearchView,
     SitemapXmlView,
     RobotsTxtView,
+    GoogleSiteVerificationView,
     RegisterView,
     RealEstateDetailView,
     RealEstateMarketplaceListView,
@@ -24,6 +25,7 @@ from .views import (
 app_name = "marketplace"
 
 urlpatterns = [
+    re_path(r"^(?P<filename>google[a-zA-Z0-9]+\.html)$", GoogleSiteVerificationView.as_view(), name="google_site_verification"),
     path("connexion/", auth_views.LoginView.as_view(template_name="auth/login.html"), name="login"),
     path("inscription/", RegisterView.as_view(), name="register"),
     path("deconnexion/", auth_views.LogoutView.as_view(next_page="home"), name="logout"),
