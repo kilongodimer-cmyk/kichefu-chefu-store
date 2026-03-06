@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Immobilier | KICHEFU-CHEFU STORE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+      :root { --bg:#080808; --line:rgba(255,255,255,.13); --muted:rgba(255,255,255,.74); --gold:#c9a227; --text:#fff; }
+      * { box-sizing:border-box; }
+      body { margin:0; color:var(--text); font-family:"Poppins",system-ui,sans-serif; background:var(--bg); }
+      .container { width:min(1200px,92vw); margin:0 auto; }
+      .top { border-bottom:1px solid var(--line); background:#050505; }
+      .nav { min-height:74px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+      .brand { color:#fff; text-decoration:none; font-weight:700; }
+      .menu { display:flex; gap:12px; flex-wrap:wrap; }
+      .menu a { color:#fff; text-decoration:none; opacity:.86; }
+      .hero { padding:46px 0 18px; }
+      h1 { margin:0; font-size:clamp(1.9rem,4vw,3rem); }
+      .sub { margin-top:10px; color:var(--muted); }
+      .districts { margin-top:14px; display:flex; gap:7px; flex-wrap:wrap; }
+      .districts span { border:1px solid var(--line); border-radius:999px; padding:5px 9px; font-size:.8rem; color:var(--muted); }
+      .filters { margin-top:14px; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
+      .filters input,.filters select { width:100%; border:1px solid var(--line); background:#111; color:#fff; border-radius:10px; padding:10px 12px; font-family:inherit; }
+      .btn { border:1px solid transparent; border-radius:999px; padding:10px 14px; text-decoration:none; font-weight:600; display:inline-flex; align-items:center; justify-content:center; }
+      .btn-gold { background:linear-gradient(135deg,#c9a227,#e2c363); color:#000; }
+      .btn-ghost { border-color:var(--line); color:#fff; }
+      .grid { padding:24px 0 56px; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+      .card { border:1px solid var(--line); border-radius:14px; overflow:hidden; background:linear-gradient(180deg,#101010,#0a0a0a); }
+      .card img { width:100%; aspect-ratio:16/10; object-fit:cover; display:block; }
+      .body { padding:12px; }
+      .title { margin:0; }
+      .price { margin-top:8px; color:var(--gold); font-weight:700; }
+      .meta { margin-top:8px; color:var(--muted); font-size:.9rem; display:grid; gap:4px; }
+      .badges { margin-top:8px; display:flex; gap:6px; flex-wrap:wrap; }
+      .badge { border:1px solid rgba(201,162,39,.45); border-radius:999px; padding:4px 8px; font-size:.72rem; color:#eedb98; }
+      .commission { border-color:rgba(52,199,89,.4); color:#b6eec2; }
+      .actions { margin-top:10px; display:flex; gap:8px; flex-wrap:wrap; }
+      .pager { margin:0 0 56px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+      .pager a,.pager span { color:#fff; text-decoration:none; border:1px solid var(--line); border-radius:999px; padding:7px 12px; }
+      .pager .active { background:var(--gold); color:#000; border-color:transparent; }
+      @media (max-width:1020px) { .filters { grid-template-columns:1fr 1fr; } .grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+      @media (max-width:760px) { .nav { flex-direction:column; align-items:flex-start; padding:10px 0; } .filters,.grid { grid-template-columns:1fr; } }
+    </style>
+  </head>
+  <body>
+    <header class="top">
+      <div class="container nav">
+        <a class="brand" href="/">KICHEFU-CHEFU STORE</a>
+        <nav class="menu"><a href="/voitures/">Voitures</a><a href="/telephones/">Telephones</a><a href="/accessoires/">Accessoires</a><a href="/immobilier/">Immobilier</a><a href="/vendre-avec-nous/">Vendre avec nous</a></nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="hero">
+        <h1>Parcelles et maisons a Lubumbashi</h1>
+        <p class="sub">Annonces ciblees sur les quartiers: Kenya, Kamalondo, Katuba, Ruashi, Golf, Bel-Air et Kalubwe.</p>
+        <div class="districts">{% for area in lubumbashi_areas %}<span>{{ area }}</span>{% endfor %}</div>
+        <form method="get" class="filters">
+          <select name="real_estate_type"><option value="">Type de bien</option>{% for value, label in estate_types %}<option value="{{ value }}" {% if filters.real_estate_type == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select>
+          <select name="location"><option value="">Quartier</option>{% for area in lubumbashi_areas %}<option value="{{ area }}" {% if filters.location == area %}selected{% endif %}>{{ area }}</option>{% endfor %}</select>
+          <input type="text" name="q" value="{{ filters.q }}" placeholder="Recherche libre" />
+          <button class="btn btn-gold" type="submit">Filtrer</button>
+        </form>
+      </section>
+
+      <section class="grid">
+        {% for listing, badges in estate_items %}
+          <article class="card">
+            {% with img=listing.images.first %}
+              {% if img %}<img src="{{ img.image.url }}" alt="{{ listing.location }}" loading="lazy" decoding="async" />{% else %}<img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80" alt="{{ listing.location }}" loading="lazy" decoding="async" />{% endif %}
+            {% endwith %}
+            <div class="body">
+              <h3 class="title">{{ listing.get_real_estate_type_display }} - {{ listing.location }}</h3>
+              <div class="price">{{ listing.price }} $</div>
+              <div class="meta"><span>{{ listing.get_availability_display }}</span></div>
+              <div class="badges">
+                {% for badge in badges %}<span class="badge">{{ badge }}</span>{% endfor %}
+                {% if listing.is_commission %}<span class="badge commission">Vente en commission par KICHEFU-CHEFU STORE</span>{% endif %}
+              </div>
+              <div class="actions">
+                <a class="btn btn-ghost" href="{% url 'marketplace:real_estate_detail' listing.pk %}">Voir details</a>
+                <a class="btn btn-gold" href="https://wa.me/243000000000?text=Bonjour,%20je%20suis%20interesse%20par%20{{ listing.get_real_estate_type_display }}%20a%20{{ listing.location }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+              </div>
+            </div>
+          </article>
+        {% empty %}<p>Aucune annonce immobiliere trouvee.</p>{% endfor %}
+      </section>
+
+      {% if page_obj.paginator.num_pages > 1 %}
+        <div class="pager">
+          {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}&real_estate_type={{ filters.real_estate_type }}&location={{ filters.location }}&q={{ filters.q }}">Precedent</a>{% endif %}
+          <span class="active">Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+          {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}&real_estate_type={{ filters.real_estate_type }}&location={{ filters.location }}&q={{ filters.q }}">Suivant</a>{% endif %}
+        </div>
+      {% endif %}
+    </main>
+  </body>
+</html>

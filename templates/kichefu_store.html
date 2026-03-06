@@ -3,688 +3,367 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>KICHEFU-CHEFU STORE | Marketplace Premium</title>
+    <title>KICHEFU-CHEFU STORE | Marketplace Lubumbashi</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
     <style>
       :root {
-        --black: #000000;
-        --white: #ffffff;
-        --gold: #c9a227;
-        --ink-1: #070707;
-        --ink-2: #111111;
+        --bg: #070707;
+        --panel: #121212;
         --line: rgba(255, 255, 255, 0.14);
-        --muted: rgba(255, 255, 255, 0.74);
-        --ok: #34c759;
-        --radius-xl: 24px;
-        --radius-lg: 18px;
-        --radius-md: 14px;
-        --shadow-soft: 0 16px 36px rgba(0, 0, 0, 0.3);
+        --muted: rgba(255, 255, 255, 0.75);
+        --gold: #c9a227;
+        --text: #fff;
       }
-
-      * {
-        box-sizing: border-box;
-      }
-
+      * { box-sizing: border-box; }
       body {
         margin: 0;
-        color: var(--white);
         font-family: "Poppins", system-ui, sans-serif;
+        color: var(--text);
         background:
-          radial-gradient(circle at 12% 0%, rgba(201, 162, 39, 0.22), transparent 33%),
-          radial-gradient(circle at 88% 12%, rgba(201, 162, 39, 0.12), transparent 28%),
-          linear-gradient(180deg, #050505 0%, #090909 55%, #050505 100%);
+          radial-gradient(circle at 8% 0%, rgba(201, 162, 39, 0.2), transparent 34%),
+          radial-gradient(circle at 85% 10%, rgba(201, 162, 39, 0.08), transparent 36%),
+          var(--bg);
       }
-
-      .container {
-        width: min(1220px, 92vw);
-        margin: 0 auto;
-      }
-
+      .container { width: min(1220px, 92vw); margin: 0 auto; }
       .topbar {
         position: sticky;
         top: 0;
-        z-index: 20;
-        background: rgba(6, 6, 6, 0.86);
-        backdrop-filter: blur(10px);
+        z-index: 30;
         border-bottom: 1px solid var(--line);
+        background: rgba(4, 4, 4, 0.9);
+        backdrop-filter: blur(8px);
       }
-
       .nav {
-        min-height: 84px;
+        min-height: 78px;
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 16px;
       }
-
-      .brand {
-        text-decoration: none;
-        color: var(--white);
-        display: inline-flex;
-        flex-direction: column;
-        gap: 4px;
-      }
-
-      .brand-crown {
-        color: var(--gold);
-        font-size: 1.2rem;
-        line-height: 1;
-      }
-
-      .brand-name {
-        text-transform: uppercase;
-        font-weight: 700;
-        font-size: 0.92rem;
-        letter-spacing: 0.09em;
-      }
-
-      .menu {
-        display: flex;
-        align-items: center;
-        gap: 17px;
-        flex-wrap: wrap;
-      }
-
-      .menu a {
-        color: var(--white);
-        opacity: 0.86;
-        text-decoration: none;
-        font-size: 0.92rem;
-        transition: opacity 0.25s ease, color 0.25s ease;
-      }
-
-      .menu a:hover {
-        opacity: 1;
-        color: var(--gold);
-      }
-
+      .brand { color: #fff; text-decoration: none; font-weight: 800; letter-spacing: 0.08em; font-size: 0.9rem; }
+      .menu { display: flex; gap: 13px; flex-wrap: wrap; }
+      .menu a { color: #fff; text-decoration: none; opacity: 0.86; font-size: 0.9rem; }
+      .menu a:hover { opacity: 1; color: var(--gold); }
       .btn {
-        border-radius: 999px;
         border: 1px solid transparent;
-        padding: 11px 18px;
+        border-radius: 999px;
+        padding: 10px 16px;
         text-decoration: none;
         font-weight: 600;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        transition: transform 0.28s ease, box-shadow 0.28s ease;
       }
-
-      .btn:hover {
-        transform: translateY(-2px);
-      }
-
-      .btn-gold {
-        color: #000;
-        background: linear-gradient(135deg, #c9a227, #e0bf57);
-        box-shadow: 0 10px 22px rgba(201, 162, 39, 0.28);
-      }
-
-      .btn-ghost {
-        color: var(--white);
-        border-color: var(--line);
-        background: rgba(255, 255, 255, 0.03);
-      }
-
+      .btn-gold { background: linear-gradient(135deg, #c9a227, #e1c15d); color: #000; }
+      .btn-ghost { border-color: var(--line); color: #fff; background: rgba(255, 255, 255, 0.02); }
       .hero {
-        padding: 110px 0 95px;
-        border-bottom: 1px solid var(--line);
-      }
-
-      .hero-grid {
+        padding: 96px 0 78px;
         display: grid;
-        grid-template-columns: 1.05fr 0.95fr;
-        gap: 34px;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 24px;
         align-items: center;
       }
-
-      .hero-badge {
+      .eyebrow {
         display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 14px;
+        border: 1px solid rgba(201, 162, 39, 0.5);
+        background: rgba(201, 162, 39, 0.12);
         border-radius: 999px;
-        border: 1px solid rgba(201, 162, 39, 0.45);
-        background: rgba(201, 162, 39, 0.1);
+        padding: 7px 12px;
         font-size: 0.78rem;
         text-transform: uppercase;
-        letter-spacing: 0.06em;
+        letter-spacing: 0.05em;
       }
-
-      .hero-badge::before {
-        content: "";
-        width: 7px;
-        height: 7px;
-        border-radius: 999px;
-        background: var(--gold);
-      }
-
-      h1 {
-        margin: 18px 0 0;
-        font-size: clamp(2.1rem, 5vw, 4.3rem);
-        line-height: 1.04;
-      }
-
-      .lead {
-        margin: 18px 0 0;
-        max-width: 650px;
-        color: var(--muted);
-      }
-
-      .hero-actions {
-        margin-top: 28px;
-        display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
-      }
-
-      .hero-media {
+      h1 { margin: 14px 0 0; font-size: clamp(2rem, 4.7vw, 4rem); line-height: 1.05; }
+      .lead { margin-top: 14px; color: var(--muted); max-width: 680px; }
+      .hero-actions { margin-top: 24px; display: flex; gap: 10px; flex-wrap: wrap; }
+      .hero-image {
         border: 1px solid var(--line);
-        border-radius: var(--radius-xl);
+        border-radius: 20px;
         overflow: hidden;
-        box-shadow: var(--shadow-soft);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
       }
-
-      .hero-media img {
-        width: 100%;
-        height: 100%;
-        min-height: 330px;
-        object-fit: cover;
-        display: block;
-      }
-
-      .section {
-        padding: 92px 0;
-      }
-
-      .section-title {
-        margin: 0 0 10px;
-        font-size: clamp(1.45rem, 2.3vw, 2.18rem);
-      }
-
-      .section-subtitle {
-        margin: 0;
-        max-width: 760px;
-        color: var(--muted);
-      }
-
-      .grid {
-        margin-top: 30px;
-        display: grid;
-        gap: 22px;
-      }
-
+      .hero-image img { width: 100%; height: 100%; min-height: 320px; object-fit: cover; display: block; }
+      .section { padding: 68px 0; border-top: 1px solid var(--line); }
+      .head { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+      .head h2 { margin: 0; font-size: clamp(1.4rem, 2.3vw, 2rem); }
+      .head p { margin: 8px 0 0; color: var(--muted); }
+      .grid { margin-top: 24px; display: grid; gap: 18px; }
       .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
       .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-
-      .category-card,
-      .product-card {
+      .card {
         border: 1px solid var(--line);
-        border-radius: var(--radius-md);
+        border-radius: 14px;
         overflow: hidden;
-        background: linear-gradient(180deg, #101010 0%, #0a0a0a 100%);
-        box-shadow: var(--shadow-soft);
-        transition: transform 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease;
+        background: linear-gradient(180deg, #111, #0b0b0b);
       }
-
-      .category-card:hover,
-      .product-card:hover {
-        transform: translateY(-7px);
-        border-color: var(--gold);
-        box-shadow: 0 22px 44px rgba(0, 0, 0, 0.36);
-      }
-
-      .category-card img,
-      .product-card img {
-        width: 100%;
-        aspect-ratio: 16 / 10;
-        object-fit: cover;
-        display: block;
-      }
-
-      .category-body,
-      .product-body {
-        padding: 15px;
-      }
-
-      .category-title {
-        margin: 0;
-        font-size: 1.02rem;
-      }
-
-      .product-title {
-        margin: 0;
-        font-size: 1.05rem;
-      }
-
-      .product-price {
-        margin-top: 8px;
-        color: var(--gold);
-        font-weight: 700;
-      }
-
-      .product-meta {
-        margin-top: 8px;
-        display: grid;
-        gap: 6px;
-        color: var(--muted);
-        font-size: 0.9rem;
-      }
-
-      .status-badge {
-        margin-top: 8px;
-        width: fit-content;
-        padding: 5px 10px;
-        border-radius: 999px;
-        border: 1px solid rgba(52, 199, 89, 0.45);
-        color: #cbf5d7;
-        background: rgba(52, 199, 89, 0.14);
-        font-size: 0.76rem;
-        font-weight: 600;
-      }
-
-      .product-actions {
-        margin-top: 12px;
+      .card:hover { border-color: var(--gold); transform: translateY(-4px); transition: 0.22s ease; }
+      .card img { width: 100%; aspect-ratio: 16/10; object-fit: cover; display: block; }
+      .body { padding: 14px; }
+      .title { margin: 0; font-size: 1rem; }
+      .price { margin-top: 7px; color: var(--gold); font-weight: 700; }
+      .meta { margin-top: 8px; color: var(--muted); font-size: 0.9rem; display: grid; gap: 5px; }
+      .badges { margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap; }
+      .badge { border: 1px solid var(--line); border-radius: 999px; padding: 4px 8px; font-size: 0.72rem; }
+      .badge-gold { border-color: rgba(201, 162, 39, 0.5); color: #f0dc9b; }
+      .badge-ok { border-color: rgba(52, 199, 89, 0.45); color: #b6efc4; }
+      .actions { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+      .offer {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 12px;
         display: flex;
-        gap: 9px;
-        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        background: var(--panel);
       }
-
-      .commission {
-        border-top: 1px solid var(--line);
-        border-bottom: 1px solid var(--line);
-        background:
-          radial-gradient(circle at 8% 50%, rgba(201, 162, 39, 0.18), transparent 32%),
-          #0f0f0f;
-      }
-
-      .commission-box {
-        border: 1px solid var(--line);
-        border-radius: var(--radius-xl);
-        background: linear-gradient(145deg, rgba(16, 16, 16, 0.97), rgba(25, 25, 25, 0.92));
-        box-shadow: var(--shadow-soft);
-        padding: 34px;
-      }
-
-      .testimonials {
-        background: linear-gradient(180deg, rgba(10, 10, 10, 0.95), rgba(6, 6, 6, 0.95));
-        border-top: 1px solid var(--line);
-        border-bottom: 1px solid var(--line);
-      }
-
-      .quote-grid {
-        margin-top: 28px;
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 18px;
-      }
-
-      .quote-card {
-        border: 1px solid var(--line);
-        border-radius: var(--radius-md);
-        background: linear-gradient(180deg, #101010, #0b0b0b);
-        padding: 18px;
-        box-shadow: var(--shadow-soft);
-      }
-
-      .quote-stars {
-        color: var(--gold);
-        letter-spacing: 0.08em;
-        font-size: 0.82rem;
-      }
-
-      .quote-text {
-        margin-top: 10px;
-        color: var(--muted);
-        font-size: 0.92rem;
-      }
-
-      .quote-author {
-        margin-top: 12px;
-        font-weight: 600;
-        font-size: 0.88rem;
-      }
-
-      footer {
-        border-top: 1px solid var(--line);
-        padding: 70px 0 34px;
-        background: #050505;
-      }
-
-      .footer-grid {
-        display: grid;
-        grid-template-columns: 1.2fr 1fr 1fr;
-        gap: 28px;
-      }
-
-      .footer-grid h4 {
-        margin: 0 0 12px;
-      }
-
-      .footer-grid p,
-      .footer-grid a,
-      .footer-grid li {
-        margin: 0;
-        color: var(--muted);
-        text-decoration: none;
-        list-style: none;
-      }
-
-      .footer-grid ul {
-        margin: 0;
-        padding: 0;
-        display: grid;
-        gap: 8px;
-      }
-
-      .copy {
-        margin-top: 24px;
-        font-size: 0.87rem;
-        color: rgba(255, 255, 255, 0.58);
-      }
-
+      .offer small { color: var(--muted); display: block; }
+      .districts { margin-top: 18px; display: flex; gap: 8px; flex-wrap: wrap; }
+      .districts span { border: 1px solid var(--line); border-radius: 999px; padding: 6px 10px; font-size: 0.82rem; color: var(--muted); }
+      footer { border-top: 1px solid var(--line); padding: 52px 0 32px; background: #050505; }
+      .foot { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 20px; }
+      .foot p, .foot a { color: var(--muted); text-decoration: none; margin: 0; }
+      .copy { margin-top: 16px; color: rgba(255, 255, 255, 0.55); font-size: 0.85rem; }
       @media (max-width: 1080px) {
-        .hero-grid { grid-template-columns: 1fr; }
+        .hero { grid-template-columns: 1fr; }
         .grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-        .grid-3,
-        .footer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .grid-3, .foot { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       }
-
       @media (max-width: 760px) {
-        .nav { flex-direction: column; align-items: flex-start; padding: 14px 0; }
-        .menu { gap: 12px; }
-        .hero { padding: 84px 0 72px; }
-        .section { padding: 68px 0; }
-        .grid-4,
-        .grid-3,
-        .footer-grid,
-        .quote-grid { grid-template-columns: 1fr; }
-        .commission-box { padding: 24px; }
-      }
-
-      @media (max-width: 1080px) {
-        .quote-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .nav { flex-direction: column; align-items: flex-start; padding: 10px 0; }
+        .grid-4, .grid-3, .foot { grid-template-columns: 1fr; }
       }
     </style>
   </head>
   <body>
     <header class="topbar">
       <div class="container nav">
-        <a href="/" class="brand" aria-label="KICHEFU-CHEFU STORE">
-          <span class="brand-crown">♛</span>
-          <span class="brand-name">KICHEFU-CHEFU STORE</span>
-        </a>
+        <a class="brand" href="/">KICHEFU-CHEFU STORE</a>
         <nav class="menu" aria-label="Navigation principale">
-          <a href="#accueil">Accueil</a>
           <a href="/voitures/">Voitures</a>
-          <a href="#telephones">Téléphones</a>
-          <a href="#accessoires">Accessoires</a>
-          <a href="#immobilier">Immobilier</a>
-          <a href="#vendre">Vendre avec nous</a>
-          <a href="#contact">Contact</a>
+          <a href="/telephones/">Telephones</a>
+          <a href="/accessoires/">Accessoires</a>
+          <a href="/immobilier/">Parcelles & maisons</a>
+          <a href="/vendre-avec-nous/">Vendre avec nous</a>
         </nav>
         <a class="btn btn-gold" href="https://wa.me/243000000000" target="_blank" rel="noopener noreferrer">WhatsApp</a>
       </div>
     </header>
 
-    <main id="accueil">
-      <section class="hero">
-        <div class="container hero-grid">
-          <div>
-            <span class="hero-badge">Plateforme Marketplace Pro</span>
-            <h1>KICHEFU-CHEFU STORE</h1>
-            <p class="lead">Téléphones • Accessoires • Vente et importation de voitures • Commission immobilière</p>
-            <div class="hero-actions">
-              <a class="btn btn-gold" href="/voitures/">Voir les véhicules</a>
-              <a class="btn btn-ghost" href="#telephones">Voir les téléphones</a>
-            </div>
-          </div>
-          <div class="hero-media">
-            <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80" alt="Voiture premium" loading="eager" fetchpriority="high" decoding="async" />
-          </div>
+    <section class="container hero">
+      <div>
+        <span class="eyebrow">Lubumbashi Marketplace</span>
+        <h1>La plateforme locale pour voitures, smartphones et immobilier</h1>
+        <p class="lead">KICHEFU-CHEFU STORE est concu pour le marche de la RDC: navigation rapide, gros visuels, contact WhatsApp direct et categories dediees pour explorer plus longtemps.</p>
+        <div class="hero-actions">
+          <a class="btn btn-gold" href="/voitures/">Explorer les voitures</a>
+          <a class="btn btn-ghost" href="/immobilier/">Voir l'immobilier</a>
         </div>
-      </section>
+      </div>
+      <div class="hero-image">
+        <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1400&q=80" alt="Voitures et business a Lubumbashi" loading="lazy" decoding="async" />
+      </div>
+    </section>
 
-      <section class="section" id="accessoires">
-        <div class="container">
-          <h2 class="section-title">Catégories</h2>
-          <p class="section-subtitle">Une interface moderne inspirée des grands marketplaces: navigation claire, produits visibles, actions rapides.</p>
-          <div class="grid grid-4">
-            <article class="category-card">
-              <img src="https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=1000&q=80" alt="Téléphones" loading="lazy" decoding="async" />
-              <div class="category-body"><h3 class="category-title">Téléphones</h3></div>
-            </article>
-            <article class="category-card">
-              <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=1000&q=80" alt="Accessoires" loading="lazy" decoding="async" />
-              <div class="category-body"><h3 class="category-title">Accessoires</h3></div>
-            </article>
-            <article class="category-card">
-              <img src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1000&q=80" alt="Voitures" loading="lazy" decoding="async" />
-              <div class="category-body"><h3 class="category-title">Voitures</h3></div>
-            </article>
-            <article class="category-card">
-              <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1000&q=80" alt="Immobilier" loading="lazy" decoding="async" />
-              <div class="category-body"><h3 class="category-title">Immobilier</h3></div>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section class="section" id="voitures">
-        <div class="container">
-          <h2 class="section-title">Voitures Récentes</h2>
-          <p class="section-subtitle">Des cartes automobiles comparables aux grandes plateformes: image large, prix en évidence, badge statut et actions directes.</p>
-          <div class="grid grid-3">
-            <article class="product-card">
-              <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1100&q=80" alt="Toyota Land Cruiser" loading="lazy" decoding="async" />
-              <div class="product-body">
-                <h3 class="product-title">Toyota Land Cruiser 2022</h3>
-                <div class="product-price">58 000 $</div>
-                <div class="product-meta"><span>Kilométrage: 42 000 km</span></div>
-                <span class="status-badge">Disponible</span>
-                <div class="product-actions">
-                  <a class="btn btn-ghost" href="/voitures/">Voir détails</a>
-                  <a class="btn btn-gold" href="https://wa.me/243000000000?text=Bonjour,%20je%20suis%20interesse%20par%20Toyota%20Land%20Cruiser%202022." target="_blank" rel="noopener noreferrer">WhatsApp</a>
-                </div>
-              </div>
-            </article>
-            <article class="product-card">
-              <img src="https://images.unsplash.com/photo-1549924231-f129b911e442?auto=format&fit=crop&w=1100&q=80" alt="Mercedes GLE" loading="lazy" decoding="async" />
-              <div class="product-body">
-                <h3 class="product-title">Mercedes GLE 2021</h3>
-                <div class="product-price">64 500 $</div>
-                <div class="product-meta"><span>Kilométrage: 36 800 km</span></div>
-                <span class="status-badge">Stock limité</span>
-                <div class="product-actions">
-                  <a class="btn btn-ghost" href="/voitures/">Voir détails</a>
-                  <a class="btn btn-gold" href="https://wa.me/243000000000?text=Bonjour,%20je%20suis%20interesse%20par%20Mercedes%20GLE%202021." target="_blank" rel="noopener noreferrer">WhatsApp</a>
-                </div>
-              </div>
-            </article>
-            <article class="product-card">
-              <img src="https://images.unsplash.com/photo-1617469767053-c787537917f1?auto=format&fit=crop&w=1100&q=80" alt="BMW X5" loading="lazy" decoding="async" />
-              <div class="product-body">
-                <h3 class="product-title">BMW X5 2023</h3>
-                <div class="product-price">71 300 $</div>
-                <div class="product-meta"><span>Kilométrage: 18 500 km</span></div>
-                <span class="status-badge">Disponible</span>
-                <div class="product-actions">
-                  <a class="btn btn-ghost" href="/voitures/">Voir détails</a>
-                  <a class="btn btn-gold" href="https://wa.me/243000000000?text=Bonjour,%20je%20suis%20interesse%20par%20BMW%20X5%202023." target="_blank" rel="noopener noreferrer">WhatsApp</a>
-                </div>
-              </div>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section class="section" id="telephones">
-        <div class="container">
-          <h2 class="section-title">Téléphones Populaires</h2>
-          <p class="section-subtitle">Même standard de présentation premium que l'automobile, pour une expérience e-commerce cohérente.</p>
-          <div class="grid grid-3">
-            <article class="product-card">
-              <img src="https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=1100&q=80" alt="iPhone 15 Pro" loading="lazy" decoding="async" />
-              <div class="product-body">
-                <h3 class="product-title">iPhone 15 Pro</h3>
-                <div class="product-price">1 240 $</div>
-                <div class="product-meta"><span>Stockage: 256 Go</span></div>
-                <span class="status-badge">Disponible</span>
-                <div class="product-actions">
-                  <a class="btn btn-ghost" href="#">Voir détails</a>
-                  <a class="btn btn-gold" href="https://wa.me/243000000000?text=Bonjour,%20je%20suis%20interesse%20par%20iPhone%2015%20Pro." target="_blank" rel="noopener noreferrer">WhatsApp</a>
-                </div>
-              </div>
-            </article>
-            <article class="product-card">
-              <img src="https://images.unsplash.com/photo-1678652197831-2d180705cd2c?auto=format&fit=crop&w=1100&q=80" alt="Samsung Galaxy S24 Ultra" loading="lazy" decoding="async" />
-              <div class="product-body">
-                <h3 class="product-title">Samsung Galaxy S24 Ultra</h3>
-                <div class="product-price">1 180 $</div>
-                <div class="product-meta"><span>Stockage: 512 Go</span></div>
-                <span class="status-badge">Sur commande</span>
-                <div class="product-actions">
-                  <a class="btn btn-ghost" href="#">Voir détails</a>
-                  <a class="btn btn-gold" href="https://wa.me/243000000000?text=Bonjour,%20je%20suis%20interesse%20par%20Samsung%20Galaxy%20S24%20Ultra." target="_blank" rel="noopener noreferrer">WhatsApp</a>
-                </div>
-              </div>
-            </article>
-            <article class="product-card">
-              <img src="https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?auto=format&fit=crop&w=1100&q=80" alt="Google Pixel 8 Pro" loading="lazy" decoding="async" />
-              <div class="product-body">
-                <h3 class="product-title">Google Pixel 8 Pro</h3>
-                <div class="product-price">980 $</div>
-                <div class="product-meta"><span>Stockage: 256 Go</span></div>
-                <span class="status-badge">Disponible</span>
-                <div class="product-actions">
-                  <a class="btn btn-ghost" href="#">Voir détails</a>
-                  <a class="btn btn-gold" href="https://wa.me/243000000000?text=Bonjour,%20je%20suis%20interesse%20par%20Google%20Pixel%208%20Pro." target="_blank" rel="noopener noreferrer">WhatsApp</a>
-                </div>
-              </div>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section class="section commission" id="vendre">
-        <div class="container">
-          <div class="commission-box">
-            <h2 class="section-title">Vendre avec nous</h2>
-            <p class="section-subtitle">Vous voulez vendre votre voiture ou votre parcelle rapidement ? KICHEFU-CHEFU STORE vous aide à trouver un acheteur.</p>
-            <div class="hero-actions" style="margin-top:20px;">
-              <a class="btn btn-gold" href="/voitures/vendre/">Proposer un bien</a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="section testimonials" id="avis">
-        <div class="container">
-          <h2 class="section-title">Avis Clients</h2>
-          <p class="section-subtitle">Des retours concrets de clients qui ont acheté ou vendu via KICHEFU-CHEFU STORE.</p>
-          <div class="quote-grid">
-            <article class="quote-card">
-              <div class="quote-stars">★★★★★</div>
-              <p class="quote-text">"Processus rapide et transparent. J'ai trouvé mon véhicule en moins d'une semaine."</p>
-              <p class="quote-author">M. Kabasele - Acheteur automobile</p>
-            </article>
-            <article class="quote-card">
-              <div class="quote-stars">★★★★★</div>
-              <p class="quote-text">"Design clair, prix visibles, contact WhatsApp immédiat. Très professionnel."</p>
-              <p class="quote-author">Mme Mbuyi - Cliente smartphones</p>
-            </article>
-            <article class="quote-card">
-              <div class="quote-stars">★★★★★</div>
-              <p class="quote-text">"J'ai vendu ma parcelle rapidement grâce au service de commission du store."</p>
-              <p class="quote-author">M. Ilunga - Vendeur immobilier</p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section class="section" id="immobilier">
-        <div class="container">
-          <h2 class="section-title">Immobilier</h2>
-          <p class="section-subtitle">Maisons et parcelles avec la même qualité de présentation qu'une plateforme immobilière professionnelle.</p>
-          <div class="grid grid-3">
-            <article class="product-card">
-              <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=1100&q=80" alt="Maison Gombe" loading="lazy" decoding="async" />
-              <div class="product-body">
-                <h3 class="product-title">Maison - Gombe</h3>
-                <div class="product-price">185 000 $</div>
-                <div class="product-meta"><span>Type: Maison</span></div>
-                <span class="status-badge">Disponible</span>
-                <div class="product-actions">
-                  <a class="btn btn-ghost" href="#">Voir détails</a>
-                  <a class="btn btn-gold" href="https://wa.me/243000000000?text=Bonjour,%20je%20suis%20interesse%20par%20la%20maison%20a%20Gombe." target="_blank" rel="noopener noreferrer">WhatsApp</a>
-                </div>
-              </div>
-            </article>
-            <article class="product-card">
-              <img src="https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1100&q=80" alt="Parcelle Limete" loading="lazy" decoding="async" />
-              <div class="product-body">
-                <h3 class="product-title">Parcelle - Limete</h3>
-                <div class="product-price">72 000 $</div>
-                <div class="product-meta"><span>Type: Parcelle</span></div>
-                <span class="status-badge">Disponible</span>
-                <div class="product-actions">
-                  <a class="btn btn-ghost" href="#">Voir détails</a>
-                  <a class="btn btn-gold" href="https://wa.me/243000000000?text=Bonjour,%20je%20suis%20interesse%20par%20la%20parcelle%20a%20Limete." target="_blank" rel="noopener noreferrer">WhatsApp</a>
-                </div>
-              </div>
-            </article>
-            <article class="product-card">
-              <img src="https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?auto=format&fit=crop&w=1100&q=80" alt="Maison Ngaliema" loading="lazy" decoding="async" />
-              <div class="product-body">
-                <h3 class="product-title">Maison - Ngaliema</h3>
-                <div class="product-price">210 000 $</div>
-                <div class="product-meta"><span>Type: Maison</span></div>
-                <span class="status-badge">Stock limité</span>
-                <div class="product-actions">
-                  <a class="btn btn-ghost" href="#">Voir détails</a>
-                  <a class="btn btn-gold" href="https://wa.me/243000000000?text=Bonjour,%20je%20suis%20interesse%20par%20la%20maison%20a%20Ngaliema." target="_blank" rel="noopener noreferrer">WhatsApp</a>
-                </div>
-              </div>
-            </article>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <footer id="contact">
+    <section class="section">
       <div class="container">
-        <div class="footer-grid">
+        <div class="head">
           <div>
-            <a href="/" class="brand" aria-label="KICHEFU-CHEFU STORE">
-              <span class="brand-crown">♛</span>
-              <span class="brand-name">KICHEFU-CHEFU STORE</span>
-            </a>
-            <p style="margin-top:12px;">Marketplace premium pour voitures, téléphones, accessoires et immobilier.</p>
+            <h2>Categories principales</h2>
+            <p>Chaque univers a sa page dediee pour une experience claire et efficace.</p>
+          </div>
+        </div>
+        <div class="grid grid-4">
+          <a class="card" href="/voitures/"><img src="https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=1200&q=80" alt="Voitures" /><div class="body"><h3 class="title">Voitures</h3></div></a>
+          <a class="card" href="/telephones/"><img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1200&q=80" alt="Telephones" /><div class="body"><h3 class="title">Telephones</h3></div></a>
+          <a class="card" href="/accessoires/"><img src="https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=1200&q=80" alt="Accessoires" /><div class="body"><h3 class="title">Accessoires</h3></div></a>
+          <a class="card" href="/immobilier/"><img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80" alt="Parcelles et maisons" /><div class="body"><h3 class="title">Parcelles et maisons</h3></div></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="head">
+          <div>
+            <h2>Les meilleures offres du moment</h2>
+            <p>Selection prix attractifs pour augmenter l'engagement et la conversion.</p>
+          </div>
+        </div>
+        <div class="grid grid-3">
+          {% for offer in best_offers %}
+            <article class="offer">
+              <div>
+                <strong>{{ offer.title }}</strong>
+                <small>{{ offer.kind }}</small>
+              </div>
+              <div>
+                <strong>{{ offer.price }} $</strong>
+                <a class="btn btn-ghost" href="{{ offer.url }}">Voir</a>
+              </div>
+            </article>
+          {% empty %}
+            <p>Aucune offre disponible actuellement.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="head"><div><h2>Voitures populaires</h2><p>Marques recherchees en RDC: Toyota, Nissan, Mercedes, Honda, Hyundai, Kia, Mitsubishi.</p></div><a class="btn btn-ghost" href="/voitures/">Voir tout</a></div>
+        <div class="grid grid-3">
+          {% for car, badges in popular_cars %}
+            <article class="card">
+              {% with image=car.images.first %}
+                {% if image %}<img src="{{ image.image.url }}" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1200&q=80" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />{% endif %}
+              {% endwith %}
+              <div class="body">
+                <h3 class="title">{{ car.brand }} {{ car.model }}</h3>
+                <div class="price">{{ car.price }} $</div>
+                <div class="meta"><span>{{ car.year }} � {{ car.mileage }} km</span><span>{{ car.get_availability_display }}</span></div>
+                <div class="badges">
+                  {% for badge in badges %}<span class="badge badge-gold">{{ badge }}</span>{% endfor %}
+                  {% if car.is_commission %}<span class="badge badge-ok">Vente en commission par KICHEFU-CHEFU STORE</span>{% endif %}
+                </div>
+                <div class="actions">
+                  <a class="btn btn-ghost" href="/voitures/{{ car.pk }}/">Voir details</a>
+                  <a class="btn btn-gold" href="https://wa.me/243000000000?text=Bonjour,%20je%20veux%20ce%20vehicule%20{{ car.brand }}%20{{ car.model }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                </div>
+              </div>
+            </article>
+          {% empty %}
+            <p>Aucune voiture disponible.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="head"><div><h2>Nouveautes voitures</h2><p>Dernieres annonces pour encourager la decouverte continue.</p></div></div>
+        <div class="grid grid-3">
+          {% for car, badges in new_cars %}
+            <article class="card">
+              {% with image=car.images.first %}
+                {% if image %}<img src="{{ image.image.url }}" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://images.unsplash.com/photo-1553440569-bcc63803a83d?auto=format&fit=crop&w=1200&q=80" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />{% endif %}
+              {% endwith %}
+              <div class="body">
+                <h3 class="title">{{ car.brand }} {{ car.model }}</h3>
+                <div class="price">{{ car.price }} $</div>
+                <div class="badges">{% for badge in badges %}<span class="badge badge-gold">{{ badge }}</span>{% endfor %}</div>
+                <div class="actions"><a class="btn btn-ghost" href="/voitures/{{ car.pk }}/">Voir details</a></div>
+              </div>
+            </article>
+          {% empty %}
+            <p>Pas encore de nouveautes.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="head"><div><h2>Telephones populaires</h2><p>Samsung, iPhone, Tecno, Infinix, Xiaomi, Oppo.</p></div><a class="btn btn-ghost" href="/telephones/">Voir tout</a></div>
+        <div class="grid grid-3">
+          {% for phone, badges in popular_phones %}
+            <article class="card">
+              {% with image=phone.images.first %}
+                {% if image %}<img src="{{ image.image.url }}" alt="{{ phone.brand }} {{ phone.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1200&q=80" alt="{{ phone.brand }} {{ phone.model }}" loading="lazy" decoding="async" />{% endif %}
+              {% endwith %}
+              <div class="body">
+                <h3 class="title">{{ phone.brand }} {{ phone.model }}</h3>
+                <div class="price">{{ phone.price }} $</div>
+                <div class="meta"><span>Stockage: {{ phone.storage }}</span><span>{{ phone.get_availability_display }}</span></div>
+                <div class="badges">{% for badge in badges %}<span class="badge badge-gold">{{ badge }}</span>{% endfor %}</div>
+                <div class="actions">
+                  <a class="btn btn-ghost" href="/telephones/{{ phone.pk }}/">Voir details</a>
+                  <a class="btn btn-gold" href="https://wa.me/243000000000?text=Bonjour,%20je%20veux%20le%20telephone%20{{ phone.brand }}%20{{ phone.model }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                </div>
+              </div>
+            </article>
+          {% empty %}
+            <p>Aucun telephone disponible.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="head"><div><h2>Annonces recentes immobilier</h2><p>Focalise sur Lubumbashi pour une meilleure pertinence locale.</p></div><a class="btn btn-ghost" href="/immobilier/">Voir tout</a></div>
+        <div class="districts">{% for area in lubumbashi_areas %}<span>{{ area }}</span>{% endfor %}</div>
+        <div class="grid grid-3">
+          {% for listing, badges in recent_real_estates %}
+            <article class="card">
+              {% with image=listing.images.first %}
+                {% if image %}<img src="{{ image.image.url }}" alt="{{ listing.location }}" loading="lazy" decoding="async" />{% else %}<img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80" alt="{{ listing.location }}" loading="lazy" decoding="async" />{% endif %}
+              {% endwith %}
+              <div class="body">
+                <h3 class="title">{{ listing.get_real_estate_type_display }} - {{ listing.location }}</h3>
+                <div class="price">{{ listing.price }} $</div>
+                <div class="meta"><span>{{ listing.get_availability_display }}</span></div>
+                <div class="badges">
+                  {% for badge in badges %}<span class="badge badge-gold">{{ badge }}</span>{% endfor %}
+                  {% if listing.is_commission %}<span class="badge badge-ok">Vente en commission par KICHEFU-CHEFU STORE</span>{% endif %}
+                </div>
+                <div class="actions">
+                  <a class="btn btn-ghost" href="/immobilier/{{ listing.pk }}/">Voir details</a>
+                  <a class="btn btn-gold" href="https://wa.me/243000000000?text=Bonjour,%20je%20suis%20interesse%20par%20ce%20bien%20{{ listing.location }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                </div>
+              </div>
+            </article>
+          {% empty %}
+            <p>Aucune annonce immobiliere disponible.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="head"><div><h2>Accessoires telephoniques populaires</h2><p>Produits de support qui augmentent les achats complementaires.</p></div><a class="btn btn-ghost" href="/accessoires/">Voir tout</a></div>
+        <div class="grid grid-3">
+          {% for item, badges in top_accessories %}
+            <article class="card">
+              {% if item.image %}<img src="{{ item.image.url }}" alt="{{ item.name }}" loading="lazy" decoding="async" />{% else %}<img src="https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=1200&q=80" alt="{{ item.name }}" loading="lazy" decoding="async" />{% endif %}
+              <div class="body">
+                <h3 class="title">{{ item.name }}</h3>
+                <div class="price">{{ item.price }} $</div>
+                <div class="meta"><span>{{ item.get_availability_display }}</span></div>
+                <div class="badges">{% for badge in badges %}<span class="badge badge-gold">{{ badge }}</span>{% endfor %}</div>
+                <div class="actions"><a class="btn btn-gold" href="https://wa.me/243000000000?text=Bonjour,%20je%20veux%20cet%20accessoire%20{{ item.name }}" target="_blank" rel="noopener noreferrer">WhatsApp</a></div>
+              </div>
+            </article>
+          {% empty %}
+            <p>Aucun accessoire disponible.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container">
+        <div class="foot">
+          <div>
+            <h3>KICHEFU-CHEFU STORE</h3>
+            <p>Marketplace locale de reference a Lubumbashi pour l'automobile, les telephones et l'immobilier.</p>
           </div>
           <div>
-            <h4>Liens rapides</h4>
-            <ul>
-              <li><a href="#accueil">Accueil</a></li>
-              <li><a href="/voitures/">Voitures</a></li>
-              <li><a href="#telephones">Téléphones</a></li>
-              <li><a href="#immobilier">Immobilier</a></li>
-            </ul>
+            <h4>Navigation</h4>
+            <p><a href="/voitures/">Voitures</a></p>
+            <p><a href="/telephones/">Telephones</a></p>
+            <p><a href="/immobilier/">Immobilier</a></p>
           </div>
           <div>
             <h4>Contact</h4>
-            <ul>
-              <li>Téléphone: +243 000 000 000</li>
-              <li>WhatsApp: +243 000 000 000</li>
-              <li>Adresse: Kinshasa, RDC</li>
-            </ul>
+            <p><a href="https://wa.me/243000000000" target="_blank" rel="noopener noreferrer">WhatsApp direct</a></p>
+            <p><a href="/vendre-avec-nous/">Vendre avec nous</a></p>
           </div>
         </div>
-        <p class="copy">© 2026 KICHEFU-CHEFU STORE. Tous droits réservés.</p>
+        <p class="copy">� 2026 KICHEFU-CHEFU STORE - Lubumbashi, RDC.</p>
       </div>
     </footer>
   </body>

@@ -79,6 +79,7 @@ class Car(models.Model):
 	price = models.DecimalField(max_digits=12, decimal_places=2, db_index=True)
 	description = models.TextField(blank=True)
 	seller_phone = models.CharField(max_length=30, blank=True)
+	is_commission = models.BooleanField(default=False, db_index=True)
 	availability = models.CharField(
 		max_length=12,
 		choices=AvailabilityChoices.choices,
@@ -180,6 +181,7 @@ class RealEstate(models.Model):
 	location = models.CharField(max_length=140, db_index=True)
 	price = models.DecimalField(max_digits=12, decimal_places=2, db_index=True)
 	description = models.TextField(blank=True)
+	is_commission = models.BooleanField(default=False, db_index=True)
 	availability = models.CharField(
 		max_length=12,
 		choices=AvailabilityChoices.choices,

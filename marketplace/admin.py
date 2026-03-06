@@ -22,8 +22,8 @@ class CarImageInline(admin.TabularInline):
 
 @admin.register(Car)
 class CarAdmin(admin.ModelAdmin):
-	list_display = ("brand", "model", "vehicle_type", "year", "mileage", "price", "availability", "date_added")
-	list_filter = ("availability", "vehicle_type", "year", "brand", "fuel_type", "transmission")
+	list_display = ("brand", "model", "vehicle_type", "year", "mileage", "price", "is_commission", "availability", "date_added")
+	list_filter = ("availability", "is_commission", "vehicle_type", "year", "brand", "fuel_type", "transmission")
 	search_fields = ("brand", "model", "description")
 	ordering = ("-date_added",)
 	inlines = [CarImageInline]
@@ -58,8 +58,8 @@ class RealEstateImageInline(admin.TabularInline):
 
 @admin.register(RealEstate)
 class RealEstateAdmin(admin.ModelAdmin):
-	list_display = ("real_estate_type", "location", "price", "availability", "date_added")
-	list_filter = ("real_estate_type", "availability")
+	list_display = ("real_estate_type", "location", "price", "is_commission", "availability", "date_added")
+	list_filter = ("real_estate_type", "is_commission", "availability")
 	search_fields = ("location", "description")
 	ordering = ("-date_added",)
 	inlines = [RealEstateImageInline]
