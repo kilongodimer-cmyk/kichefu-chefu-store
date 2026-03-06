@@ -32,11 +32,13 @@ class CarImageSerializer(serializers.ModelSerializer):
 class CarSerializer(serializers.ModelSerializer):
     images = CarImageSerializer(many=True, read_only=True)
     whatsapp_link = serializers.SerializerMethodField()
+    absolute_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Car
         fields = (
             "id",
+            "slug",
             "brand",
             "model",
             "vehicle_type",
@@ -53,11 +55,15 @@ class CarSerializer(serializers.ModelSerializer):
             "date_added",
             "images",
             "whatsapp_link",
+            "absolute_url",
         )
-        read_only_fields = ("id", "date_added", "images", "whatsapp_link")
+        read_only_fields = ("id", "date_added", "images", "whatsapp_link", "absolute_url")
 
     def get_whatsapp_link(self, obj):
         return build_whatsapp_link()
+
+    def get_absolute_url(self, obj):
+        return obj.get_absolute_url()
 
 
 class PhoneImageSerializer(serializers.ModelSerializer):
@@ -70,11 +76,13 @@ class PhoneImageSerializer(serializers.ModelSerializer):
 class PhoneSerializer(serializers.ModelSerializer):
     images = PhoneImageSerializer(many=True, read_only=True)
     whatsapp_link = serializers.SerializerMethodField()
+    absolute_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Phone
         fields = (
             "id",
+            "slug",
             "brand",
             "model",
             "storage",
@@ -85,11 +93,15 @@ class PhoneSerializer(serializers.ModelSerializer):
             "date_added",
             "images",
             "whatsapp_link",
+            "absolute_url",
         )
-        read_only_fields = ("id", "date_added", "images", "whatsapp_link")
+        read_only_fields = ("id", "date_added", "images", "whatsapp_link", "absolute_url")
 
     def get_whatsapp_link(self, obj):
         return build_whatsapp_link()
+
+    def get_absolute_url(self, obj):
+        return obj.get_absolute_url()
 
 
 class AccessorySerializer(serializers.ModelSerializer):
@@ -123,11 +135,13 @@ class RealEstateImageSerializer(serializers.ModelSerializer):
 class RealEstateSerializer(serializers.ModelSerializer):
     images = RealEstateImageSerializer(many=True, read_only=True)
     whatsapp_link = serializers.SerializerMethodField()
+    absolute_url = serializers.SerializerMethodField()
 
     class Meta:
         model = RealEstate
         fields = (
             "id",
+            "slug",
             "real_estate_type",
             "location",
             "price",
@@ -138,11 +152,15 @@ class RealEstateSerializer(serializers.ModelSerializer):
             "date_added",
             "images",
             "whatsapp_link",
+            "absolute_url",
         )
-        read_only_fields = ("id", "date_added", "images", "whatsapp_link")
+        read_only_fields = ("id", "date_added", "images", "whatsapp_link", "absolute_url")
 
     def get_whatsapp_link(self, obj):
         return build_whatsapp_link()
+
+    def get_absolute_url(self, obj):
+        return obj.get_absolute_url()
 
 
 class ProposalImageSerializer(serializers.ModelSerializer):

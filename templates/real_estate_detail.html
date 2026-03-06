@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{ listing.get_real_estate_type_display }} | KICHEFU-CHEFU STORE</title>
+    <title>{{ listing.get_real_estate_type_display }} a vendre {{ listing.location }} Lubumbashi | KICHEFU-CHEFU STORE</title>
+    <meta name="description" content="{{ listing.get_real_estate_type_display }} a vendre a {{ listing.location }} Lubumbashi. Prix: {{ listing.price }} $. Consultez cette annonce immobiliere sur KICHEFU-CHEFU STORE." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -83,7 +84,7 @@
       <h2>Produits similaires</h2>
       <div class="grid">
         {% for item in similar_listings %}
-          <article class="mini">{% with img=item.images.first %}{% if img %}<img src="{{ img.image.url }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/0f1117/e8edf6.png&text={{ item.get_real_estate_type_display|urlencode }}+{{ item.location|urlencode }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% endif %}{% endwith %}<div class="body"><h3>{{ item.get_real_estate_type_display }} - {{ item.location }}</h3><div class="p">{{ item.price }} $</div><a class="btn" href="{% url 'marketplace:real_estate_detail' item.pk %}">Voir details</a></div></article>
+          <article class="mini">{% with img=item.images.first %}{% if img %}<img src="{{ img.image.url }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/0f1117/e8edf6.png&text={{ item.get_real_estate_type_display|urlencode }}+{{ item.location|urlencode }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% endif %}{% endwith %}<div class="body"><h3>{{ item.get_real_estate_type_display }} - {{ item.location }}</h3><div class="p">{{ item.price }} $</div><a class="btn" href="{{ item.get_absolute_url }}">Voir details</a></div></article>
         {% empty %}<p>Pas d'annonces similaires.</p>{% endfor %}
       </div>
     </section>
@@ -92,7 +93,7 @@
       <h2>Vous pourriez aussi aimer</h2>
       <div class="grid">
         {% for item in recommended_listings %}
-          <article class="mini">{% with img=item.images.first %}{% if img %}<img src="{{ img.image.url }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/0f1117/e8edf6.png&text={{ item.get_real_estate_type_display|urlencode }}+{{ item.location|urlencode }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% endif %}{% endwith %}<div class="body"><h3>{{ item.get_real_estate_type_display }} - {{ item.location }}</h3><div class="p">{{ item.price }} $</div><a class="btn" href="{% url 'marketplace:real_estate_detail' item.pk %}">Voir details</a></div></article>
+          <article class="mini">{% with img=item.images.first %}{% if img %}<img src="{{ img.image.url }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/0f1117/e8edf6.png&text={{ item.get_real_estate_type_display|urlencode }}+{{ item.location|urlencode }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% endif %}{% endwith %}<div class="body"><h3>{{ item.get_real_estate_type_display }} - {{ item.location }}</h3><div class="p">{{ item.price }} $</div><a class="btn" href="{{ item.get_absolute_url }}">Voir details</a></div></article>
         {% empty %}<p>Pas de recommandations pour ce bien.</p>{% endfor %}
       </div>
     </section>

@@ -3,6 +3,8 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.urls import reverse
+from django.utils.text import slugify
 from django.utils import timezone
 
 
@@ -28,6 +30,22 @@ def upload_proposal_image(instance, filename):
 
 def upload_sell_car_image(instance, filename):
 	return f"marketplace/sell_car/{instance.sell_request_id}/{filename}"
+
+
+def _build_unique_slug(model_class, raw_text, current_pk=None):
+	base_slug = slugify(raw_text)[:170] or "item"
+	candidate = base_slug
+	counter = 2
+
+	while True:
+		queryset = model_class.objects.filter(slug=candidate)
+		if current_pk:
+			queryset = queryset.exclude(pk=current_pk)
+		if not queryset.exists():
+			return candidate
+		suffix = f"-{counter}"
+		candidate = f"{base_slug[:170 - len(suffix)]}{suffix}"
+		counter += 1
 
 
 class AvailabilityChoices(models.TextChoices):
@@ -59,6 +77,7 @@ class Car(models.Model):
 
 	brand = models.CharField(max_length=60, db_index=True)
 	model = models.CharField(max_length=60, db_index=True)
+	slug = models.SlugField(max_length=180, unique=True, blank=True, null=True, db_index=True)
 	vehicle_type = models.CharField(
 		max_length=20,
 		choices=VehicleType.choices,
@@ -104,6 +123,14 @@ class Car(models.Model):
 	def __str__(self):
 		return f"{self.brand} {self.model} ({self.year})"
 
+	def get_absolute_url(self):
+		return reverse("marketplace:car_detail", kwargs={"slug": self.slug or str(self.pk)})
+
+	def save(self, *args, **kwargs):
+		if not self.slug:
+			self.slug = _build_unique_slug(Car, f"{self.brand} {self.model} {self.year}", self.pk)
+		super().save(*args, **kwargs)
+
 
 class CarImage(models.Model):
 	car = models.ForeignKey(Car, on_delete=models.CASCADE, related_name="images")
@@ -120,6 +147,7 @@ class CarImage(models.Model):
 class Phone(models.Model):
 	brand = models.CharField(max_length=60, db_index=True)
 	model = models.CharField(max_length=60, db_index=True)
+	slug = models.SlugField(max_length=180, unique=True, blank=True, null=True, db_index=True)
 	storage = models.CharField(max_length=40)
 	price = models.DecimalField(max_digits=10, decimal_places=2, db_index=True)
 	description = models.TextField(blank=True)
@@ -141,6 +169,14 @@ class Phone(models.Model):
 
 	def __str__(self):
 		return f"{self.brand} {self.model}"
+
+	def get_absolute_url(self):
+		return reverse("marketplace:phone_detail", kwargs={"slug": self.slug or str(self.pk)})
+
+	def save(self, *args, **kwargs):
+		if not self.slug:
+			self.slug = _build_unique_slug(Phone, f"{self.brand} {self.model}", self.pk)
+		super().save(*args, **kwargs)
 
 
 class PhoneImage(models.Model):
@@ -184,6 +220,7 @@ class RealEstateType(models.TextChoices):
 class RealEstate(models.Model):
 	real_estate_type = models.CharField(max_length=10, choices=RealEstateType.choices)
 	location = models.CharField(max_length=140, db_index=True)
+	slug = models.SlugField(max_length=180, unique=True, blank=True, null=True, db_index=True)
 	price = models.DecimalField(max_digits=12, decimal_places=2, db_index=True)
 	description = models.TextField(blank=True)
 	is_commission = models.BooleanField(default=False, db_index=True)
@@ -205,6 +242,15 @@ class RealEstate(models.Model):
 
 	def __str__(self):
 		return f"{self.get_real_estate_type_display()} - {self.location}"
+
+	def get_absolute_url(self):
+		return reverse("marketplace:land_detail", kwargs={"slug": self.slug or str(self.pk)})
+
+	def save(self, *args, **kwargs):
+		if not self.slug:
+			type_label = self.get_real_estate_type_display() if self.real_estate_type else "parcelle"
+			self.slug = _build_unique_slug(RealEstate, f"{type_label} {self.location}", self.pk)
+		super().save(*args, **kwargs)
 
 
 class RealEstateImage(models.Model):

@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>KICHEFU-CHEFU STORE | Marketplace Lubumbashi</title>
+    <title>Voiture, telephone et parcelle a vendre Lubumbashi | KICHEFU-CHEFU STORE</title>
+    <meta name="description" content="Decouvrez les meilleures voitures, telephones et parcelles a vendre a Lubumbashi sur KICHEFU-CHEFU STORE." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -193,7 +194,7 @@
           <a href="/voitures/">Voitures</a>
           <a href="/telephones/">Telephones</a>
           <a href="/accessoires/">Accessoires</a>
-          <a href="/immobilier/">Parcelles & maisons</a>
+          <a href="/parcelles/">Parcelles & maisons</a>
           <a href="/vendre-avec-nous/">Vendre avec nous</a>
           <a href="/favoris/">Mes favoris</a>
         </nav>
@@ -230,7 +231,7 @@
         <p class="lead">KICHEFU-CHEFU STORE est concu pour le marche de la RDC: navigation rapide, gros visuels, contact WhatsApp direct et categories dediees pour explorer plus longtemps.</p>
         <div class="hero-actions">
           <a class="btn btn-gold" href="/voitures/">Explorer les voitures</a>
-          <a class="btn btn-ghost" href="/immobilier/">Voir l'immobilier</a>
+          <a class="btn btn-ghost" href="/parcelles/">Voir l'immobilier</a>
         </div>
       </div>
       <div class="hero-image">
@@ -250,7 +251,7 @@
           <a class="card" href="/voitures/"><img src="https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=1200&q=80" alt="Voitures" /><div class="body"><h3 class="title">Voitures</h3></div></a>
           <a class="card" href="/telephones/"><img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1200&q=80" alt="Telephones" /><div class="body"><h3 class="title">Telephones</h3></div></a>
           <a class="card" href="/accessoires/"><img src="https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=1200&q=80" alt="Accessoires" /><div class="body"><h3 class="title">Accessoires</h3></div></a>
-          <a class="card" href="/immobilier/"><img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80" alt="Parcelles et maisons" /><div class="body"><h3 class="title">Parcelles et maisons</h3></div></a>
+          <a class="card" href="/parcelles/"><img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80" alt="Parcelles et maisons" /><div class="body"><h3 class="title">Parcelles et maisons</h3></div></a>
         </div>
       </div>
     </section>
@@ -272,7 +273,7 @@
                   <div class="overlay-badges">{% for badge in badges %}<span class="badge badge-gold">{{ badge }}</span>{% endfor %}</div>
                 </div>
               {% endwith %}
-              <div class="body"><h3 class="title">{{ car.brand }} {{ car.model }}</h3><div class="price">{{ car.price }} $</div><div class="views">{{ car.view_count }} personnes ont consulte ce vehicule</div><a class="btn btn-ghost" href="/voitures/{{ car.pk }}/">Voir details</a></div>
+              <div class="body"><h3 class="title">{{ car.brand }} {{ car.model }}</h3><div class="price">{{ car.price }} $</div><div class="views">{{ car.view_count }} personnes ont consulte ce vehicule</div><a class="btn btn-ghost" href="{{ car.get_absolute_url }}">Voir details</a></div>
             </article>
           {% empty %}
             <p>Aucune donnee de popularite disponible pour le moment.</p>
@@ -350,7 +351,7 @@
                 <div class="meta"><span>{{ car.year }}  -  {{ car.mileage }} km</span><span>{{ car.get_availability_display }}</span></div>
                 <div class="views">{{ car.view_count }} personnes ont consulte ce vehicule</div>
                 <div class="actions">
-                  <a class="btn btn-ghost" href="/voitures/{{ car.pk }}/">Voir details</a>
+                  <a class="btn btn-ghost" href="{{ car.get_absolute_url }}">Voir details</a>
                   <a class="btn btn-gold" href="https://wa.me/243000000000?text=Bonjour,%20je%20veux%20ce%20vehicule%20{{ car.brand }}%20{{ car.model }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
                   {% if user.is_authenticated %}
                     <form class="heart-form" method="post" action="{% url 'marketplace:toggle_favorite' 'car' car.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}" /><button class="heart-btn{% if car.pk in favorite_car_ids %} active{% endif %}" type="submit">&#10084;</button></form>
@@ -380,7 +381,7 @@
                 <h3 class="title">{{ car.brand }} {{ car.model }}</h3>
                 <div class="price">{{ car.price }} $</div>
                 <div class="badges">{% for badge in badges %}<span class="badge badge-gold">{{ badge }}</span>{% endfor %}</div>
-                <div class="actions"><a class="btn btn-ghost" href="/voitures/{{ car.pk }}/">Voir details</a></div>
+                <div class="actions"><a class="btn btn-ghost" href="{{ car.get_absolute_url }}">Voir details</a></div>
               </div>
             </article>
           {% empty %}
@@ -408,7 +409,7 @@
                 <div class="meta"><span>Stockage: {{ phone.storage }}</span><span>{{ phone.get_availability_display }}</span></div>
                 <div class="views">{{ phone.view_count }} personnes ont consulte ce telephone</div>
                 <div class="actions">
-                  <a class="btn btn-ghost" href="/telephones/{{ phone.pk }}/">Voir details</a>
+                  <a class="btn btn-ghost" href="{{ phone.get_absolute_url }}">Voir details</a>
                   <a class="btn btn-gold" href="https://wa.me/243000000000?text=Bonjour,%20je%20veux%20le%20telephone%20{{ phone.brand }}%20{{ phone.model }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
                   {% if user.is_authenticated %}
                     <form class="heart-form" method="post" action="{% url 'marketplace:toggle_favorite' 'phone' phone.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}" /><button class="heart-btn{% if phone.pk in favorite_phone_ids %} active{% endif %}" type="submit">&#10084;</button></form>
@@ -427,7 +428,7 @@
 
     <section class="section">
       <div class="container">
-        <div class="head"><div><h2>Annonces recentes immobilier</h2><p>Focalise sur Lubumbashi pour une meilleure pertinence locale.</p></div><a class="btn btn-ghost" href="/immobilier/">Voir tout</a></div>
+        <div class="head"><div><h2>Annonces recentes immobilier</h2><p>Focalise sur Lubumbashi pour une meilleure pertinence locale.</p></div><a class="btn btn-ghost" href="/parcelles/">Voir tout</a></div>
         <div class="districts">{% for area in lubumbashi_areas %}<span>{{ area }}</span>{% endfor %}</div>
         <div class="grid grid-3">
           {% for listing, badges in recent_real_estates %}
@@ -447,7 +448,7 @@
                 <div class="meta"><span>{{ listing.get_availability_display }}</span></div>
                 <div class="views">{{ listing.view_count }} personnes ont consulte cette annonce</div>
                 <div class="actions">
-                  <a class="btn btn-ghost" href="/immobilier/{{ listing.pk }}/">Voir details</a>
+                  <a class="btn btn-ghost" href="{{ listing.get_absolute_url }}">Voir details</a>
                   <a class="btn btn-gold" href="https://wa.me/243000000000?text=Bonjour,%20je%20suis%20interesse%20par%20ce%20bien%20{{ listing.location }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
                   {% if user.is_authenticated %}
                     <form class="heart-form" method="post" action="{% url 'marketplace:toggle_favorite' 'real_estate' listing.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}" /><button class="heart-btn{% if listing.pk in favorite_real_estate_ids %} active{% endif %}" type="submit">&#10084;</button></form>
@@ -501,7 +502,7 @@
             <h4>Navigation</h4>
             <p><a href="/voitures/">Voitures</a></p>
             <p><a href="/telephones/">Telephones</a></p>
-            <p><a href="/immobilier/">Immobilier</a></p>
+            <p><a href="/parcelles/">Immobilier</a></p>
             <p><a href="/agent/connexion/">Espace agent</a></p>
           </div>
           <div>

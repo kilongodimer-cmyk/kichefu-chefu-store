@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Voitures | KICHEFU-CHEFU STORE</title>
+    <title>Voitures a vendre a Lubumbashi | KICHEFU-CHEFU STORE</title>
+    <meta name="description" content="Trouvez des voitures a vendre a Lubumbashi: Toyota, Nissan, Mercedes et plus, avec filtres par marque, modele et prix." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -66,7 +67,7 @@
           <a href="/voitures/">Voitures</a>
           <a href="/telephones/">Telephones</a>
           <a href="/accessoires/">Accessoires</a>
-          <a href="/immobilier/">Immobilier</a>
+          <a href="/parcelles/">Immobilier</a>
           <a href="/vendre-avec-nous/">Vendre avec nous</a>
         </nav>
       </div>
@@ -121,7 +122,7 @@
                 </div>
                 <div class="views">{{ car.view_count }} personnes ont consulte ce vehicule</div>
                 <div class="actions">
-                  <a class="btn btn-ghost" href="{% url 'marketplace:car_detail' car.pk %}">Voir details</a>
+                  <a class="btn btn-ghost" href="{{ car.get_absolute_url }}">Voir details</a>
                   <a class="btn btn-gold" target="_blank" rel="noopener noreferrer" href="https://wa.me/243000000000?text=Bonjour,%20je%20suis%20interesse%20par%20{{ car.brand }}%20{{ car.model }}">WhatsApp</a>
                   {% if user.is_authenticated %}
                     <form class="heart-form" method="post" action="{% url 'marketplace:toggle_favorite' 'car' car.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}" /><button class="heart-btn{% if car.pk in favorite_car_ids %} active{% endif %}" type="submit">&#10084;</button></form>

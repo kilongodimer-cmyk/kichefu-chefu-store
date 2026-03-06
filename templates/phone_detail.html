@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{ phone.brand }} {{ phone.model }} | KICHEFU-CHEFU STORE</title>
+    <title>{{ phone.brand }} {{ phone.model }} a vendre a Lubumbashi | KICHEFU-CHEFU STORE</title>
+    <meta name="description" content="{{ phone.brand }} {{ phone.model }} a vendre a Lubumbashi. Prix: {{ phone.price }} $. Trouvez ce telephone et des alternatives sur KICHEFU-CHEFU STORE." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -81,7 +82,7 @@
       <h2>Produits similaires</h2>
       <div class="grid">
         {% for item in similar_phones %}
-          <article class="mini">{% with img=item.images.first %}{% if img %}<img src="{{ img.image.url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/0f1117/e8edf6.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}{% endwith %}<div class="body"><h3>{{ item.brand }} {{ item.model }}</h3><div class="p">{{ item.price }} $</div><a class="btn" href="{% url 'marketplace:phone_detail' item.pk %}">Voir details</a></div></article>
+          <article class="mini">{% with img=item.images.first %}{% if img %}<img src="{{ img.image.url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/0f1117/e8edf6.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}{% endwith %}<div class="body"><h3>{{ item.brand }} {{ item.model }}</h3><div class="p">{{ item.price }} $</div><a class="btn" href="{{ item.get_absolute_url }}">Voir details</a></div></article>
         {% empty %}<p>Pas de telephones similaires.</p>{% endfor %}
       </div>
     </section>
@@ -90,7 +91,7 @@
       <h2>Vous pourriez aussi aimer</h2>
       <div class="grid">
         {% for item in recommended_phones %}
-          <article class="mini">{% with img=item.images.first %}{% if img %}<img src="{{ img.image.url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/0f1117/e8edf6.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}{% endwith %}<div class="body"><h3>{{ item.brand }} {{ item.model }}</h3><div class="p">{{ item.price }} $</div><a class="btn" href="{% url 'marketplace:phone_detail' item.pk %}">Voir details</a></div></article>
+          <article class="mini">{% with img=item.images.first %}{% if img %}<img src="{{ img.image.url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/0f1117/e8edf6.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}{% endwith %}<div class="body"><h3>{{ item.brand }} {{ item.model }}</h3><div class="p">{{ item.price }} $</div><a class="btn" href="{{ item.get_absolute_url }}">Voir details</a></div></article>
         {% empty %}<p>Pas de recommandations pour ce produit.</p>{% endfor %}
       </div>
     </section>

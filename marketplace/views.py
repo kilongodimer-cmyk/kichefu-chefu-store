@@ -6,6 +6,7 @@ from django.contrib.auth.views import LoginView
 from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import Paginator
 from django.db.models import F, Q
+from django.http import HttpResponse
 from django.http import JsonResponse
 from django.urls import reverse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -181,16 +182,16 @@ def get_recommended_from_history(request):
 
 	recommendations = []
 	for item in cars:
-		recommendations.append({"kind": "Voiture", "title": f"{item.brand} {item.model}", "price": item.price, "url": f"/voitures/{item.pk}/"})
+		recommendations.append({"kind": "Voiture", "title": f"{item.brand} {item.model}", "price": item.price, "url": item.get_absolute_url()})
 	for item in phones:
-		recommendations.append({"kind": "Telephone", "title": f"{item.brand} {item.model}", "price": item.price, "url": f"/telephones/{item.pk}/"})
+		recommendations.append({"kind": "Telephone", "title": f"{item.brand} {item.model}", "price": item.price, "url": item.get_absolute_url()})
 	for item in real_estate:
 		recommendations.append(
 			{
 				"kind": "Immobilier",
 				"title": f"{item.get_real_estate_type_display()} - {item.location}",
 				"price": item.price,
-				"url": f"/immobilier/{item.pk}/",
+				"url": item.get_absolute_url(),
 			}
 		)
 	return recommendations[:8]
@@ -320,8 +321,8 @@ class ProposalImageViewSet(viewsets.ModelViewSet):
 	permission_classes = [permissions.IsAuthenticated]
 
 
-class SiteLoginRequiredMixin(LoginRequiredMixin):
-	login_url = "/connexion/"
+class SiteLoginRequiredMixin:
+	"""Public storefront mixin kept for compatibility with existing class hierarchy."""
 
 
 class HomePageView(SiteLoginRequiredMixin, View):
@@ -344,16 +345,16 @@ class HomePageView(SiteLoginRequiredMixin, View):
 
 		best_offers = []
 		for car in cars.filter(availability="available").order_by("price")[:4]:
-			best_offers.append({"kind": "Voiture", "title": f"{car.brand} {car.model}", "price": car.price, "url": f"/voitures/{car.pk}/"})
+			best_offers.append({"kind": "Voiture", "title": f"{car.brand} {car.model}", "price": car.price, "url": car.get_absolute_url()})
 		for phone in phones.filter(availability="available").order_by("price")[:4]:
-			best_offers.append({"kind": "Telephone", "title": f"{phone.brand} {phone.model}", "price": phone.price, "url": f"/telephones/{phone.pk}/"})
+			best_offers.append({"kind": "Telephone", "title": f"{phone.brand} {phone.model}", "price": phone.price, "url": phone.get_absolute_url()})
 		for listing in real_estates.filter(availability="available").order_by("price")[:4]:
 			best_offers.append(
 				{
 					"kind": "Immobilier",
 					"title": f"{listing.get_real_estate_type_display()} a {listing.location}",
 					"price": listing.price,
-					"url": f"/immobilier/{listing.pk}/",
+					"url": listing.get_absolute_url(),
 				}
 			)
 		best_offers = sorted(best_offers, key=lambda x: x["price"])[:8]
@@ -395,7 +396,7 @@ class SearchSuggestionsView(SiteLoginRequiredMixin, View):
 				{
 					"title": f"{item.brand} {item.model}",
 					"category": "Voiture",
-					"url": f"/voitures/{item.pk}/",
+					"url": item.get_absolute_url(),
 				}
 			)
 
@@ -405,7 +406,7 @@ class SearchSuggestionsView(SiteLoginRequiredMixin, View):
 				{
 					"title": f"{item.brand} {item.model}",
 					"category": "Telephone",
-					"url": f"/telephones/{item.pk}/",
+					"url": item.get_absolute_url(),
 				}
 			)
 
@@ -415,7 +416,7 @@ class SearchSuggestionsView(SiteLoginRequiredMixin, View):
 				{
 					"title": f"{item.get_real_estate_type_display()} {item.location}",
 					"category": "Parcelle/Maison",
-					"url": f"/immobilier/{item.pk}/",
+					"url": item.get_absolute_url(),
 				}
 			)
 
@@ -453,7 +454,7 @@ class GlobalSearchView(SiteLoginRequiredMixin, View):
 						"category": "Voiture",
 						"title": f"{item.brand} {item.model}",
 						"price": item.price,
-						"url": f"/voitures/{item.pk}/",
+						"url": item.get_absolute_url(),
 						"image_url": _first_image_url(item),
 					}
 				)
@@ -476,7 +477,7 @@ class GlobalSearchView(SiteLoginRequiredMixin, View):
 						"category": "Telephone",
 						"title": f"{item.brand} {item.model}",
 						"price": item.price,
-						"url": f"/telephones/{item.pk}/",
+						"url": item.get_absolute_url(),
 						"image_url": _first_image_url(item),
 					}
 				)
@@ -497,7 +498,7 @@ class GlobalSearchView(SiteLoginRequiredMixin, View):
 						"category": item.get_real_estate_type_display(),
 						"title": f"{item.get_real_estate_type_display()} - {item.location}",
 						"price": item.price,
-						"url": f"/immobilier/{item.pk}/",
+						"url": item.get_absolute_url(),
 						"image_url": _first_image_url(item),
 					}
 				)
@@ -582,8 +583,14 @@ class CarMarketplaceListView(SiteLoginRequiredMixin, View):
 class CarDetailView(SiteLoginRequiredMixin, View):
 	template_name = "car_detail.html"
 
-	def get(self, request, pk):
-		car = get_object_or_404(Car.objects.prefetch_related("images"), pk=pk)
+	def get(self, request, slug):
+		car_queryset = Car.objects.prefetch_related("images")
+		car = car_queryset.filter(slug=slug).first()
+		if car is None and str(slug).isdigit():
+			legacy_car = car_queryset.filter(pk=int(slug)).first()
+			if legacy_car:
+				return redirect(legacy_car.get_absolute_url())
+		car = get_object_or_404(car_queryset, slug=slug)
 		Car.objects.filter(pk=car.pk).update(view_count=F("view_count") + 1)
 		car.refresh_from_db(fields=["view_count"])
 		track_recent_view(request, "cars", car.pk)
@@ -661,8 +668,14 @@ class PhoneMarketplaceListView(SiteLoginRequiredMixin, View):
 class PhoneDetailView(SiteLoginRequiredMixin, View):
 	template_name = "phone_detail.html"
 
-	def get(self, request, pk):
-		phone = get_object_or_404(Phone.objects.prefetch_related("images"), pk=pk)
+	def get(self, request, slug):
+		phone_queryset = Phone.objects.prefetch_related("images")
+		phone = phone_queryset.filter(slug=slug).first()
+		if phone is None and str(slug).isdigit():
+			legacy_phone = phone_queryset.filter(pk=int(slug)).first()
+			if legacy_phone:
+				return redirect(legacy_phone.get_absolute_url())
+		phone = get_object_or_404(phone_queryset, slug=slug)
 		Phone.objects.filter(pk=phone.pk).update(view_count=F("view_count") + 1)
 		phone.refresh_from_db(fields=["view_count"])
 		track_recent_view(request, "phones", phone.pk)
@@ -751,8 +764,14 @@ class RealEstateMarketplaceListView(SiteLoginRequiredMixin, View):
 class RealEstateDetailView(SiteLoginRequiredMixin, View):
 	template_name = "real_estate_detail.html"
 
-	def get(self, request, pk):
-		listing = get_object_or_404(RealEstate.objects.prefetch_related("images"), pk=pk)
+	def get(self, request, slug):
+		listing_queryset = RealEstate.objects.prefetch_related("images")
+		listing = listing_queryset.filter(slug=slug).first()
+		if listing is None and str(slug).isdigit():
+			legacy_listing = listing_queryset.filter(pk=int(slug)).first()
+			if legacy_listing:
+				return redirect(legacy_listing.get_absolute_url())
+		listing = get_object_or_404(listing_queryset, slug=slug)
 		RealEstate.objects.filter(pk=listing.pk).update(view_count=F("view_count") + 1)
 		listing.refresh_from_db(fields=["view_count"])
 		track_recent_view(request, "real_estate", listing.pk)
@@ -912,3 +931,40 @@ class SellWithUsView(SiteLoginRequiredMixin, View):
 
 		messages.success(request, "Votre annonce a ete envoyee. Notre equipe vous contacte rapidement.")
 		return redirect("marketplace:sell_with_us")
+
+
+class RobotsTxtView(View):
+	def get(self, request):
+		lines = [
+			"User-agent: *",
+			"Allow: /",
+			f"Sitemap: {request.build_absolute_uri('/sitemap.xml')}",
+		]
+		return HttpResponse("\n".join(lines), content_type="text/plain")
+
+
+class SitemapXmlView(View):
+	def get(self, request):
+		urls = [
+			request.build_absolute_uri("/"),
+			request.build_absolute_uri("/voitures/"),
+			request.build_absolute_uri("/telephones/"),
+			request.build_absolute_uri("/parcelles/"),
+			request.build_absolute_uri("/recherche/"),
+		]
+
+		for car in Car.objects.only("slug").all()[:5000]:
+			urls.append(request.build_absolute_uri(car.get_absolute_url()))
+		for phone in Phone.objects.only("slug").all()[:5000]:
+			urls.append(request.build_absolute_uri(phone.get_absolute_url()))
+		for listing in RealEstate.objects.only("slug").all()[:5000]:
+			urls.append(request.build_absolute_uri(listing.get_absolute_url()))
+
+		body = [
+			'<?xml version="1.0" encoding="UTF-8"?>',
+			'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+		]
+		for link in urls:
+			body.append(f"<url><loc>{link}</loc></url>")
+		body.append("</urlset>")
+		return HttpResponse("".join(body), content_type="application/xml")

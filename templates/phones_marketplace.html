@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Telephones | KICHEFU-CHEFU STORE</title>
+    <title>Telephones a vendre a Lubumbashi | KICHEFU-CHEFU STORE</title>
+    <meta name="description" content="Achetez des telephones a vendre a Lubumbashi: Samsung, iPhone, Tecno, Infinix et plus avec filtres de recherche." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -53,7 +54,7 @@
     <header class="top">
       <div class="container nav">
         <a class="brand" href="/">KICHEFU-CHEFU STORE</a>
-        <nav class="menu"><a href="/voitures/">Voitures</a><a href="/telephones/">Telephones</a><a href="/accessoires/">Accessoires</a><a href="/immobilier/">Immobilier</a><a href="/vendre-avec-nous/">Vendre avec nous</a></nav>
+        <nav class="menu"><a href="/voitures/">Voitures</a><a href="/telephones/">Telephones</a><a href="/accessoires/">Accessoires</a><a href="/parcelles/">Immobilier</a><a href="/vendre-avec-nous/">Vendre avec nous</a></nav>
       </div>
     </header>
 
@@ -85,7 +86,7 @@
               <div class="meta"><span>Stockage: {{ phone.storage }}</span><span>{{ phone.get_availability_display }}</span></div>
               <div class="views">{{ phone.view_count }} personnes ont consulte ce telephone</div>
               <div class="actions">
-                <a class="btn btn-ghost" href="{% url 'marketplace:phone_detail' phone.pk %}">Voir details</a>
+                <a class="btn btn-ghost" href="{{ phone.get_absolute_url }}">Voir details</a>
                 <a class="btn btn-gold" href="https://wa.me/243000000000?text=Bonjour,%20je%20veux%20le%20telephone%20{{ phone.brand }}%20{{ phone.model }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
                 {% if user.is_authenticated %}
                   <form class="heart-form" method="post" action="{% url 'marketplace:toggle_favorite' 'phone' phone.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}" /><button class="heart-btn{% if phone.pk in favorite_phone_ids %} active{% endif %}" type="submit">&#10084;</button></form>
