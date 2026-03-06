@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Inscription | KICHEFU-CHEFU STORE</title>
+    <style>
+      :root {
+        --bg: #0f1216;
+        --panel: #171b22;
+        --line: #2b313d;
+        --text: #f7f8fa;
+        --muted: #b6bdc8;
+        --gold: #d6b96f;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: radial-gradient(circle at top left, #1d2430 0%, var(--bg) 55%);
+        color: var(--text);
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+      }
+      .card {
+        width: min(460px, 100%);
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 24px;
+      }
+      h1 { margin: 0 0 10px; font-size: 1.5rem; }
+      p { margin: 0 0 18px; color: var(--muted); }
+      label { display: block; margin: 12px 0 6px; font-size: 0.92rem; }
+      input {
+        width: 100%;
+        border: 1px solid var(--line);
+        background: #0e1218;
+        color: var(--text);
+        border-radius: 10px;
+        padding: 11px 12px;
+      }
+      .helptext { display: block; margin-top: 6px; color: var(--muted); font-size: 0.82rem; }
+      ul.errorlist {
+        margin: 8px 0 10px;
+        padding: 10px 12px;
+        list-style: none;
+        border: 1px solid #69393e;
+        border-radius: 10px;
+        background: #311f23;
+        color: #ffc5cd;
+      }
+      .btn {
+        width: 100%;
+        border: 0;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #c9a34a, var(--gold));
+        color: #111;
+        font-weight: 700;
+        padding: 12px;
+        margin-top: 14px;
+        cursor: pointer;
+      }
+      .links {
+        margin-top: 14px;
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      a { color: var(--gold); text-decoration: none; }
+    </style>
+  </head>
+  <body>
+    <main class="card">
+      <h1>Inscription</h1>
+      <p>Creez un compte utilisateur pour sauvegarder vos favoris.</p>
+      <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% if field.help_text %}<span class="helptext">{{ field.help_text }}</span>{% endif %}
+          {{ field.errors }}
+        {% endfor %}
+        <input type="hidden" name="next" value="{{ next }}" />
+        <button class="btn" type="submit">Creer mon compte</button>
+      </form>
+      <div class="links">
+        <a href="/connexion/{% if next %}?next={{ next }}{% endif %}">J'ai deja un compte</a>
+        <a href="/">Retour a l'accueil</a>
+      </div>
+    </main>
+  </body>
+</html>

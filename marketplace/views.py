@@ -1,4 +1,6 @@
 from django.contrib import messages
+from django.contrib.auth import login
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import Paginator
@@ -508,8 +510,35 @@ class RealEstateDetailView(View):
 		)
 
 
+class RegisterView(View):
+	template_name = "auth/register.html"
+
+	def _next_url(self, request):
+		return request.GET.get("next") or request.POST.get("next") or ""
+
+	def get(self, request):
+		if request.user.is_authenticated:
+			return redirect("home")
+		return render(request, self.template_name, {"form": UserCreationForm(), "next": self._next_url(request)})
+
+	def post(self, request):
+		if request.user.is_authenticated:
+			return redirect("home")
+
+		form = UserCreationForm(request.POST)
+		if not form.is_valid():
+			return render(request, self.template_name, {"form": form, "next": self._next_url(request)})
+
+		user = form.save()
+		login(request, user)
+		next_url = self._next_url(request)
+		if next_url:
+			return redirect(next_url)
+		return redirect("home")
+
+
 class ToggleFavoriteView(LoginRequiredMixin, View):
-	login_url = "/admin/login/"
+	login_url = "/connexion/"
 
 	def post(self, request, model_name, pk):
 		model_map = {"car": Car, "phone": Phone, "real_estate": RealEstate}
@@ -534,7 +563,7 @@ class ToggleFavoriteView(LoginRequiredMixin, View):
 
 
 class FavoritesView(LoginRequiredMixin, View):
-	login_url = "/admin/login/"
+	login_url = "/connexion/"
 	template_name = "favorites.html"
 
 	def get(self, request):

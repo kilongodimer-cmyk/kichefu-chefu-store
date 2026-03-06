@@ -126,7 +126,7 @@
                   {% if user.is_authenticated %}
                     <form class="heart-form" method="post" action="{% url 'marketplace:toggle_favorite' 'car' car.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}" /><button class="heart-btn{% if car.pk in favorite_car_ids %} active{% endif %}" type="submit">&#10084;</button></form>
                   {% else %}
-                    <a class="btn btn-ghost" href="/admin/login/?next={{ request.path }}">&#10084;</a>
+                    <a class="btn btn-ghost" href="/connexion/?next={{ request.path }}">&#10084;</a>
                   {% endif %}
                 </div>
               </div>

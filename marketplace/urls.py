@@ -1,3 +1,4 @@
+from django.contrib.auth import views as auth_views
 from django.urls import path
 
 from .views import (
@@ -7,6 +8,7 @@ from .views import (
     FavoritesView,
     PhoneDetailView,
     PhoneMarketplaceListView,
+    RegisterView,
     RealEstateDetailView,
     RealEstateMarketplaceListView,
     SellWithUsView,
@@ -16,6 +18,9 @@ from .views import (
 app_name = "marketplace"
 
 urlpatterns = [
+    path("connexion/", auth_views.LoginView.as_view(template_name="auth/login.html"), name="login"),
+    path("inscription/", RegisterView.as_view(), name="register"),
+    path("deconnexion/", auth_views.LogoutView.as_view(next_page="home"), name="logout"),
     path("voitures/", CarMarketplaceListView.as_view(), name="car_list"),
     path("voitures/<int:pk>/", CarDetailView.as_view(), name="car_detail"),
     path("telephones/", PhoneMarketplaceListView.as_view(), name="phone_list"),

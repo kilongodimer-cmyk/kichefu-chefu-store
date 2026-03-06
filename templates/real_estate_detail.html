@@ -73,7 +73,7 @@
           {% if user.is_authenticated %}
             <form method="post" action="{% url 'marketplace:toggle_favorite' 'real_estate' listing.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}" /><button class="heart-btn{% if is_favorite %} active{% endif %}" type="submit">&#10084; Favori</button></form>
           {% else %}
-            <a class="btn" href="/admin/login/?next={{ request.path }}">&#10084; Favori</a>
+            <a class="btn" href="/connexion/?next={{ request.path }}">&#10084; Favori</a>
           {% endif %}
         </div>
       </section>
