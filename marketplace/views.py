@@ -12,6 +12,7 @@ from urllib.parse import quote
 from datetime import timedelta
 from decimal import Decimal
 
+from .demo_seed import ensure_seeded_data
 from .forms import ProposalSellForm
 from .models import (
 	Accessory,
@@ -42,6 +43,14 @@ from .serializers import (
 WHATSAPP_DEFAULT = "+243000000000"
 LUBUMBASHI_NEIGHBORHOODS = ["Kenya", "Kamalondo", "Katuba", "Ruashi", "Golf", "Bel-Air", "Kalubwe"]
 RECENT_SESSION_KEY = "recently_viewed"
+
+
+def ensure_seeded_data_safe():
+	try:
+		ensure_seeded_data()
+	except Exception:
+		# Never block page/API rendering if DB is not ready yet.
+		pass
 
 
 def make_whatsapp_link(phone_number, message):
@@ -127,13 +136,16 @@ def get_favorite_id_map(user):
 
 
 class CarViewSet(viewsets.ModelViewSet):
-	queryset = Car.objects.prefetch_related("images").all()
 	serializer_class = CarSerializer
 	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 	filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
 	filterset_fields = ["brand", "model", "year", "availability", "vehicle_type", "fuel_type", "transmission", "is_commission"]
 	search_fields = ["brand", "model", "description"]
 	ordering_fields = ["price", "year", "mileage", "date_added"]
+
+	def get_queryset(self):
+		ensure_seeded_data_safe()
+		return Car.objects.prefetch_related("images").all()
 
 
 class CarImageViewSet(viewsets.ModelViewSet):
@@ -143,13 +155,16 @@ class CarImageViewSet(viewsets.ModelViewSet):
 
 
 class PhoneViewSet(viewsets.ModelViewSet):
-	queryset = Phone.objects.prefetch_related("images").all()
 	serializer_class = PhoneSerializer
 	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 	filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
 	filterset_fields = ["brand", "model", "availability"]
 	search_fields = ["brand", "model", "description"]
 	ordering_fields = ["price", "date_added"]
+
+	def get_queryset(self):
+		ensure_seeded_data_safe()
+		return Phone.objects.prefetch_related("images").all()
 
 
 class PhoneImageViewSet(viewsets.ModelViewSet):
@@ -159,7 +174,6 @@ class PhoneImageViewSet(viewsets.ModelViewSet):
 
 
 class AccessoryViewSet(viewsets.ModelViewSet):
-	queryset = Accessory.objects.all()
 	serializer_class = AccessorySerializer
 	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 	filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
@@ -167,15 +181,22 @@ class AccessoryViewSet(viewsets.ModelViewSet):
 	search_fields = ["name", "description"]
 	ordering_fields = ["price", "date_added", "name"]
 
+	def get_queryset(self):
+		ensure_seeded_data_safe()
+		return Accessory.objects.all()
+
 
 class RealEstateViewSet(viewsets.ModelViewSet):
-	queryset = RealEstate.objects.prefetch_related("images").all()
 	serializer_class = RealEstateSerializer
 	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 	filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
 	filterset_fields = ["real_estate_type", "location", "availability", "is_commission"]
 	search_fields = ["location", "description"]
 	ordering_fields = ["price", "date_added", "location"]
+
+	def get_queryset(self):
+		ensure_seeded_data_safe()
+		return RealEstate.objects.prefetch_related("images").all()
 
 
 class RealEstateImageViewSet(viewsets.ModelViewSet):
@@ -200,6 +221,7 @@ class HomePageView(View):
 	template_name = "kichefu_store.html"
 
 	def get(self, request):
+		ensure_seeded_data_safe()
 		cars = Car.objects.prefetch_related("images").all()
 		phones = Phone.objects.prefetch_related("images").all()
 		accessories = Accessory.objects.all()
@@ -256,6 +278,7 @@ class CarMarketplaceListView(View):
 	template_name = "cars_marketplace.html"
 
 	def get(self, request):
+		ensure_seeded_data_safe()
 		cars = Car.objects.prefetch_related("images").all()
 
 		search = request.GET.get("q", "").strip()
@@ -342,6 +365,7 @@ class PhoneMarketplaceListView(View):
 	template_name = "phones_marketplace.html"
 
 	def get(self, request):
+		ensure_seeded_data_safe()
 		phones = Phone.objects.prefetch_related("images").all()
 
 		search = request.GET.get("q", "").strip()
@@ -404,6 +428,7 @@ class AccessoryMarketplaceListView(View):
 	template_name = "accessories_marketplace.html"
 
 	def get(self, request):
+		ensure_seeded_data_safe()
 		items = Accessory.objects.all()
 		search = request.GET.get("q", "").strip()
 		if search:
@@ -423,6 +448,7 @@ class RealEstateMarketplaceListView(View):
 	template_name = "real_estate_marketplace.html"
 
 	def get(self, request):
+		ensure_seeded_data_safe()
 		listings = RealEstate.objects.prefetch_related("images").all()
 
 		estate_type = request.GET.get("real_estate_type", "").strip()
