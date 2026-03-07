@@ -7,30 +7,39 @@
     <meta name="description" content="{{ car.brand }} {{ car.model }} a vendre. Prix: {{ car.price }} $." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet" />
     <style>
-      :root { --black:#0f0f0f; --orange:#ff6b00; --white:#fff; --gray-light:#f3f3f3; --gray-text:#666; --line:rgba(255,255,255,.14); --muted:rgba(255,255,255,.74); }
+      :root { --black:#0f0f0f; --orange:#ff6b00; --white:#fff; --line:rgba(255,255,255,.14); --muted:rgba(255,255,255,.74); }
       * { box-sizing:border-box; }
-      body { margin:0; font-family:"Inter",system-ui,sans-serif; color:var(--white); background:var(--black); animation:fade .36s ease; }
-      @keyframes fade { from { opacity:0; transform:translateY(8px);} to { opacity:1; transform:translateY(0);} }
+      html, body { cursor:none; }
+      body { margin:0; font-family:"Inter",system-ui,sans-serif; color:var(--white); background:var(--black); }
+      a,button,input { cursor:none; }
+      .cursor-dot,.cursor-ring { position:fixed; top:0; left:0; pointer-events:none; z-index:220; mix-blend-mode:difference; }
+      .cursor-dot { width:8px; height:8px; border-radius:50%; background:var(--white); transform:translate(-50%,-50%); }
+      .cursor-ring { width:34px; height:34px; border:1px solid var(--white); border-radius:50%; transform:translate(-50%,-50%); transition:width .2s ease,height .2s ease,border-color .2s ease; }
+      .cursor-ring.is-hover { width:56px; height:56px; border-color:var(--orange); }
+
       .container { width:min(1240px,92vw); margin:0 auto; }
-      .topbar { position:sticky; top:0; z-index:70; background:rgba(15,15,15,.92); border-bottom:1px solid var(--line); backdrop-filter:blur(10px); }
+      .topbar { position:sticky; top:0; z-index:90; background:rgba(15,15,15,.35); border-bottom:1px solid var(--line); backdrop-filter:blur(10px) saturate(140%); }
       .nav { min-height:78px; display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:12px; }
-      .logo { color:#fff; text-decoration:none; font-weight:900; letter-spacing:.08em; font-size:.9rem; }
+      .logo { color:#fff; text-decoration:none; font-weight:900; letter-spacing:.08em; }
       .menu { display:flex; justify-content:center; gap:14px; flex-wrap:wrap; }
-      .menu a { color:#fff; text-decoration:none; opacity:.92; }
-      .menu a:hover { color:var(--orange); }
+      .menu a { color:#fff; text-decoration:none; opacity:.92; position:relative; }
+      .menu a::after { content:""; position:absolute; left:0; bottom:-4px; width:100%; height:1px; background:var(--orange); transform:scaleX(0); transform-origin:left; transition:transform .2s ease; }
+      .menu a:hover::after { transform:scaleX(1); }
       .right-zone { display:flex; justify-content:flex-end; align-items:center; gap:8px; flex-wrap:wrap; }
-      .btn,.icon-btn { border:1px solid var(--line); border-radius:999px; color:#fff; text-decoration:none; padding:10px 14px; display:inline-flex; align-items:center; justify-content:center; font-family:inherit; font-weight:700; background:rgba(255,255,255,.03); cursor:pointer; }
+      .btn,.icon-btn { border:1px solid var(--line); border-radius:999px; color:#fff; text-decoration:none; padding:10px 14px; display:inline-flex; align-items:center; justify-content:center; font-family:inherit; font-weight:700; background:rgba(255,255,255,.03); transition:transform .18s ease, box-shadow .18s ease; }
+      .btn:hover,.icon-btn:hover { transform:scale(1.05); box-shadow:0 10px 24px rgba(255,107,0,.2); }
       .btn-main { border-color:transparent; background:var(--orange); color:#111; }
       .icon-btn { width:38px; height:38px; padding:0; }
+
       .hero { padding:28px 0 58px; display:grid; grid-template-columns:1.08fr .92fr; gap:20px; }
       .gallery { border:1px solid var(--line); border-radius:14px; background:#161616; overflow:hidden; }
       .main-img { width:100%; aspect-ratio:16/10; object-fit:cover; display:block; }
       .thumbs { padding:10px; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; }
       .thumbs img { width:100%; aspect-ratio:16/10; object-fit:cover; border-radius:8px; border:1px solid var(--line); }
       .panel { border:1px solid var(--line); border-radius:14px; background:#161616; padding:16px; }
-      h1 { margin:0; font-size:clamp(1.6rem,3vw,2.5rem); font-weight:900; }
+      .display-title { margin:0; font-family:"Bebas Neue","Inter",sans-serif; letter-spacing:.03em; font-size:clamp(1.8rem,6vw,3.8rem); line-height:.95; }
       .price { margin-top:10px; color:#ff8a3c; font-size:1.45rem; font-weight:900; }
       .views { margin-top:8px; color:var(--muted); }
       .desc { margin-top:12px; color:var(--muted); line-height:1.6; }
@@ -39,49 +48,59 @@
       .spec b { display:block; color:var(--muted); font-size:.8rem; font-weight:400; }
       .spec span { display:block; margin-top:4px; font-weight:700; }
       .actions { margin-top:14px; display:flex; gap:8px; flex-wrap:wrap; }
-      .heart-btn { border:1px solid var(--line); background:rgba(0,0,0,.5); color:var(--white); border-radius:999px; padding:10px 14px; cursor:pointer; font-family:inherit; font-weight:700; transition:transform .15s ease; }
-      .heart-btn:hover { transform:scale(1.08); }
-      .heart-btn.active { border-color:rgba(255,107,0,.55); color:#ffd4b4; }
+      .heart-btn { border:1px solid var(--line); background:rgba(0,0,0,.5); color:var(--white); border-radius:999px; padding:10px 14px; }
       .section { padding-bottom:46px; }
       .section h2 { margin:0 0 12px; font-size:1.35rem; }
       .grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
-      .mini { border:1px solid var(--line); border-radius:12px; overflow:hidden; background:#161616; transition:.2s ease; }
-      .mini:hover { border-color:rgba(255,107,0,.45); transform:translateY(-3px); }
+      .mini { border:1px solid var(--line); border-radius:12px; overflow:hidden; background:#161616; }
       .mini img { width:100%; aspect-ratio:16/10; object-fit:cover; display:block; }
       .mini .body { padding:10px; }
       .mini h3 { margin:0; font-size:.95rem; }
       .mini .p { margin-top:6px; color:#ff8a3c; font-weight:800; }
-      @media (max-width:980px) { .nav { grid-template-columns:1fr; padding:10px 0; } .menu { justify-content:flex-start; } .right-zone { justify-content:flex-start; } .hero { grid-template-columns:1fr; } .grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+      .mini .btn { margin-top:8px; }
+      .char { display:inline-block; }
+
+      @media (max-width:980px) {
+        html, body, a, button, input { cursor:auto; }
+        .cursor-dot,.cursor-ring { display:none; }
+        .nav { grid-template-columns:1fr; padding:10px 0; }
+        .menu,.right-zone { justify-content:flex-start; }
+        .hero { grid-template-columns:1fr; }
+        .grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      }
       @media (max-width:760px) { .thumbs,.specs,.grid { grid-template-columns:1fr; } }
     </style>
   </head>
   <body>
+    <div class="cursor-dot" id="cursor-dot"></div>
+    <div class="cursor-ring" id="cursor-ring"></div>
+
     <header class="topbar">
       <div class="container nav">
-        <a class="logo" href="/">Kichefu Chefu Store</a>
-        <nav class="menu"><a href="/">Accueil</a><a href="/voitures/">Voitures</a><a href="/telephones/">Telephones</a><a href="/parcelles/">Parcelles</a><a href="/accessoires/">Accessoires</a></nav>
+        <a class="logo magnetic" href="/">Kichefu Chefu Store</a>
+        <nav class="menu"><a class="magnetic" href="/">Accueil</a><a class="magnetic" href="/voitures/">Voitures</a><a class="magnetic" href="/telephones/">Telephones</a><a class="magnetic" href="/parcelles/">Parcelles</a><a class="magnetic" href="/accessoires/">Accessoires</a></nav>
         <div class="right-zone">
-          <a class="icon-btn" href="/favoris/" title="Favoris">&#10084;</a>
-          <a class="btn" href="{% url 'marketplace:car_list' %}">Retour</a>
+          <a class="icon-btn magnetic" href="/favoris/" title="Favoris">&#10084;</a>
+          <a class="btn magnetic" href="{% url 'marketplace:car_list' %}">Retour</a>
           {% if user.is_authenticated %}
-            <form class="inline-form" method="post" action="{% url 'marketplace:logout' %}">{% csrf_token %}<button class="btn" type="submit">Deconnexion</button></form>
+            <form class="inline-form" method="post" action="{% url 'marketplace:logout' %}">{% csrf_token %}<button class="btn magnetic" type="submit">Deconnexion</button></form>
           {% else %}
-            <a class="btn" href="/connexion/?next={{ request.path }}">Connexion</a><a class="btn" href="/inscription/?next={{ request.path }}">Inscription</a>
+            <a class="btn magnetic" href="/connexion/?next={{ request.path }}">Connexion</a><a class="btn magnetic" href="/inscription/?next={{ request.path }}">Inscription</a>
           {% endif %}
         </div>
       </div>
     </header>
 
     <main class="container hero">
-      <section class="gallery">
+      <section class="gallery fade-item">
         {% with first_image=car.images.first %}
-          {% if first_image %}<img class="main-img" src="{{ first_image.image.url }}" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />{% else %}<img class="main-img" src="https://dummyimage.com/1300x800/171717/ffffff.png&text={{ car.brand|urlencode }}+{{ car.model|urlencode }}" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />{% endif %}
+          {% if first_image %}<img class="main-img parallax-media" src="{{ first_image.image.url }}" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />{% else %}<img class="main-img parallax-media" src="https://dummyimage.com/1300x800/171717/ffffff.png&text={{ car.brand|urlencode }}+{{ car.model|urlencode }}" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />{% endif %}
         {% endwith %}
-        <div class="thumbs">{% for img in car.images.all|slice:':8' %}<img src="{{ img.image.url }}" alt="Image {{ forloop.counter }}" loading="lazy" decoding="async" />{% endfor %}</div>
+        <div class="thumbs">{% for img in car.images.all|slice:':8' %}<img class="parallax-media" src="{{ img.image.url }}" alt="Image {{ forloop.counter }}" loading="lazy" decoding="async" />{% endfor %}</div>
       </section>
 
-      <section class="panel">
-        <h1>{{ car.brand }} {{ car.model }}</h1>
+      <section class="panel fade-item">
+        <h1 class="display-title split-text">{{ car.brand }} {{ car.model }}</h1>
         <div class="price">{{ car.price }} $</div>
         <div class="views">{{ car.view_count }} vues | Ville: {{ car.city|default:"Lubumbashi" }}</div>
         <p class="desc">{{ car.description|default:"Aucune description fournie pour ce vehicule." }}</p>
@@ -96,19 +115,93 @@
           <div class="spec"><b>Disponibilite</b><span>{{ car.get_availability_display }}</span></div>
         </div>
         <div class="actions">
-          <a class="btn btn-main" href="{{ whatsapp_link }}" target="_blank" rel="noopener noreferrer">Contacter via WhatsApp</a>
-          <a class="btn" href="tel:{{ contact_phone }}">Appeler</a>
+          <a class="btn btn-main magnetic" href="{{ whatsapp_link }}" target="_blank" rel="noopener noreferrer">Contacter via WhatsApp</a>
+          <a class="btn magnetic" href="tel:{{ contact_phone }}">Appeler</a>
           {% if user.is_authenticated %}
-            <form method="post" action="{% url 'marketplace:toggle_price_alert' 'car' car.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}" /><button class="btn" type="submit">{% if price_alert_active %}Desactiver alerte prix{% else %}Alerte baisse de prix{% endif %}</button></form>
-            <form method="post" action="{% url 'marketplace:toggle_favorite' 'car' car.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}" /><button class="heart-btn{% if is_favorite %} active{% endif %}" type="submit">&#10084; Ajouter aux favoris</button></form>
+            <form method="post" action="{% url 'marketplace:toggle_price_alert' 'car' car.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}" /><button class="btn magnetic" type="submit">{% if price_alert_active %}Desactiver alerte prix{% else %}Alerte baisse de prix{% endif %}</button></form>
+            <form method="post" action="{% url 'marketplace:toggle_favorite' 'car' car.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}" /><button class="heart-btn magnetic{% if is_favorite %} active{% endif %}" type="submit">&#10084; Ajouter aux favoris</button></form>
           {% else %}
-            <a class="btn" href="/connexion/?next={{ request.path }}">&#10084; Ajouter aux favoris</a>
+            <a class="btn magnetic" href="/connexion/?next={{ request.path }}">&#10084; Ajouter aux favoris</a>
           {% endif %}
         </div>
       </section>
     </main>
 
-    <section class="container section"><h2>Produits similaires</h2><div class="grid">{% for item in similar_cars %}<article class="mini">{% with img=item.images.first %}{% if img %}<img src="{{ img.image.url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}{% endwith %}<div class="body"><h3>{{ item.brand }} {{ item.model }}</h3><div class="p">{{ item.price }} $</div><a class="btn" href="{{ item.get_absolute_url }}">Voir details</a></div></article>{% empty %}<p>Pas encore de produits similaires.</p>{% endfor %}</div></section>
-    <section class="container section"><h2>Produits recommandes</h2><div class="grid">{% for item in recommended_cars %}<article class="mini">{% with img=item.images.first %}{% if img %}<img src="{{ img.image.url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}{% endwith %}<div class="body"><h3>{{ item.brand }} {{ item.model }}</h3><div class="p">{{ item.price }} $</div><a class="btn" href="{{ item.get_absolute_url }}">Voir details</a></div></article>{% empty %}<p>Pas encore de recommandations.</p>{% endfor %}</div></section>
+    <section class="container section">
+      <h2 class="split-text">Produits similaires</h2>
+      <div class="grid" id="similar-grid">
+        {% for item in similar_cars %}
+          <article class="mini motion-card">{% with img=item.images.first %}{% if img %}<img class="parallax-media" src="{{ img.image.url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img class="parallax-media" src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}{% endwith %}<div class="body"><h3>{{ item.brand }} {{ item.model }}</h3><div class="p">{{ item.price }} $</div><a class="btn magnetic" href="{{ item.get_absolute_url }}">Voir details</a></div></article>
+        {% empty %}<p>Pas encore de produits similaires.</p>{% endfor %}
+      </div>
+    </section>
+
+    <section class="container section">
+      <h2 class="split-text">Produits recommandes</h2>
+      <div class="grid" id="recommended-grid">
+        {% for item in recommended_cars %}
+          <article class="mini motion-card">{% with img=item.images.first %}{% if img %}<img class="parallax-media" src="{{ img.image.url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img class="parallax-media" src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}{% endwith %}<div class="body"><h3>{{ item.brand }} {{ item.model }}</h3><div class="p">{{ item.price }} $</div><a class="btn magnetic" href="{{ item.get_absolute_url }}">Voir details</a></div></article>
+        {% empty %}<p>Pas encore de recommandations.</p>{% endfor %}
+      </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+    <script>
+      (function () {
+        gsap.registerPlugin(ScrollTrigger);
+
+        const dot = document.getElementById("cursor-dot");
+        const ring = document.getElementById("cursor-ring");
+        if (dot && ring && window.matchMedia("(min-width: 981px)").matches) {
+          window.addEventListener("mousemove", (event) => {
+            gsap.to(dot, { x: event.clientX, y: event.clientY, duration: 0.08 });
+            gsap.to(ring, { x: event.clientX, y: event.clientY, duration: 0.2 });
+          });
+          document.querySelectorAll("a, button, input, .mini, .magnetic").forEach((item) => {
+            item.addEventListener("mouseenter", () => ring.classList.add("is-hover"));
+            item.addEventListener("mouseleave", () => ring.classList.remove("is-hover"));
+          });
+        }
+
+        document.querySelectorAll(".split-text").forEach((block) => {
+          const chars = block.textContent.split("").map((char) => `<span class=\"char\">${char === " " ? "&nbsp;" : char}</span>`).join("");
+          block.innerHTML = chars;
+        });
+
+        gsap.from(".split-text .char", { yPercent: 120, opacity: 0, stagger: 0.02, duration: 0.75, ease: "power3.out" });
+        gsap.from(".fade-item", { y: 24, opacity: 0, duration: 0.75, ease: "power3.out" });
+        gsap.from(".motion-card", {
+          y: 36,
+          opacity: 0,
+          stagger: { each: 0.08, from: "start" },
+          duration: 0.75,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: "#similar-grid",
+            start: "top 82%"
+          }
+        });
+
+        gsap.utils.toArray(".parallax-media").forEach((media) => {
+          gsap.fromTo(media, { yPercent: -6, scale: 1.08 }, {
+            yPercent: 6,
+            scale: 1,
+            ease: "none",
+            scrollTrigger: { trigger: media, scrub: true, start: "top bottom", end: "bottom top" }
+          });
+        });
+
+        document.querySelectorAll(".magnetic").forEach((item) => {
+          item.addEventListener("mousemove", (event) => {
+            const rect = item.getBoundingClientRect();
+            const x = event.clientX - (rect.left + rect.width / 2);
+            const y = event.clientY - (rect.top + rect.height / 2);
+            gsap.to(item, { x: x * 0.15, y: y * 0.15, duration: 0.2, ease: "power2.out" });
+          });
+          item.addEventListener("mouseleave", () => gsap.to(item, { x: 0, y: 0, duration: 0.25, ease: "power2.out" }));
+        });
+      })();
+    </script>
   </body>
 </html>

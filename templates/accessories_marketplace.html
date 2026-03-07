@@ -6,110 +6,527 @@
     <title>Accessoires | Kichefu Chefu Store</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet" />
     <style>
-      :root { --black:#0f0f0f; --orange:#ff6b00; --white:#fff; --gray-light:#f3f3f3; --gray-text:#666; --line:rgba(255,255,255,.14); --muted:rgba(255,255,255,.75); }
-      * { box-sizing:border-box; }
-      body { margin:0; color:var(--white); font-family:"Inter",system-ui,sans-serif; background:var(--black); animation:fade .38s ease; }
-      @keyframes fade { from { opacity:0; transform:translateY(8px);} to { opacity:1; transform:translateY(0);} }
-      .container { width:min(1240px,92vw); margin:0 auto; }
-      .topbar { position:sticky; top:0; z-index:70; background:rgba(15,15,15,.92); border-bottom:1px solid var(--line); backdrop-filter:blur(10px); }
-      .nav { min-height:78px; display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:12px; }
-      .logo { color:#fff; text-decoration:none; font-weight:900; letter-spacing:.08em; font-size:.9rem; }
-      .menu { display:flex; justify-content:center; gap:14px; flex-wrap:wrap; }
-      .menu a { color:#fff; text-decoration:none; opacity:.92; }
-      .menu a:hover { color:var(--orange); }
-      .right-zone { display:flex; justify-content:flex-end; align-items:center; gap:8px; flex-wrap:wrap; }
-      .header-search { width:min(220px,100%); border:1px solid var(--line); border-radius:999px; background:#1a1a1a; color:#fff; padding:9px 12px; font-family:inherit; }
-      .btn,.icon-btn { border:1px solid var(--line); border-radius:999px; text-decoration:none; color:#fff; background:rgba(255,255,255,.03); font-family:inherit; font-weight:700; display:inline-flex; align-items:center; justify-content:center; }
-      .btn { padding:10px 14px; }
-      .btn-main { background:var(--orange); color:#111; border-color:transparent; }
-      .icon-btn { width:38px; height:38px; }
+      :root {
+        --black: #0f0f0f;
+        --orange: #ff6b00;
+        --white: #ffffff;
+        --gray-light: #f3f3f3;
+        --gray-text: #666666;
+        --line: rgba(255, 255, 255, 0.16);
+        --muted: rgba(255, 255, 255, 0.75);
+      }
+      * { box-sizing: border-box; }
+      html, body { cursor: none; }
+      body {
+        margin: 0;
+        color: var(--white);
+        font-family: "Inter", system-ui, sans-serif;
+        background:
+          radial-gradient(circle at 10% 0%, rgba(255, 107, 0, 0.18), transparent 35%),
+          radial-gradient(circle at 100% 0%, rgba(255, 107, 0, 0.08), transparent 30%),
+          var(--black);
+        overflow-x: hidden;
+      }
+      a, button, input, select, textarea { cursor: none; }
 
-      .hero { padding:42px 0 20px; }
-      h1 { margin:0; font-size:clamp(1.9rem,4vw,3rem); }
-      .sub { margin-top:10px; color:var(--muted); max-width:760px; }
-      .search { margin-top:16px; display:grid; grid-template-columns:1fr auto; gap:10px; }
-      .search input { width:100%; border:1px solid var(--line); background:#111; color:#fff; border-radius:11px; padding:10px 12px; font-family:inherit; }
-      .grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; padding-bottom:56px; }
-      .card { border:1px solid var(--line); border-radius:14px; overflow:hidden; background:#161616; transition:.2s ease; }
-      .card:hover { border-color:rgba(255,107,0,.45); transform:translateY(-4px); box-shadow:0 20px 30px rgba(0,0,0,.32); }
-      .media { overflow:hidden; }
-      .card img { width:100%; aspect-ratio:16/10; object-fit:cover; display:block; transition:transform .3s ease; }
-      .card:hover img { transform:scale(1.05); }
-      .body { padding:12px; }
-      .title { margin:0; font-size:1rem; }
-      .price { margin-top:8px; color:#ff8a3c; font-weight:800; }
-      .meta { margin-top:8px; color:var(--muted); font-size:.9rem; }
-      .badges { margin-top:8px; display:flex; gap:6px; flex-wrap:wrap; }
-      .badge { border:1px solid rgba(255,107,0,.45); border-radius:999px; padding:4px 8px; font-size:.72rem; color:#ffd4b4; background:rgba(255,107,0,.14); }
-      .actions { margin-top:10px; display:flex; gap:8px; flex-wrap:wrap; }
-      .pager { margin:22px 0 56px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-      .pager a,.pager span { color:#fff; text-decoration:none; border:1px solid var(--line); border-radius:999px; padding:7px 12px; }
-      .pager .active { background:var(--orange); color:#111; border-color:transparent; font-weight:800; }
-      @media (max-width:1120px) { .nav { grid-template-columns:1fr; padding:10px 0; } .menu { justify-content:flex-start; } .right-zone { justify-content:flex-start; } .grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
-      @media (max-width:760px) { .search,.grid { grid-template-columns:1fr; } }
+      .cursor-dot,
+      .cursor-ring {
+        position: fixed;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 200;
+        mix-blend-mode: difference;
+      }
+      .cursor-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--white);
+        transform: translate(-50%, -50%);
+      }
+      .cursor-ring {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        border: 1px solid var(--white);
+        transform: translate(-50%, -50%);
+        transition: width 0.2s ease, height 0.2s ease, border-color 0.2s ease;
+      }
+      .cursor-ring.is-hover {
+        width: 56px;
+        height: 56px;
+        border-color: var(--orange);
+      }
+
+      .smooth-wrap {
+        position: fixed;
+        width: 100%;
+        top: 0;
+        left: 0;
+      }
+      .content {
+        min-height: 100vh;
+      }
+
+      .container { width: min(1260px, 92vw); margin: 0 auto; }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 120;
+        border-bottom: 1px solid var(--line);
+        background: rgba(17, 17, 17, 0.35);
+        backdrop-filter: blur(12px) saturate(140%);
+      }
+      .nav {
+        min-height: 78px;
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+        gap: 12px;
+      }
+      .logo {
+        color: #fff;
+        text-decoration: none;
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        font-size: 0.9rem;
+      }
+      .menu {
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+      .menu a {
+        color: #fff;
+        text-decoration: none;
+        opacity: 0.92;
+        position: relative;
+      }
+      .menu a::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -4px;
+        width: 100%;
+        height: 1px;
+        transform: scaleX(0);
+        transform-origin: left;
+        background: var(--orange);
+        transition: transform 0.2s ease;
+      }
+      .menu a:hover::after { transform: scaleX(1); }
+      .right-zone {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .header-search {
+        width: min(240px, 100%);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.04);
+        color: #fff;
+        padding: 9px 12px;
+        font-family: inherit;
+      }
+      .btn,
+      .icon-btn {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        text-decoration: none;
+        color: #fff;
+        background: rgba(255, 255, 255, 0.04);
+        font-family: inherit;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+      }
+      .btn:hover,
+      .icon-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 24px rgba(255, 107, 0, 0.2);
+      }
+      .btn { padding: 10px 14px; }
+      .btn-main {
+        background: var(--orange);
+        color: #111;
+        border-color: transparent;
+      }
+      .icon-btn { width: 38px; height: 38px; }
+
+      .hero {
+        position: relative;
+        min-height: 100vh;
+        display: grid;
+        align-items: end;
+        padding: 0 0 74px;
+        overflow: hidden;
+      }
+      .hero-video {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transform: scale(1.12);
+      }
+      .hero-overlay {
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(180deg, rgba(0, 0, 0, 0.4), rgba(10, 10, 10, 0.82)),
+          repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0 2px, transparent 2px 6px);
+      }
+      .hero-inner {
+        position: relative;
+        z-index: 1;
+        width: min(1260px, 92vw);
+        margin: 0 auto;
+      }
+      .display-title {
+        margin: 0;
+        font-family: "Bebas Neue", "Inter", sans-serif;
+        font-size: clamp(3rem, 11vw, 9rem);
+        line-height: 0.95;
+        letter-spacing: 0.03em;
+      }
+      .lead {
+        margin: 12px 0 0;
+        max-width: 780px;
+        color: var(--muted);
+        font-size: clamp(1rem, 1.5vw, 1.2rem);
+      }
+      .search-shell {
+        margin-top: 18px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 12px;
+        background: rgba(15, 15, 15, 0.5);
+        backdrop-filter: blur(7px);
+      }
+      .search {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 10px;
+      }
+      .search input {
+        width: 100%;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.03);
+        color: #fff;
+        border-radius: 11px;
+        padding: 12px;
+        font-family: inherit;
+      }
+
+      .catalog {
+        padding: 64px 0 80px;
+      }
+      .head {
+        margin-bottom: 20px;
+      }
+      .head h2 {
+        margin: 0;
+        font-size: clamp(1.6rem, 4vw, 3rem);
+      }
+      .head p {
+        margin: 8px 0 0;
+        color: var(--muted);
+        max-width: 780px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 18px;
+      }
+      .card {
+        position: relative;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        overflow: hidden;
+        background: #161616;
+        transform-style: preserve-3d;
+      }
+      .media {
+        position: relative;
+        overflow: hidden;
+      }
+      .card img {
+        width: 100%;
+        aspect-ratio: 4/5;
+        object-fit: cover;
+        display: block;
+        transform: scale(1.04);
+      }
+      .veil {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(0,0,0,0.05), rgba(0,0,0,0.72));
+      }
+      .card-body {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 14px;
+        backdrop-filter: blur(0px);
+        transition: backdrop-filter 0.3s ease;
+      }
+      .title { margin: 0; font-size: 1rem; }
+      .meta { margin-top: 6px; color: var(--muted); font-size: 0.9rem; }
+      .price { margin-top: 8px; color: #ffb07c; font-weight: 900; }
+      .badges { margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap; }
+      .badge {
+        border: 1px solid rgba(255, 107, 0, 0.46);
+        border-radius: 999px;
+        padding: 4px 8px;
+        font-size: 0.72rem;
+        color: #ffd4b4;
+        background: rgba(255, 107, 0, 0.14);
+      }
+      .actions {
+        margin-top: 10px;
+        opacity: 0;
+        transform: translateY(8px);
+        transition: opacity 0.25s ease, transform 0.25s ease;
+      }
+      .card:hover .actions {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .card:hover .card-body { backdrop-filter: blur(10px); }
+
+      .pager { margin: 28px 0 0; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+      .pager a, .pager span {
+        color: #fff;
+        text-decoration: none;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 8px 12px;
+      }
+      .pager .active { background: var(--orange); color: #111; border-color: transparent; font-weight: 800; }
+
+      @media (max-width: 1120px) {
+        html, body, a, button, input, select, textarea { cursor: auto; }
+        .cursor-dot, .cursor-ring { display: none; }
+        .nav { grid-template-columns: 1fr; padding: 10px 0; }
+        .menu, .right-zone { justify-content: flex-start; }
+        .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      }
+      @media (max-width: 760px) {
+        .search, .grid { grid-template-columns: 1fr; }
+      }
     </style>
   </head>
   <body>
-    <header class="topbar">
-      <div class="container nav">
-        <a class="logo" href="/">Kichefu Chefu Store</a>
-        <nav class="menu"><a href="/">Accueil</a><a href="/voitures/">Voitures</a><a href="/telephones/">Telephones</a><a href="/parcelles/">Parcelles</a><a href="/accessoires/">Accessoires</a></nav>
-        <div class="right-zone">
-          <form action="/recherche/" method="get"><input class="header-search" type="text" name="q" placeholder="Rechercher..." /></form>
-          <a class="icon-btn" href="/favoris/" title="Favoris">&#10084;</a>
-          <a class="btn btn-main" href="/vendre-avec-nous/">Publier une annonce</a>
-          {% if user.is_authenticated %}
-            <form class="inline-form" method="post" action="{% url 'marketplace:logout' %}">{% csrf_token %}<button class="btn" type="submit">Deconnexion</button></form>
-          {% else %}
-            <a class="btn" href="/connexion/?next={{ request.path }}">Connexion</a>
-            <a class="btn" href="/inscription/?next={{ request.path }}">Inscription</a>
-          {% endif %}
-        </div>
-      </div>
-    </header>
+    <div class="cursor-dot" id="cursor-dot"></div>
+    <div class="cursor-ring" id="cursor-ring"></div>
 
-    <main class="container">
-      <section class="hero">
-        <h1>Accessoires populaires</h1>
-        <p class="sub">Selection premium d'accessoires smartphone avec presentation moderne et navigation fluide.</p>
-        <form method="get" class="search">
-          <input type="text" name="q" value="{{ filters.q }}" placeholder="Rechercher un accessoire" />
-          <button class="btn btn-main" type="submit">Rechercher</button>
-        </form>
-      </section>
-
-      <section class="grid">
-        {% for item, badges in accessory_items %}
-          <article class="card">
-            <div class="media">
-              {% if item.image %}
-                <img src="{{ item.image.url }}" alt="{{ item.name }}" loading="lazy" decoding="async" />
+    <div class="smooth-wrap" id="smooth-wrap">
+      <div class="content" id="content">
+        <header class="topbar">
+          <div class="container nav">
+            <a class="logo magnetic" href="/">Kichefu Chefu Store</a>
+            <nav class="menu">
+              <a class="magnetic" href="/">Accueil</a>
+              <a class="magnetic" href="/voitures/">Voitures</a>
+              <a class="magnetic" href="/telephones/">Telephones</a>
+              <a class="magnetic" href="/parcelles/">Parcelles</a>
+              <a class="magnetic" href="/accessoires/">Accessoires</a>
+            </nav>
+            <div class="right-zone">
+              <form action="/recherche/" method="get"><input class="header-search" type="text" name="q" placeholder="Rechercher..." /></form>
+              <a class="icon-btn magnetic" href="/favoris/" title="Favoris">&#10084;</a>
+              <a class="btn btn-main magnetic" href="/vendre-avec-nous/">Publier une annonce</a>
+              {% if user.is_authenticated %}
+                <form class="inline-form" method="post" action="{% url 'marketplace:logout' %}">{% csrf_token %}<button class="btn magnetic" type="submit">Deconnexion</button></form>
               {% else %}
-                <img src="https://dummyimage.com/1200x750/0f1117/e8edf6.png&text={{ item.name|urlencode }}" alt="{{ item.name }}" loading="lazy" decoding="async" />
+                <a class="btn magnetic" href="/connexion/?next={{ request.path }}">Connexion</a>
+                <a class="btn magnetic" href="/inscription/?next={{ request.path }}">Inscription</a>
               {% endif %}
             </div>
-            <div class="body">
-              <h3 class="title">{{ item.name }}</h3>
-              <div class="price">{{ item.price }} $</div>
-              <div class="meta">{{ item.get_availability_display }}</div>
-              <div class="badges">{% for badge in badges %}<span class="badge">{{ badge }}</span>{% endfor %}<span class="badge">accessoire</span></div>
-              <div class="actions">
-                <a class="btn btn-main" href="https://wa.me/243000000000?text=Bonjour,%20je%20veux%20cet%20accessoire%20{{ item.name }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+          </div>
+        </header>
+
+        <main>
+          <section class="hero">
+            <video class="hero-video parallax-media" autoplay muted loop playsinline preload="metadata">
+              <source src="https://cdn.coverr.co/videos/coverr-aerial-view-of-traffic-at-night-1579/1080p.mp4" type="video/mp4" />
+            </video>
+            <div class="hero-overlay"></div>
+
+            <div class="hero-inner">
+              <h1 class="display-title split-text">Accessoires Cinematiques</h1>
+              <p class="lead fade-item">Une experience visuelle immersive avec profondeur, mouvement et interactions fluides.</p>
+              <div class="search-shell fade-item">
+                <form method="get" class="search">
+                  <input type="text" name="q" value="{{ filters.q }}" placeholder="Rechercher un accessoire" />
+                  <button class="btn btn-main magnetic" type="submit">Explorer</button>
+                </form>
               </div>
             </div>
-          </article>
-        {% empty %}<p>Aucun accessoire trouve.</p>{% endfor %}
-      </section>
+          </section>
 
-      {% if page_obj.paginator.num_pages > 1 %}
-        <div class="pager">
-          {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}&q={{ filters.q }}">Precedent</a>{% endif %}
-          <span class="active">Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
-          {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}&q={{ filters.q }}">Suivant</a>{% endif %}
-        </div>
-      {% endif %}
-    </main>
+          <section class="catalog container">
+            <div class="head">
+              <h2 class="split-text">Collection Premium</h2>
+              <p class="fade-item">Moins de texte, plus de visuel: chaque carte reagit au scroll et au survol avec reveal progressif.</p>
+            </div>
+
+            <section class="grid" id="cards-grid">
+              {% for item, badges in accessory_items %}
+                <article class="card motion-card">
+                  <div class="media">
+                    {% if item.image %}
+                      <img class="parallax-media" src="{{ item.image.url }}" alt="{{ item.name }}" loading="lazy" decoding="async" />
+                    {% else %}
+                      <img class="parallax-media" src="https://dummyimage.com/1200x1500/101010/e8edf6.png&text={{ item.name|urlencode }}" alt="{{ item.name }}" loading="lazy" decoding="async" />
+                    {% endif %}
+                    <div class="veil"></div>
+                  </div>
+                  <div class="card-body">
+                    <h3 class="title">{{ item.name }}</h3>
+                    <div class="meta">{{ item.get_availability_display }}</div>
+                    <div class="price">{{ item.price }} $</div>
+                    <div class="badges">{% for badge in badges %}<span class="badge">{{ badge }}</span>{% endfor %}<span class="badge">accessoire</span></div>
+                    <div class="actions">
+                      <a class="btn btn-main magnetic" href="https://wa.me/243000000000?text=Bonjour,%20je%20veux%20cet%20accessoire%20{{ item.name }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                    </div>
+                  </div>
+                </article>
+              {% empty %}
+                <p>Aucun accessoire trouve.</p>
+              {% endfor %}
+            </section>
+
+            {% if page_obj.paginator.num_pages > 1 %}
+              <div class="pager fade-item">
+                {% if page_obj.has_previous %}<a class="magnetic" href="?page={{ page_obj.previous_page_number }}&q={{ filters.q }}">Precedent</a>{% endif %}
+                <span class="active">Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+                {% if page_obj.has_next %}<a class="magnetic" href="?page={{ page_obj.next_page_number }}&q={{ filters.q }}">Suivant</a>{% endif %}
+              </div>
+            {% endif %}
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+    <script>
+      (function () {
+        gsap.registerPlugin(ScrollTrigger);
+
+        const smoothWrap = document.getElementById("smooth-wrap");
+        const content = document.getElementById("content");
+        let currentY = 0;
+        let targetY = 0;
+        let ease = 0.08;
+
+        function setBodyHeight() {
+          document.body.style.height = content.getBoundingClientRect().height + "px";
+        }
+
+        function smoothScrollLoop() {
+          targetY = window.scrollY || window.pageYOffset;
+          currentY += (targetY - currentY) * ease;
+          gsap.set(content, { y: -currentY });
+          ScrollTrigger.update();
+          requestAnimationFrame(smoothScrollLoop);
+        }
+
+        setBodyHeight();
+        smoothScrollLoop();
+        window.addEventListener("resize", setBodyHeight);
+
+        // Cursor interaction
+        const dot = document.getElementById("cursor-dot");
+        const ring = document.getElementById("cursor-ring");
+        if (dot && ring && window.matchMedia("(min-width: 1121px)").matches) {
+          window.addEventListener("mousemove", (event) => {
+            gsap.to(dot, { x: event.clientX, y: event.clientY, duration: 0.08 });
+            gsap.to(ring, { x: event.clientX, y: event.clientY, duration: 0.2 });
+          });
+          document.querySelectorAll("a, button, input, .card, .magnetic").forEach((item) => {
+            item.addEventListener("mouseenter", () => ring.classList.add("is-hover"));
+            item.addEventListener("mouseleave", () => ring.classList.remove("is-hover"));
+          });
+        }
+
+        // Title split animation
+        document.querySelectorAll(".split-text").forEach((block) => {
+          const chars = block.textContent.split("").map((char) => `<span class=\"char\">${char === " " ? "&nbsp;" : char}</span>`).join("");
+          block.innerHTML = chars;
+        });
+        gsap.from(".split-text .char", {
+          yPercent: 120,
+          opacity: 0,
+          stagger: 0.02,
+          ease: "power3.out",
+          duration: 0.8
+        });
+
+        // Stagger reveal
+        gsap.from(".fade-item", {
+          y: 26,
+          opacity: 0,
+          stagger: 0.12,
+          duration: 0.8,
+          ease: "power3.out"
+        });
+        gsap.from(".motion-card", {
+          y: 40,
+          opacity: 0,
+          stagger: { each: 0.08, from: "start" },
+          duration: 0.8,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: "#cards-grid",
+            start: "top 85%"
+          }
+        });
+
+        // Parallax + zoom on scroll
+        gsap.utils.toArray(".parallax-media").forEach((media) => {
+          gsap.fromTo(media,
+            { yPercent: -8, scale: 1.08 },
+            {
+              yPercent: 8,
+              scale: 1,
+              ease: "none",
+              scrollTrigger: {
+                trigger: media,
+                scrub: true,
+                start: "top bottom",
+                end: "bottom top"
+              }
+            }
+          );
+        });
+
+        // Magnetic micro interactions
+        document.querySelectorAll(".magnetic").forEach((item) => {
+          item.addEventListener("mousemove", (event) => {
+            const rect = item.getBoundingClientRect();
+            const x = event.clientX - (rect.left + rect.width / 2);
+            const y = event.clientY - (rect.top + rect.height / 2);
+            gsap.to(item, { x: x * 0.15, y: y * 0.15, duration: 0.2, ease: "power2.out" });
+          });
+          item.addEventListener("mouseleave", () => {
+            gsap.to(item, { x: 0, y: 0, duration: 0.25, ease: "power2.out" });
+          });
+        });
+      })();
+    </script>
   </body>
 </html>

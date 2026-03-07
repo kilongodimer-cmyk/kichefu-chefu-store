@@ -3,11 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Kichefu Chefu Store | Marketplace Premium</title>
-    <meta name="description" content="Kichefu Chefu Store: voitures, telephones et parcelles disponibles immediatement." />
+    <title>Kichefu Chefu Store | Cinematic Marketplace</title>
+    <meta name="description" content="Marketplace visuel de voitures, telephones et parcelles a Lubumbashi." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet" />
     <style>
       :root {
         --black: #0f0f0f;
@@ -15,41 +15,82 @@
         --white: #ffffff;
         --gray-light: #f3f3f3;
         --gray-text: #666666;
-        --line: rgba(255, 255, 255, 0.12);
+        --line: rgba(255, 255, 255, 0.16);
         --muted: rgba(255, 255, 255, 0.78);
       }
       * { box-sizing: border-box; }
-      html { scroll-behavior: smooth; }
+      html, body { cursor: none; }
       body {
         margin: 0;
-        font-family: "Inter", system-ui, sans-serif;
         color: var(--white);
-        background: var(--black);
+        font-family: "Inter", system-ui, sans-serif;
+        background:
+          radial-gradient(circle at 12% 0%, rgba(255, 107, 0, 0.2), transparent 32%),
+          radial-gradient(circle at 100% 0%, rgba(255, 107, 0, 0.1), transparent 32%),
+          var(--black);
+        overflow-x: hidden;
       }
-      .container { width: min(1240px, 92vw); margin: 0 auto; }
+      a, button, input, select, textarea { cursor: none; }
+
+      .cursor-dot,
+      .cursor-ring {
+        position: fixed;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 300;
+        mix-blend-mode: difference;
+      }
+      .cursor-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--white);
+        transform: translate(-50%, -50%);
+      }
+      .cursor-ring {
+        width: 34px;
+        height: 34px;
+        border: 1px solid var(--white);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: width 0.2s ease, height 0.2s ease, border-color 0.2s ease;
+      }
+      .cursor-ring.is-hover {
+        width: 56px;
+        height: 56px;
+        border-color: var(--orange);
+      }
+
+      .smooth-wrap {
+        position: fixed;
+        width: 100%;
+        top: 0;
+        left: 0;
+      }
+      .content { min-height: 100vh; }
+      .container { width: min(1260px, 92vw); margin: 0 auto; }
 
       .topbar {
         position: sticky;
         top: 0;
-        z-index: 80;
-        background: rgba(17, 17, 17, 0.9);
+        z-index: 120;
         border-bottom: 1px solid var(--line);
-        backdrop-filter: blur(9px);
+        background: rgba(17, 17, 17, 0.35);
+        backdrop-filter: blur(12px) saturate(140%);
       }
       .nav {
         min-height: 78px;
         display: grid;
         grid-template-columns: auto 1fr auto;
         align-items: center;
-        gap: 14px;
+        gap: 12px;
       }
       .logo {
         color: var(--white);
         text-decoration: none;
         font-weight: 900;
         letter-spacing: 0.08em;
-        font-size: 0.9rem;
-        white-space: nowrap;
       }
       .menu {
         display: flex;
@@ -60,10 +101,22 @@
       .menu a {
         color: var(--white);
         text-decoration: none;
-        font-weight: 400;
         opacity: 0.92;
+        position: relative;
       }
-      .menu a:hover { color: var(--orange); }
+      .menu a::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -4px;
+        width: 100%;
+        height: 1px;
+        background: var(--orange);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.2s ease;
+      }
+      .menu a:hover::after { transform: scaleX(1); }
       .right-zone {
         display: flex;
         align-items: center;
@@ -72,155 +125,143 @@
         flex-wrap: wrap;
       }
       .header-search {
-        width: min(270px, 100%);
+        width: min(250px, 100%);
         border: 1px solid var(--line);
         border-radius: 999px;
-        padding: 9px 13px;
-        background: #1a1a1a;
+        padding: 9px 12px;
+        background: rgba(255, 255, 255, 0.04);
         color: var(--white);
-        font-family: inherit;
       }
-      .icon-btn,
-      .btn {
+      .btn,
+      .icon-btn {
         border: 1px solid var(--line);
-        background: rgba(255, 255, 255, 0.03);
-        color: var(--white);
         border-radius: 999px;
         text-decoration: none;
+        color: var(--white);
+        background: rgba(255, 255, 255, 0.04);
+        font-family: inherit;
+        font-weight: 700;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        font-family: inherit;
-        font-weight: 700;
-        cursor: pointer;
+        transition: transform 0.18s ease, box-shadow 0.18s ease;
       }
-      .icon-btn { width: 38px; height: 38px; font-size: 1rem; }
+      .btn:hover,
+      .icon-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 24px rgba(255, 107, 0, 0.2);
+      }
+      .icon-btn { width: 38px; height: 38px; }
       .btn { padding: 10px 15px; }
       .btn-main { background: var(--orange); color: #111; border-color: transparent; }
 
       .hero {
         position: relative;
-        min-height: 84vh;
+        min-height: 100vh;
         display: grid;
-        align-items: center;
+        align-items: end;
+        padding: 0 0 78px;
         overflow: hidden;
-        border-bottom: 1px solid var(--line);
       }
-      .hero::before {
-        content: "";
+      .hero-video {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transform: scale(1.12);
+      }
+      .hero-overlay {
         position: absolute;
         inset: 0;
         background:
-          linear-gradient(120deg, rgba(0, 0, 0, 0.75), rgba(17, 17, 17, 0.5)),
-          url("https://images.unsplash.com/photo-1485291571150-772bcfc10da5?auto=format&fit=crop&w=1800&q=80") center/cover no-repeat;
-        z-index: 0;
+          linear-gradient(180deg, rgba(0, 0, 0, 0.4), rgba(9, 9, 9, 0.86)),
+          repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.025) 0 2px, transparent 2px 6px);
       }
       .watermark {
         position: absolute;
-        right: -6%;
-        bottom: 8%;
-        font-size: clamp(3rem, 12vw, 11rem);
-        font-weight: 900;
-        letter-spacing: 0.08em;
-        color: rgba(255, 255, 255, 0.06);
-        transform: rotate(-10deg);
-        user-select: none;
-        pointer-events: none;
-        z-index: 1;
+        right: -4%;
+        bottom: 3%;
+        font-size: clamp(3rem, 15vw, 13rem);
+        font-family: "Bebas Neue", sans-serif;
+        letter-spacing: 0.07em;
+        color: rgba(255, 255, 255, 0.05);
+        transform: rotate(-7deg);
       }
       .hero-inner {
         position: relative;
-        z-index: 2;
-        width: min(1240px, 92vw);
+        z-index: 1;
+        width: min(1260px, 92vw);
         margin: 0 auto;
-        padding: 88px 0 78px;
       }
-      .hero h1 {
+      .display-title {
         margin: 0;
-        font-size: clamp(2.2rem, 5.8vw, 5.2rem);
-        line-height: 1.03;
-        font-weight: 900;
+        font-family: "Bebas Neue", "Inter", sans-serif;
+        letter-spacing: 0.03em;
+        font-size: clamp(3rem, 12vw, 10rem);
+        line-height: 0.94;
       }
-      .hero p {
-        margin: 14px 0 0;
-        max-width: 780px;
+      .lead {
+        margin: 12px 0 0;
+        max-width: 760px;
         color: var(--muted);
-        font-size: clamp(1rem, 1.7vw, 1.25rem);
+        font-size: clamp(1rem, 1.6vw, 1.2rem);
       }
       .counter {
-        margin-top: 18px;
+        margin-top: 16px;
         display: inline-flex;
-        align-items: center;
         gap: 8px;
-        border: 1px solid rgba(255, 107, 0, 0.48);
+        align-items: center;
+        border: 1px solid rgba(255, 107, 0, 0.46);
         background: rgba(255, 107, 0, 0.15);
         border-radius: 999px;
         padding: 10px 14px;
       }
-      .search-box {
-        margin-top: 22px;
+      .search-shell {
+        margin-top: 18px;
         border: 1px solid var(--line);
-        background: rgba(17, 17, 17, 0.76);
         border-radius: 18px;
-        padding: 14px;
+        padding: 13px;
+        background: rgba(15, 15, 15, 0.5);
+        backdrop-filter: blur(8px);
       }
       .search-grid {
         display: grid;
         grid-template-columns: 1fr 1fr 1fr auto;
         gap: 10px;
       }
-      .input-icon {
-        position: relative;
-      }
+      .input-icon { position: relative; }
       .input-icon span {
         position: absolute;
         left: 11px;
         top: 50%;
         transform: translateY(-50%);
-        opacity: 0.8;
       }
       .input-icon input {
         width: 100%;
         border: 1px solid var(--line);
-        border-radius: 10px;
-        background: #161616;
+        border-radius: 11px;
+        background: rgba(255, 255, 255, 0.03);
         color: var(--white);
-        padding: 12px 12px 12px 36px;
-        font-family: inherit;
+        padding: 12px 12px 12px 34px;
       }
 
       .section {
-        padding: 64px 0;
+        padding: 70px 0;
         border-bottom: 1px solid var(--line);
-      }
-      .fade-in {
-        opacity: 0;
-        transform: translateY(22px);
-        transition: opacity 0.55s ease, transform 0.55s ease;
-      }
-      .fade-in.visible {
-        opacity: 1;
-        transform: translateY(0);
       }
       .section-head {
         display: flex;
-        align-items: end;
         justify-content: space-between;
+        align-items: end;
         gap: 12px;
         flex-wrap: wrap;
       }
-      .section h2 {
-        margin: 0;
-        font-size: clamp(1.35rem, 2.8vw, 2.1rem);
-        font-weight: 800;
-      }
-      .section p.head-sub {
-        margin: 7px 0 0;
-        color: var(--muted);
-      }
+      .section h2 { margin: 0; font-size: clamp(1.45rem, 3vw, 2.4rem); }
+      .section .sub { margin-top: 8px; color: var(--muted); }
 
       .cards {
-        margin-top: 20px;
+        margin-top: 22px;
         display: grid;
         gap: 16px;
       }
@@ -228,65 +269,55 @@
       .cards-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
       .card {
         border: 1px solid var(--line);
-        border-radius: 14px;
+        border-radius: 16px;
         overflow: hidden;
-        background: #171717;
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+        background: #151515;
       }
-      .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 34px rgba(0, 0, 0, 0.36);
-        border-color: rgba(255, 107, 0, 0.45);
-      }
-      .card .media {
+      .media {
         position: relative;
         overflow: hidden;
       }
-      .card .media img {
+      .media img {
         width: 100%;
         aspect-ratio: 16/10;
         object-fit: cover;
         display: block;
-        transition: transform 0.32s ease;
       }
-      .card:hover .media img { transform: scale(1.05); }
+      .veil {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0.6));
+      }
       .badge {
         position: absolute;
         top: 10px;
         left: 10px;
-        border: 1px solid rgba(255, 107, 0, 0.45);
-        background: rgba(255, 107, 0, 0.18);
+        border: 1px solid rgba(255, 107, 0, 0.48);
+        background: rgba(255, 107, 0, 0.16);
         color: #ffd4b4;
         border-radius: 999px;
-        padding: 4px 9px;
         font-size: 0.72rem;
-        font-weight: 700;
+        padding: 4px 8px;
       }
       .body { padding: 12px; }
-      .title { margin: 0; font-size: 1rem; font-weight: 700; }
-      .meta { margin-top: 7px; color: var(--muted); font-size: 0.9rem; }
-      .price { margin-top: 8px; font-weight: 900; color: #ff8a3c; font-size: 1.06rem; }
-      .card-actions { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
-      .card-actions .btn { padding: 8px 12px; font-size: 0.86rem; }
-      .fav-anim { transition: transform 0.15s ease; }
-      .fav-anim:hover { transform: scale(1.12); }
+      .title { margin: 0; font-size: 1rem; }
+      .meta { margin-top: 8px; color: var(--muted); font-size: 0.9rem; }
+      .price { margin-top: 8px; color: #ff9b53; font-weight: 900; }
+      .card-actions { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; opacity: 0; transform: translateY(6px); transition: opacity 0.22s ease, transform 0.22s ease; }
+      .card:hover .card-actions { opacity: 1; transform: translateY(0); }
 
       .simple-list { margin-top: 18px; display: grid; gap: 10px; }
       .simple-item {
         border: 1px solid var(--line);
-        border-radius: 11px;
-        background: #181818;
+        border-radius: 12px;
+        background: #171717;
         padding: 12px;
         display: flex;
-        align-items: center;
         justify-content: space-between;
+        align-items: center;
         gap: 10px;
       }
 
-      .location {
-        background: #141414;
-      }
       .location-grid {
         margin-top: 18px;
         display: grid;
@@ -297,15 +328,10 @@
       .map-card {
         border: 1px solid var(--line);
         border-radius: 14px;
-        background: #1a1a1a;
+        background: #191919;
         padding: 16px;
       }
-      .map-frame {
-        width: 100%;
-        min-height: 320px;
-        border: 0;
-        border-radius: 10px;
-      }
+      .map-frame { width: 100%; min-height: 320px; border: 0; border-radius: 10px; }
 
       footer {
         padding: 52px 0 34px;
@@ -316,255 +342,358 @@
         grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 20px;
       }
-      footer h4 { margin: 0 0 10px; font-size: 1rem; }
+      footer h4 { margin: 0 0 10px; }
       footer a,
-      footer p {
-        margin: 0;
-        color: #c7c7c7;
-        text-decoration: none;
-        line-height: 1.8;
-      }
+      footer p { margin: 0; color: #c7c7c7; text-decoration: none; line-height: 1.8; }
       footer a:hover { color: var(--orange); }
-      .copy {
-        margin-top: 14px;
-        color: #9a9a9a;
-        font-size: 0.85rem;
-      }
+      .copy { margin-top: 14px; color: #9a9a9a; font-size: 0.85rem; }
 
       @media (max-width: 1120px) {
-        .nav { grid-template-columns: 1fr; padding: 12px 0; }
-        .menu { justify-content: flex-start; }
-        .right-zone { justify-content: flex-start; }
+        html, body, a, button, input, select, textarea { cursor: auto; }
+        .cursor-dot, .cursor-ring { display: none; }
+        .nav { grid-template-columns: 1fr; padding: 10px 0; }
+        .menu, .right-zone { justify-content: flex-start; }
+        .search-grid { grid-template-columns: 1fr 1fr; }
         .cards-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         .cards-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-        .search-grid { grid-template-columns: 1fr 1fr; }
         .location-grid { grid-template-columns: 1fr; }
         .footer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       }
       @media (max-width: 760px) {
-        .cards-4, .cards-3 { grid-template-columns: 1fr; }
-        .search-grid { grid-template-columns: 1fr; }
-        .footer-grid { grid-template-columns: 1fr; }
+        .search-grid, .cards-4, .cards-3, .footer-grid { grid-template-columns: 1fr; }
       }
+  .char { display: inline-block; }
     </style>
   </head>
   <body>
-    <header class="topbar">
-      <div class="container nav">
-        <a class="logo" href="/">Kichefu Chefu Store</a>
+    <div class="cursor-dot" id="cursor-dot"></div>
+    <div class="cursor-ring" id="cursor-ring"></div>
 
-        <nav class="menu" aria-label="Navigation principale">
-          <a href="/">Accueil</a>
-          <a href="/voitures/">Voitures</a>
-          <a href="/telephones/">Telephones</a>
-          <a href="/parcelles/">Parcelles</a>
-          <a href="/accessoires/">Accessoires</a>
-        </nav>
+    <div class="smooth-wrap" id="smooth-wrap">
+      <div class="content" id="content">
+        <header class="topbar">
+          <div class="container nav">
+            <a class="logo magnetic" href="/">Kichefu Chefu Store</a>
 
-        <div class="right-zone">
-          <form action="/recherche/" method="get">
-            <input class="header-search" type="text" name="q" placeholder="Rechercher..." />
-          </form>
-          <a class="icon-btn fav-anim" href="/favoris/" title="Favoris">&#10084;</a>
-          {% if user.is_authenticated %}
-            <form class="inline-form" method="post" action="{% url 'marketplace:logout' %}">
-              {% csrf_token %}
-              <button class="btn" type="submit">Deconnexion</button>
-            </form>
-          {% else %}
-            <a class="btn" href="/connexion/?next={{ request.path }}">Connexion</a>
-            <a class="btn" href="/inscription/?next={{ request.path }}">Inscription</a>
-          {% endif %}
-          <a class="btn btn-main" href="/vendre-avec-nous/">Publier une annonce</a>
-        </div>
-      </div>
-    </header>
+            <nav class="menu" aria-label="Navigation principale">
+              <a class="magnetic" href="/">Accueil</a>
+              <a class="magnetic" href="/voitures/">Voitures</a>
+              <a class="magnetic" href="/telephones/">Telephones</a>
+              <a class="magnetic" href="/parcelles/">Parcelles</a>
+              <a class="magnetic" href="/accessoires/">Accessoires</a>
+            </nav>
 
-    <main>
-      <section class="hero">
-        <div class="watermark">KICHEFU</div>
-        <div class="hero-inner fade-in">
-          <h1>Kichefu Chefu Store</h1>
-          <p>Marketplace de voitures, telephones et parcelles a Lubumbashi</p>
-          <div class="counter"><strong>{{ available_cars_count }}</strong> <span>vehicules disponibles</span></div>
-
-          <div class="search-box">
-            <form id="hero-universal-search" class="search-grid" action="/recherche/" method="get">
-              <label class="input-icon"><span>&#128663;</span><input id="search-car" type="text" placeholder="Rechercher voiture" /></label>
-              <label class="input-icon"><span>&#128241;</span><input id="search-phone" type="text" placeholder="Rechercher telephone" /></label>
-              <label class="input-icon"><span>&#128205;</span><input id="search-land" type="text" placeholder="Rechercher parcelle" /></label>
-              <button class="btn btn-main" type="submit">Rechercher</button>
-              <input id="search-q" type="hidden" name="q" value="" />
-              <input id="search-category" type="hidden" name="category" value="all" />
-            </form>
-          </div>
-        </div>
-      </section>
-
-      <section class="section fade-in">
-        <div class="container">
-          <div class="section-head"><div><h2>Voitures populaires</h2><p class="head-sub">Selection des annonces auto les plus attractives.</p></div><a class="btn" href="/voitures/">Voir tout</a></div>
-          <div class="cards cards-4">
-            {% for item, item_badges in popular_cars %}
-              <article class="card">
-                {% with img=item.images.first %}
-                  <div class="media">
-                    {% if img %}<img src="{{ img.image.url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}
-                    <span class="badge">voiture</span>
-                  </div>
-                {% endwith %}
-                <div class="body">
-                  <h3 class="title">{{ item.brand }} {{ item.model }}</h3>
-                  <div class="meta">{{ item.city|default:"Lubumbashi" }} - {{ item.year }}</div>
-                  <div class="price">{{ item.price }} $</div>
-                  <div class="card-actions"><a class="btn" href="{{ item.get_absolute_url }}">Voir details</a></div>
-                </div>
-              </article>
-            {% endfor %}
-          </div>
-        </div>
-      </section>
-
-      <section class="section fade-in">
-        <div class="container">
-          <div class="section-head"><div><h2>Telephones populaires</h2><p class="head-sub">Les modeles les plus consultes actuellement.</p></div><a class="btn" href="/telephones/">Voir tout</a></div>
-          <div class="cards cards-4">
-            {% for item, item_badges in popular_phones %}
-              <article class="card">
-                {% with img=item.images.first %}
-                  <div class="media">
-                    {% if img %}<img src="{{ img.image.url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}
-                    <span class="badge">telephone</span>
-                  </div>
-                {% endwith %}
-                <div class="body">
-                  <h3 class="title">{{ item.brand }} {{ item.model }}</h3>
-                  <div class="meta">Lubumbashi</div>
-                  <div class="price">{{ item.price }} $</div>
-                  <div class="card-actions"><a class="btn" href="{{ item.get_absolute_url }}">Voir details</a></div>
-                </div>
-              </article>
-            {% endfor %}
-          </div>
-        </div>
-      </section>
-
-      <section class="section fade-in">
-        <div class="container">
-          <div class="section-head"><div><h2>Parcelles disponibles</h2><p class="head-sub">Opportunites immobiliere disponibles immediatement.</p></div><a class="btn" href="/parcelles/">Voir tout</a></div>
-          <div class="cards cards-3">
-            {% for item, item_badges in recent_real_estates %}
-              <article class="card">
-                {% with img=item.images.first %}
-                  <div class="media">
-                    {% if img %}<img src="{{ img.image.url }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.location|urlencode }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% endif %}
-                    <span class="badge">parcelle</span>
-                  </div>
-                {% endwith %}
-                <div class="body">
-                  <h3 class="title">{{ item.get_real_estate_type_display }} - {{ item.location }}</h3>
-                  <div class="meta">{{ item.location }}</div>
-                  <div class="price">{{ item.price }} $</div>
-                  <div class="card-actions"><a class="btn" href="{{ item.get_absolute_url }}">Voir details</a></div>
-                </div>
-              </article>
-            {% endfor %}
-          </div>
-        </div>
-      </section>
-
-      <section class="section fade-in">
-        <div class="container">
-          <div class="section-head"><div><h2>Nouveaux arrivages</h2><p class="head-sub">Dernieres annonces ajoutees sur la plateforme.</p></div></div>
-          <div class="simple-list">
-            {% for item in new_products %}
-              <article class="simple-item"><div><strong>{{ item.title }}</strong><div style="color:#aaa;">{{ item.kind }}</div></div><div><strong>{{ item.price }} $</strong> <a class="btn" href="{{ item.url }}">Voir</a></div></article>
-            {% empty %}<p>Aucun nouvel arrivage pour le moment.</p>{% endfor %}
-          </div>
-        </div>
-      </section>
-
-      <section class="section fade-in">
-        <div class="container">
-          <div class="section-head"><div><h2>Produits recommandes</h2><p class="head-sub">Suggestions intelligentes basees sur vos consultations.</p></div></div>
-          <div class="simple-list">
-            {% for item in recommended_for_you %}
-              <article class="simple-item"><div><strong>{{ item.title }}</strong><div style="color:#aaa;">{{ item.kind }}</div></div><div><strong>{{ item.price }} $</strong> <a class="btn" href="{{ item.url }}">Voir</a></div></article>
-            {% empty %}<p>Consultez quelques produits pour activer la recommandation.</p>{% endfor %}
-          </div>
-        </div>
-      </section>
-
-      <section class="section fade-in">
-        <div class="container">
-          <div class="section-head"><div><h2>Produits pres de vous</h2><p class="head-sub">Resultats personnalises selon votre ville.</p></div><a class="btn" href="/voitures/?city={{ user_city|default:'Lubumbashi'|urlencode }}">Explorer</a></div>
-          <div class="simple-list">
-            {% if nearby_cars %}
-              {% for item, item_badges in nearby_cars %}
-                <article class="simple-item"><div><strong>{{ item.brand }} {{ item.model }}</strong><div style="color:#aaa;">{{ item.city|default:'Lubumbashi' }}</div></div><div><strong>{{ item.price }} $</strong> <a class="btn" href="{{ item.get_absolute_url }}">Voir</a></div></article>
-              {% endfor %}
-            {% else %}
-              <article class="simple-item"><div><strong>Aucune annonce locale detectee</strong><div style="color:#aaa;">Essayez Kinshasa ou Lubumbashi</div></div><a class="btn" href="/voitures/">Voir toutes les voitures</a></article>
-            {% endif %}
-          </div>
-        </div>
-      </section>
-
-      <section class="section location fade-in" id="notre-localisation">
-        <div class="container">
-          <div class="section-head"><div><h2>Notre magasin</h2><p class="head-sub">Kichefu Chefu Store<br />Lubumbashi, Republique Democratique du Congo</p></div></div>
-          <div class="location-grid">
-            <div class="location-card">
-              <h3 style="margin-top:0;">Notre localisation</h3>
-              <p style="color:#c8c8c8; line-height:1.7;">Retrouvez notre equipe en magasin pour voir les produits, obtenir des conseils et finaliser vos achats en toute confiance.</p>
-              <a class="btn btn-main" target="_blank" rel="noopener noreferrer" href="https://www.google.com/maps/search/?api=1&query=Lubumbashi%2C+DR+Congo">Voir l'itineraire</a>
-            </div>
-            <div class="map-card">
-              <iframe
-                class="map-frame"
-                loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade"
-                src="https://maps.google.com/maps?q=Lubumbashi%2C%20Democratic%20Republic%20of%20the%20Congo&t=&z=13&ie=UTF8&iwloc=&output=embed"
-              ></iframe>
+            <div class="right-zone">
+              <form action="/recherche/" method="get">
+                <input class="header-search" type="text" name="q" placeholder="Rechercher..." />
+              </form>
+              <a class="icon-btn magnetic" href="/favoris/" title="Favoris">&#10084;</a>
+              {% if user.is_authenticated %}
+                <form class="inline-form" method="post" action="{% url 'marketplace:logout' %}">
+                  {% csrf_token %}
+                  <button class="btn magnetic" type="submit">Deconnexion</button>
+                </form>
+              {% else %}
+                <a class="btn magnetic" href="/connexion/?next={{ request.path }}">Connexion</a>
+                <a class="btn magnetic" href="/inscription/?next={{ request.path }}">Inscription</a>
+              {% endif %}
+              <a class="btn btn-main magnetic" href="/vendre-avec-nous/">Publier une annonce</a>
             </div>
           </div>
-        </div>
-      </section>
-    </main>
+        </header>
 
-    <footer>
-      <div class="container">
-        <div class="footer-grid">
-          <div>
-            <h4>A propos</h4>
-            <p>Kichefu Chefu Store est une plateforme marketplace moderne dediee aux voitures, telephones et parcelles.</p>
+        <main>
+          <section class="hero">
+            <video class="hero-video parallax-media" autoplay muted loop playsinline preload="metadata">
+              <source src="https://cdn.coverr.co/videos/coverr-aerial-view-of-traffic-at-night-1579/1080p.mp4" type="video/mp4" />
+            </video>
+            <div class="hero-overlay"></div>
+            <div class="watermark">KICHEFU</div>
+
+            <div class="hero-inner">
+              <h1 class="display-title split-text">Kichefu Chefu Store</h1>
+              <p class="lead fade-item">Marketplace de voitures, telephones et parcelles a Lubumbashi</p>
+              <div class="counter fade-item"><strong>{{ available_cars_count }}</strong> <span>vehicules disponibles</span></div>
+
+              <div class="search-shell fade-item">
+                <form id="hero-universal-search" class="search-grid" action="/recherche/" method="get">
+                  <label class="input-icon"><span>&#128663;</span><input id="search-car" type="text" placeholder="Rechercher voiture" /></label>
+                  <label class="input-icon"><span>&#128241;</span><input id="search-phone" type="text" placeholder="Rechercher telephone" /></label>
+                  <label class="input-icon"><span>&#128205;</span><input id="search-land" type="text" placeholder="Rechercher parcelle" /></label>
+                  <button class="btn btn-main magnetic" type="submit">Rechercher</button>
+                  <input id="search-q" type="hidden" name="q" value="" />
+                  <input id="search-category" type="hidden" name="category" value="all" />
+                </form>
+              </div>
+            </div>
+          </section>
+
+          <section class="section fade-item">
+            <div class="container">
+              <div class="section-head"><div><h2 class="split-text">Voitures populaires</h2><p class="sub">Selection des annonces auto les plus attractives.</p></div><a class="btn magnetic" href="/voitures/">Voir tout</a></div>
+              <div class="cards cards-4" id="cars-cards">
+                {% for item, item_badges in popular_cars %}
+                  <article class="card motion-card">
+                    {% with img=item.images.first %}
+                      <div class="media">
+                        {% if img %}<img class="parallax-media" src="{{ img.image.url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img class="parallax-media" src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}
+                        <div class="veil"></div>
+                        <span class="badge">voiture</span>
+                      </div>
+                    {% endwith %}
+                    <div class="body">
+                      <h3 class="title">{{ item.brand }} {{ item.model }}</h3>
+                      <div class="meta">{{ item.city|default:"Lubumbashi" }} - {{ item.year }}</div>
+                      <div class="price">{{ item.price }} $</div>
+                      <div class="card-actions"><a class="btn magnetic" href="{{ item.get_absolute_url }}">Voir details</a></div>
+                    </div>
+                  </article>
+                {% endfor %}
+              </div>
+            </div>
+          </section>
+
+          <section class="section fade-item">
+            <div class="container">
+              <div class="section-head"><div><h2 class="split-text">Telephones populaires</h2><p class="sub">Les modeles les plus consultes actuellement.</p></div><a class="btn magnetic" href="/telephones/">Voir tout</a></div>
+              <div class="cards cards-4" id="phones-cards">
+                {% for item, item_badges in popular_phones %}
+                  <article class="card motion-card">
+                    {% with img=item.images.first %}
+                      <div class="media">
+                        {% if img %}<img class="parallax-media" src="{{ img.image.url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img class="parallax-media" src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}
+                        <div class="veil"></div>
+                        <span class="badge">telephone</span>
+                      </div>
+                    {% endwith %}
+                    <div class="body">
+                      <h3 class="title">{{ item.brand }} {{ item.model }}</h3>
+                      <div class="meta">Lubumbashi</div>
+                      <div class="price">{{ item.price }} $</div>
+                      <div class="card-actions"><a class="btn magnetic" href="{{ item.get_absolute_url }}">Voir details</a></div>
+                    </div>
+                  </article>
+                {% endfor %}
+              </div>
+            </div>
+          </section>
+
+          <section class="section fade-item">
+            <div class="container">
+              <div class="section-head"><div><h2 class="split-text">Parcelles disponibles</h2><p class="sub">Opportunites immobilieres disponibles immediatement.</p></div><a class="btn magnetic" href="/parcelles/">Voir tout</a></div>
+              <div class="cards cards-3" id="estate-cards">
+                {% for item, item_badges in recent_real_estates %}
+                  <article class="card motion-card">
+                    {% with img=item.images.first %}
+                      <div class="media">
+                        {% if img %}<img class="parallax-media" src="{{ img.image.url }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% else %}<img class="parallax-media" src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.location|urlencode }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% endif %}
+                        <div class="veil"></div>
+                        <span class="badge">parcelle</span>
+                      </div>
+                    {% endwith %}
+                    <div class="body">
+                      <h3 class="title">{{ item.get_real_estate_type_display }} - {{ item.location }}</h3>
+                      <div class="meta">{{ item.location }}</div>
+                      <div class="price">{{ item.price }} $</div>
+                      <div class="card-actions"><a class="btn magnetic" href="{{ item.get_absolute_url }}">Voir details</a></div>
+                    </div>
+                  </article>
+                {% endfor %}
+              </div>
+            </div>
+          </section>
+
+          <section class="section fade-item">
+            <div class="container">
+              <div class="section-head"><div><h2 class="split-text">Nouveaux arrivages</h2><p class="sub">Dernieres annonces ajoutees sur la plateforme.</p></div></div>
+              <div class="simple-list">
+                {% for item in new_products %}
+                  <article class="simple-item"><div><strong>{{ item.title }}</strong><div style="color:#aaa;">{{ item.kind }}</div></div><div><strong>{{ item.price }} $</strong> <a class="btn magnetic" href="{{ item.url }}">Voir</a></div></article>
+                {% empty %}<p>Aucun nouvel arrivage pour le moment.</p>{% endfor %}
+              </div>
+            </div>
+          </section>
+
+          <section class="section fade-item">
+            <div class="container">
+              <div class="section-head"><div><h2 class="split-text">Produits recommandes</h2><p class="sub">Suggestions intelligentes basees sur vos consultations.</p></div></div>
+              <div class="simple-list">
+                {% for item in recommended_for_you %}
+                  <article class="simple-item"><div><strong>{{ item.title }}</strong><div style="color:#aaa;">{{ item.kind }}</div></div><div><strong>{{ item.price }} $</strong> <a class="btn magnetic" href="{{ item.url }}">Voir</a></div></article>
+                {% empty %}<p>Consultez quelques produits pour activer la recommandation.</p>{% endfor %}
+              </div>
+            </div>
+          </section>
+
+          <section class="section fade-item">
+            <div class="container">
+              <div class="section-head"><div><h2 class="split-text">Produits pres de vous</h2><p class="sub">Resultats personnalises selon votre ville.</p></div><a class="btn magnetic" href="/voitures/?city={{ user_city|default:'Lubumbashi'|urlencode }}">Explorer</a></div>
+              <div class="simple-list">
+                {% if nearby_cars %}
+                  {% for item, item_badges in nearby_cars %}
+                    <article class="simple-item"><div><strong>{{ item.brand }} {{ item.model }}</strong><div style="color:#aaa;">{{ item.city|default:'Lubumbashi' }}</div></div><div><strong>{{ item.price }} $</strong> <a class="btn magnetic" href="{{ item.get_absolute_url }}">Voir</a></div></article>
+                  {% endfor %}
+                {% else %}
+                  <article class="simple-item"><div><strong>Aucune annonce locale detectee</strong><div style="color:#aaa;">Essayez Kinshasa ou Lubumbashi</div></div><a class="btn magnetic" href="/voitures/">Voir toutes les voitures</a></article>
+                {% endif %}
+              </div>
+            </div>
+          </section>
+
+          <section class="section fade-item" id="notre-localisation">
+            <div class="container">
+              <div class="section-head"><div><h2 class="split-text">Notre magasin</h2><p class="sub">Kichefu Chefu Store<br />Lubumbashi, Republique Democratique du Congo</p></div></div>
+              <div class="location-grid">
+                <div class="location-card">
+                  <h3 style="margin-top:0;">Notre localisation</h3>
+                  <p style="color:#c8c8c8; line-height:1.7;">Retrouvez notre equipe en magasin pour voir les produits, obtenir des conseils et finaliser vos achats en toute confiance.</p>
+                  <a class="btn btn-main magnetic" target="_blank" rel="noopener noreferrer" href="https://www.google.com/maps/search/?api=1&query=Lubumbashi%2C+DR+Congo">Voir l'itineraire</a>
+                </div>
+                <div class="map-card">
+                  <iframe
+                    class="map-frame"
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                    src="https://maps.google.com/maps?q=Lubumbashi%2C%20Democratic%20Republic%20of%20the%20Congo&t=&z=13&ie=UTF8&iwloc=&output=embed"
+                  ></iframe>
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        <footer>
+          <div class="container">
+            <div class="footer-grid">
+              <div>
+                <h4>A propos</h4>
+                <p>Kichefu Chefu Store est une plateforme marketplace moderne dediee aux voitures, telephones et parcelles.</p>
+              </div>
+              <div>
+                <h4>Categories</h4>
+                <a href="/voitures/">Voitures</a><br />
+                <a href="/telephones/">Telephones</a><br />
+                <a href="/parcelles/">Parcelles</a><br />
+                <a href="/accessoires/">Accessoires</a>
+              </div>
+              <div>
+                <h4>Contact</h4>
+                <p>WhatsApp: +243 000 000 000</p>
+                <p>Email: kilongodimer@gmail.com</p>
+                <p>Horaires: Lun - Sam, 8h00 - 18h00</p>
+              </div>
+              <div>
+                <h4>Reseaux sociaux</h4>
+                <a target="_blank" rel="noopener noreferrer" href="https://wa.me/243000000000">WhatsApp</a><br />
+                <a target="_blank" rel="noopener noreferrer" href="https://facebook.com">Facebook</a><br />
+                <a target="_blank" rel="noopener noreferrer" href="https://instagram.com">Instagram</a>
+              </div>
+            </div>
+            <div class="copy">&copy; {% now "Y" %} Kichefu Chefu Store. Tous droits reserves.</div>
           </div>
-          <div>
-            <h4>Categories</h4>
-            <a href="/voitures/">Voitures</a><br />
-            <a href="/telephones/">Telephones</a><br />
-            <a href="/parcelles/">Parcelles</a><br />
-            <a href="/accessoires/">Accessoires</a>
-          </div>
-          <div>
-            <h4>Contact</h4>
-            <p>WhatsApp: +243 000 000 000</p>
-            <p>Email: kilongodimer@gmail.com</p>
-            <p>Horaires: Lun - Sam, 8h00 - 18h00</p>
-          </div>
-          <div>
-            <h4>Reseaux sociaux</h4>
-            <a target="_blank" rel="noopener noreferrer" href="https://wa.me/243000000000">WhatsApp</a><br />
-            <a target="_blank" rel="noopener noreferrer" href="https://facebook.com">Facebook</a><br />
-            <a target="_blank" rel="noopener noreferrer" href="https://instagram.com">Instagram</a>
-          </div>
-        </div>
-        <div class="copy">© {% now "Y" %} Kichefu Chefu Store. Tous droits reserves.</div>
+        </footer>
       </div>
-    </footer>
+    </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
     <script>
       (function () {
+        gsap.registerPlugin(ScrollTrigger);
+
+        const smoothWrap = document.getElementById("smooth-wrap");
+        const content = document.getElementById("content");
+        let currentY = 0;
+        let targetY = 0;
+        const ease = 0.08;
+
+        function setBodyHeight() {
+          document.body.style.height = content.getBoundingClientRect().height + "px";
+        }
+        function smoothScrollLoop() {
+          targetY = window.scrollY || window.pageYOffset;
+          currentY += (targetY - currentY) * ease;
+          gsap.set(content, { y: -currentY });
+          ScrollTrigger.update();
+          requestAnimationFrame(smoothScrollLoop);
+        }
+        setBodyHeight();
+        smoothScrollLoop();
+        window.addEventListener("resize", setBodyHeight);
+
+        const dot = document.getElementById("cursor-dot");
+        const ring = document.getElementById("cursor-ring");
+        if (dot && ring && window.matchMedia("(min-width: 1121px)").matches) {
+          window.addEventListener("mousemove", (event) => {
+            gsap.to(dot, { x: event.clientX, y: event.clientY, duration: 0.08 });
+            gsap.to(ring, { x: event.clientX, y: event.clientY, duration: 0.2 });
+          });
+          document.querySelectorAll("a, button, input, .card, .magnetic").forEach((item) => {
+            item.addEventListener("mouseenter", () => ring.classList.add("is-hover"));
+            item.addEventListener("mouseleave", () => ring.classList.remove("is-hover"));
+          });
+        }
+
+        document.querySelectorAll(".split-text").forEach((block) => {
+          const chars = block.textContent.split("").map((char) => `<span class=\"char\">${char === " " ? "&nbsp;" : char}</span>`).join("");
+          block.innerHTML = chars;
+        });
+
+        gsap.from(".split-text .char", {
+          yPercent: 120,
+          opacity: 0,
+          stagger: 0.018,
+          duration: 0.8,
+          ease: "power3.out"
+        });
+        gsap.from(".fade-item", {
+          y: 28,
+          opacity: 0,
+          duration: 0.8,
+          stagger: 0.12,
+          ease: "power3.out"
+        });
+        gsap.from(".motion-card", {
+          y: 42,
+          opacity: 0,
+          duration: 0.8,
+          stagger: { each: 0.08, from: "start" },
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: "main",
+            start: "top 75%"
+          }
+        });
+
+        gsap.utils.toArray(".parallax-media").forEach((media) => {
+          gsap.fromTo(media,
+            { yPercent: -8, scale: 1.08 },
+            {
+              yPercent: 8,
+              scale: 1,
+              ease: "none",
+              scrollTrigger: {
+                trigger: media,
+                scrub: true,
+                start: "top bottom",
+                end: "bottom top"
+              }
+            }
+          );
+        });
+
+        document.querySelectorAll(".magnetic").forEach((item) => {
+          item.addEventListener("mousemove", (event) => {
+            const rect = item.getBoundingClientRect();
+            const x = event.clientX - (rect.left + rect.width / 2);
+            const y = event.clientY - (rect.top + rect.height / 2);
+            gsap.to(item, { x: x * 0.15, y: y * 0.15, duration: 0.2, ease: "power2.out" });
+          });
+          item.addEventListener("mouseleave", () => {
+            gsap.to(item, { x: 0, y: 0, duration: 0.25, ease: "power2.out" });
+          });
+        });
+
         const form = document.getElementById("hero-universal-search");
         if (form) {
           form.addEventListener("submit", function () {
@@ -593,20 +722,6 @@
             }
           });
         }
-
-        const faders = document.querySelectorAll(".fade-in");
-        const observer = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                entry.target.classList.add("visible");
-                observer.unobserve(entry.target);
-              }
-            });
-          },
-          { threshold: 0.14 }
-        );
-        faders.forEach((el) => observer.observe(el));
       })();
     </script>
   </body>
