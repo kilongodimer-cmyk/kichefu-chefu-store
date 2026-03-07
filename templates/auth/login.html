@@ -12,17 +12,33 @@
         --text: #f7f8fa;
         --muted: #b6bdc8;
         --gold: #d6b96f;
+        --brand-watermark: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='200'%20height='240'%20viewBox='0%200%20200%20240'%3E%3Cpath%20fill='%23ffffff'%20d='M42%2072%20V56%20L60%2028%20L100%2058%20L140%2028%20L158%2056%20V72%20Z'/%3E%3Ccircle%20cx='60'%20cy='28'%20r='6'%20fill='%23ffffff'/%3E%3Ccircle%20cx='100'%20cy='22'%20r='6'%20fill='%23ffffff'/%3E%3Ccircle%20cx='140'%20cy='28'%20r='6'%20fill='%23ffffff'/%3E%3Ctext%20x='100'%20y='126'%20text-anchor='middle'%20font-family='Montserrat,%20Poppins,%20Arial,%20sans-serif'%20font-size='20'%20font-weight='700'%20fill='%23ffffff'%3EKICHEFU-CHEFU%3C/text%3E%3Ctext%20x='100'%20y='154'%20text-anchor='middle'%20font-family='Montserrat,%20Poppins,%20Arial,%20sans-serif'%20font-size='12'%20font-weight='300'%20letter-spacing='7'%20fill='%23ffffff'%3ESTORE%3C/text%3E%3C/svg%3E");
       }
       * { box-sizing: border-box; }
       body {
         margin: 0;
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        position: relative;
+        isolation: isolate;
         background: radial-gradient(circle at top right, #1d2430 0%, var(--bg) 55%);
         color: var(--text);
         min-height: 100vh;
         display: grid;
         place-items: center;
         padding: 24px;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        opacity: 0.05;
+        background-image: var(--brand-watermark);
+        background-repeat: repeat;
+        background-size: 200px auto;
+        background-position: 0 0;
+        background-attachment: fixed;
       }
       .card {
         width: min(440px, 100%);
