@@ -14,6 +14,12 @@
         --gold: #d6b96f;
       }
       * { box-sizing: border-box; }
+      html, body { cursor: auto; }
+      a, button, input { cursor: auto; }
+      .custom-cursor,
+      .custom-cursor a,
+      .custom-cursor button,
+      .custom-cursor input { cursor: none !important; }
       body {
         margin: 0;
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
@@ -24,6 +30,34 @@
         place-items: center;
         padding: 24px;
       }
+      .cursor-dot,
+      .cursor-ring {
+        position: fixed;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 220;
+        mix-blend-mode: difference;
+        opacity: 0;
+      }
+      .custom-cursor .cursor-dot,
+      .custom-cursor .cursor-ring { opacity: 1; }
+      .cursor-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #fff;
+        transform: translate(-50%, -50%);
+      }
+      .cursor-ring {
+        width: 34px;
+        height: 34px;
+        border: 1px solid #fff;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: width 0.2s ease, height 0.2s ease, border-color 0.2s ease;
+      }
+      .cursor-ring.is-hover { width: 56px; height: 56px; border-color: var(--gold); }
       .card {
         width: min(460px, 100%);
         background: var(--panel);
@@ -70,9 +104,15 @@
         gap: 10px;
       }
       a { color: var(--gold); text-decoration: none; }
+      @media (max-width: 980px) {
+        html, body, a, button, input { cursor: auto; }
+        .cursor-dot, .cursor-ring { display: none; }
+      }
     </style>
   </head>
   <body>
+    <div class="cursor-dot" id="cursor-dot"></div>
+    <div class="cursor-ring" id="cursor-ring"></div>
     <main class="card">
       <h1>Inscription</h1>
       <p>Creez un compte utilisateur pour sauvegarder vos favoris.</p>
@@ -92,5 +132,47 @@
         <a href="/">Retour a l'accueil</a>
       </div>
     </main>
+    <script>
+      (function () {
+        const dot = document.getElementById("cursor-dot");
+        const ring = document.getElementById("cursor-ring");
+        const cursorMedia = window.matchMedia("(min-width: 981px)");
+        const setCursorMode = () => {
+          document.documentElement.classList.toggle("custom-cursor", Boolean(dot && ring && cursorMedia.matches));
+        };
+        setCursorMode();
+        if (cursorMedia.addEventListener) {
+          cursorMedia.addEventListener("change", setCursorMode);
+        } else if (cursorMedia.addListener) {
+          cursorMedia.addListener(setCursorMode);
+        }
+        if (!dot || !ring || !cursorMedia.matches) return;
+
+        let mouseX = 0;
+        let mouseY = 0;
+        let ringX = 0;
+        let ringY = 0;
+
+        function loop() {
+          ringX += (mouseX - ringX) * 0.22;
+          ringY += (mouseY - ringY) * 0.22;
+          dot.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
+          ring.style.transform = `translate(${ringX}px, ${ringY}px) translate(-50%, -50%)`;
+          requestAnimationFrame(loop);
+        }
+
+        window.addEventListener("mousemove", (event) => {
+          mouseX = event.clientX;
+          mouseY = event.clientY;
+        });
+
+        document.querySelectorAll("a, button, input").forEach((item) => {
+          item.addEventListener("mouseenter", () => ring.classList.add("is-hover"));
+          item.addEventListener("mouseleave", () => ring.classList.remove("is-hover"));
+        });
+
+        loop();
+      })();
+    </script>
   </body>
 </html>

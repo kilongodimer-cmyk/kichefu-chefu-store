@@ -20,8 +20,45 @@
         --brand-watermark: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='200'%20height='240'%20viewBox='0%200%20200%20240'%3E%3Cpath%20fill='%23ffffff'%20d='M42%2072%20V56%20L60%2028%20L100%2058%20L140%2028%20L158%2056%20V72%20Z'/%3E%3Ccircle%20cx='60'%20cy='28'%20r='6'%20fill='%23ffffff'/%3E%3Ccircle%20cx='100'%20cy='22'%20r='6'%20fill='%23ffffff'/%3E%3Ccircle%20cx='140'%20cy='28'%20r='6'%20fill='%23ffffff'/%3E%3Ctext%20x='100'%20y='126'%20text-anchor='middle'%20font-family='Montserrat,%20Poppins,%20Arial,%20sans-serif'%20font-size='20'%20font-weight='700'%20fill='%23ffffff'%3EKICHEFU-CHEFU%3C/text%3E%3Ctext%20x='100'%20y='154'%20text-anchor='middle'%20font-family='Montserrat,%20Poppins,%20Arial,%20sans-serif'%20font-size='12'%20font-weight='300'%20letter-spacing='7'%20fill='%23ffffff'%3ESTORE%3C/text%3E%3C/svg%3E");
       }
       * { box-sizing: border-box; }
+      html, body { cursor: auto; }
+      a, button, input, select { cursor: auto; }
+      .custom-cursor,
+      .custom-cursor a,
+      .custom-cursor button,
+      .custom-cursor input,
+      .custom-cursor select {
+        cursor: none !important;
+      }
       body { margin: 0; font-family: "Inter", system-ui, sans-serif; color: var(--white); background: var(--black); position: relative; isolation: isolate; }
       body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0.05; background-image: var(--brand-watermark); background-repeat: repeat; background-size: 200px auto; background-position: 0 0; background-attachment: fixed; }
+      .cursor-dot,
+      .cursor-ring {
+        position: fixed;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 220;
+        mix-blend-mode: difference;
+        opacity: 0;
+      }
+      .custom-cursor .cursor-dot,
+      .custom-cursor .cursor-ring { opacity: 1; }
+      .cursor-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--white);
+        transform: translate(-50%, -50%);
+      }
+      .cursor-ring {
+        width: 34px;
+        height: 34px;
+        border: 1px solid var(--white);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: width 0.2s ease, height 0.2s ease, border-color 0.2s ease;
+      }
+      .cursor-ring.is-hover { width: 56px; height: 56px; border-color: var(--orange); }
       .container { width: min(1240px, 92vw); margin: 0 auto; }
       .topbar { position: sticky; top: 0; z-index: 40; background: rgba(17, 17, 17, 0.92); border-bottom: 1px solid var(--line); backdrop-filter: blur(8px); }
       .nav { min-height: 76px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; }
@@ -68,9 +105,15 @@
       .pager .active { border-color: transparent; background: var(--orange); color: #111; font-weight: 700; }
       @media (max-width: 1080px) { .filters { grid-template-columns: 1fr 1fr; } .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
       @media (max-width: 760px) { .nav { grid-template-columns: 1fr; align-items: flex-start; padding: 10px 0; } .menu { justify-content: flex-start; } .auth-actions { justify-content: flex-start; } .filters { grid-template-columns: 1fr; } .grid { grid-template-columns: 1fr; } }
+      @media (max-width: 980px) {
+        html, body, a, button, input, select { cursor: auto; }
+        .cursor-dot, .cursor-ring { display: none; }
+      }
     </style>
   </head>
   <body>
+    <div class="cursor-dot" id="cursor-dot"></div>
+    <div class="cursor-ring" id="cursor-ring"></div>
     <header class="topbar">
       <div class="container nav">
         <a class="brand" href="/">KICHEFU-CHEFU STORE</a>
@@ -153,6 +196,48 @@
         </div>
       {% endif %}
     </main>
+    <script>
+      (function () {
+        const dot = document.getElementById("cursor-dot");
+        const ring = document.getElementById("cursor-ring");
+        const cursorMedia = window.matchMedia("(min-width: 981px)");
+        const setCursorMode = () => {
+          document.documentElement.classList.toggle("custom-cursor", Boolean(dot && ring && cursorMedia.matches));
+        };
+        setCursorMode();
+        if (cursorMedia.addEventListener) {
+          cursorMedia.addEventListener("change", setCursorMode);
+        } else if (cursorMedia.addListener) {
+          cursorMedia.addListener(setCursorMode);
+        }
+        if (!dot || !ring || !cursorMedia.matches) return;
+
+        let mouseX = 0;
+        let mouseY = 0;
+        let ringX = 0;
+        let ringY = 0;
+
+        function loop() {
+          ringX += (mouseX - ringX) * 0.22;
+          ringY += (mouseY - ringY) * 0.22;
+          dot.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
+          ring.style.transform = `translate(${ringX}px, ${ringY}px) translate(-50%, -50%)`;
+          requestAnimationFrame(loop);
+        }
+
+        window.addEventListener("mousemove", (event) => {
+          mouseX = event.clientX;
+          mouseY = event.clientY;
+        });
+
+        document.querySelectorAll("a, button, input, select, .card").forEach((item) => {
+          item.addEventListener("mouseenter", () => ring.classList.add("is-hover"));
+          item.addEventListener("mouseleave", () => ring.classList.remove("is-hover"));
+        });
+
+        loop();
+      })();
+    </script>
   </body>
 </html>
 
