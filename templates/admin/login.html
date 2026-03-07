@@ -13,6 +13,13 @@
   body.login {
     position: relative;
     isolation: isolate;
+    cursor: none;
+  }
+  body.login a,
+  body.login input,
+  body.login button,
+  body.login label {
+    cursor: none;
   }
   body.login::before {
     content: "";
@@ -27,7 +34,68 @@
     background-position: 0 0;
     background-attachment: fixed;
   }
+  .cursor-dot,
+  .cursor-ring {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 240;
+    mix-blend-mode: difference;
+  }
+  .cursor-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #fff;
+    transform: translate(-50%, -50%);
+  }
+  .cursor-ring {
+    width: 34px;
+    height: 34px;
+    border: 1px solid #fff;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.2s ease, height 0.2s ease, border-color 0.2s ease;
+  }
+  .cursor-ring.is-hover {
+    width: 56px;
+    height: 56px;
+    border-color: #d6b96f;
+  }
+  body.login #content-main {
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(15, 15, 15, 0.55);
+    backdrop-filter: blur(8px);
+    padding: 16px;
+  }
+  body.login #login-form .submit-row input {
+    border-radius: 999px;
+    font-weight: 700;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  body.login #login-form .submit-row input:hover {
+    transform: scale(1.04);
+    box-shadow: 0 10px 24px rgba(214, 185, 111, 0.28);
+  }
+  .char { display: inline-block; }
+  @media (max-width: 980px) {
+    body.login,
+    body.login a,
+    body.login input,
+    body.login button,
+    body.login label {
+      cursor: auto;
+    }
+    .cursor-dot, .cursor-ring { display: none; }
+  }
 </style>
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 {% endblock %}
 
 {% block bodyclass %}{{ block.super }} login{% endblock %}
@@ -81,4 +149,40 @@ You are authenticated as {{ username }}, but are not authorized to access this p
   </div>
 </form>
 </div>
+{% endblock %}
+
+{% block extrabody %}
+{{ block.super }}
+<div class="cursor-dot" id="cursor-dot"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+<script>
+  (function () {
+    const dot = document.getElementById("cursor-dot");
+    const ring = document.getElementById("cursor-ring");
+    if (dot && ring && window.matchMedia("(min-width: 981px)").matches) {
+      window.addEventListener("mousemove", (event) => {
+        gsap.to(dot, { x: event.clientX, y: event.clientY, duration: 0.08 });
+        gsap.to(ring, { x: event.clientX, y: event.clientY, duration: 0.2 });
+      });
+      document.querySelectorAll("a, input, button, label").forEach((item) => {
+        item.addEventListener("mouseenter", () => ring.classList.add("is-hover"));
+        item.addEventListener("mouseleave", () => ring.classList.remove("is-hover"));
+      });
+    }
+
+    const title = document.querySelector("#content-main form .form-row label");
+    if (title && title.textContent) {
+      title.classList.add("split-text");
+    }
+
+    document.querySelectorAll(".split-text").forEach((block) => {
+      const chars = block.textContent.split("").map((char) => `<span class=\"char\">${char === " " ? "&nbsp;" : char}</span>`).join("");
+      block.innerHTML = chars;
+    });
+
+    gsap.from(".split-text .char", { yPercent: 120, opacity: 0, stagger: 0.02, duration: 0.7, ease: "power3.out" });
+    gsap.from("#content-main", { y: 24, opacity: 0, duration: 0.75, ease: "power3.out" });
+    gsap.from("#login-form .form-row, #login-form .submit-row, .password-reset-link", { y: 18, opacity: 0, stagger: 0.08, duration: 0.65, ease: "power3.out" });
+  })();
+</script>
 {% endblock %}
