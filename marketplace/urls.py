@@ -2,6 +2,7 @@ from django.contrib.auth import views as auth_views
 from django.urls import path, re_path
 
 from .views import (
+    AccessoryDetailView,
     AccessoryMarketplaceListView,
     AgentDashboardView,
     AgentLoginView,
@@ -43,6 +44,7 @@ urlpatterns = [
     path("telephones/", PhoneMarketplaceListView.as_view(), name="phone_list"),
     path("telephones/<slug:slug>/", PhoneDetailView.as_view(), name="phone_detail"),
     path("accessoires/", AccessoryMarketplaceListView.as_view(), name="accessory_list"),
+    path("accessoires/<int:pk>/", AccessoryDetailView.as_view(), name="accessory_detail"),
     path("immobilier/", RealEstateMarketplaceListView.as_view(), name="real_estate_list"),
     path("parcelles/", RealEstateMarketplaceListView.as_view(), name="land_list"),
     path("parcelles/<slug:slug>/", RealEstateDetailView.as_view(), name="land_detail"),

@@ -18,7 +18,7 @@
         --brand-watermark: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='200'%20height='240'%20viewBox='0%200%20200%20240'%3E%3Cpath%20fill='%23ffffff'%20d='M42%2072%20V56%20L60%2028%20L100%2058%20L140%2028%20L158%2056%20V72%20Z'/%3E%3Ccircle%20cx='60'%20cy='28'%20r='6'%20fill='%23ffffff'/%3E%3Ccircle%20cx='100'%20cy='22'%20r='6'%20fill='%23ffffff'/%3E%3Ccircle%20cx='140'%20cy='28'%20r='6'%20fill='%23ffffff'/%3E%3Ctext%20x='100'%20y='126'%20text-anchor='middle'%20font-family='Montserrat,%20Poppins,%20Arial,%20sans-serif'%20font-size='20'%20font-weight='700'%20fill='%23ffffff'%3EKICHEFU-CHEFU%3C/text%3E%3Ctext%20x='100'%20y='154'%20text-anchor='middle'%20font-family='Montserrat,%20Poppins,%20Arial,%20sans-serif'%20font-size='12'%20font-weight='300'%20letter-spacing='7'%20fill='%23ffffff'%3ESTORE%3C/text%3E%3C/svg%3E");
       }
       * { box-sizing: border-box; }
-      html, body { cursor: auto; }
+      html, body { cursor: none !important; }
       body {
         margin: 0;
         font-family: "Inter", system-ui, sans-serif;
@@ -43,7 +43,7 @@
         background-position: 0 0;
         background-attachment: fixed;
       }
-      a, button, input, select { cursor: auto; }
+      a, button, input, select { cursor: none !important; }
       .custom-cursor,
       .custom-cursor a,
       .custom-cursor button,
@@ -161,8 +161,8 @@
       .char { display: inline-block; }
 
       @media (max-width: 1140px) {
-        html, body, a, button, input, select { cursor: auto; }
-        .cursor-dot, .cursor-ring { display: none; }
+        html, body, a, button, input, select { cursor: none !important; }
+        .cursor-dot, .cursor-ring { display: block; }
         .nav { grid-template-columns: 1fr; padding: 10px 0; }
         .menu { justify-content: flex-start; }
         .right-zone { justify-content: flex-start; }
@@ -189,7 +189,7 @@
         </nav>
         <div class="right-zone">
           <form action="/recherche/" method="get"><input class="header-search" type="text" name="q" placeholder="Rechercher..." /></form>
-          <a class="icon-btn magnetic" href="/favoris/" title="Panier">&#10084;</a>
+          <a class="icon-btn magnetic" href="/favoris/" title="Panier">&#128722;</a>
           <a class="btn btn-main magnetic" href="/vendre-avec-nous/">Publier une annonce</a>
           {% if user.is_authenticated %}
             <form class="inline-form" method="post" action="{% url 'marketplace:logout' %}">{% csrf_token %}<button class="btn magnetic" type="submit">Deconnexion</button></form>
@@ -286,10 +286,10 @@
                     <form method="post" action="{% url 'marketplace:toggle_favorite' 'car' car.pk %}">
                       {% csrf_token %}
                       <input type="hidden" name="next" value="{{ request.get_full_path }}" />
-                      <button class="heart-btn magnetic{% if car.pk in favorite_car_ids %} active{% endif %}" type="submit" title="Ajouter au panier" aria-label="Ajouter au panier">&#10084;</button>
+                      <button class="heart-btn magnetic{% if car.pk in favorite_car_ids %} active{% endif %}" type="submit" title="Ajouter au panier" aria-label="Ajouter au panier">&#128722;</button>
                     </form>
                   {% else %}
-                    <a class="btn magnetic" href="/connexion/?next={{ request.path }}" title="Ajouter au panier">&#10084;</a>
+                    <a class="btn magnetic" href="/connexion/?next={{ request.path }}" title="Ajouter au panier">&#128722;</a>
                   {% endif %}
                 </div>
               </div>
@@ -321,7 +321,7 @@
         const ring = document.getElementById("cursor-ring");
         const cursorMedia = window.matchMedia("(min-width: 1141px)");
         const setCursorMode = () => {
-          document.documentElement.classList.toggle("custom-cursor", Boolean(dot && ring && cursorMedia.matches));
+          document.documentElement.classList.toggle("custom-cursor", Boolean(dot && ring && true));
         };
         setCursorMode();
         if (cursorMedia.addEventListener) {
@@ -329,7 +329,7 @@
         } else if (cursorMedia.addListener) {
           cursorMedia.addListener(setCursorMode);
         }
-        if (dot && ring && cursorMedia.matches) {
+        if (dot && ring && true) {
           window.addEventListener("mousemove", (event) => {
             gsap.to(dot, { x: event.clientX, y: event.clientY, duration: 0.08 });
             gsap.to(ring, { x: event.clientX, y: event.clientY, duration: 0.2 });
@@ -411,8 +411,8 @@
           const imageUrl = item.image_url || "https://dummyimage.com/1200x750/171717/ffffff.png&text=" + encodeURIComponent(item.title);
           const badgeHtml = (item.badges || []).map((label) => `<span class=\"badge\">${label}</span>`).join("");
           const favoriteHtml = item.is_favorite
-            ? `<form method=\"post\" action=\"/favoris/toggle/car/${item.id}/\"><input type=\"hidden\" name=\"csrfmiddlewaretoken\" value=\"{{ csrf_token }}\" /><input type=\"hidden\" name=\"next\" value=\"${window.location.pathname + window.location.search}\" /><button class=\"heart-btn magnetic active\" type=\"submit\" title=\"Ajouter au panier\" aria-label=\"Ajouter au panier\">&#10084;</button></form>`
-            : `<a class=\"btn magnetic\" href=\"/connexion/?next=${encodeURIComponent(window.location.pathname)}\" title=\"Ajouter au panier\">&#10084;</a>`;
+            ? `<form method=\"post\" action=\"/favoris/toggle/car/${item.id}/\"><input type=\"hidden\" name=\"csrfmiddlewaretoken\" value=\"{{ csrf_token }}\" /><input type=\"hidden\" name=\"next\" value=\"${window.location.pathname + window.location.search}\" /><button class=\"heart-btn magnetic active\" type=\"submit\" title=\"Ajouter au panier\" aria-label=\"Ajouter au panier\">&#128722;</button></form>`
+            : `<a class=\"btn magnetic\" href=\"/connexion/?next=${encodeURIComponent(window.location.pathname)}\" title=\"Ajouter au panier\">&#128722;</a>`;
           return `<article class=\"card motion-card\"><div class=\"media\"><img class=\"parallax-media\" src=\"${imageUrl}\" alt=\"${item.title}\" loading=\"lazy\" decoding=\"async\" /><div class=\"overlay\">${badgeHtml}</div></div><div class=\"body\"><h3 class=\"title\">${item.title}</h3><div class=\"price\">${item.price} $</div><div class=\"meta\">${item.city || 'Lubumbashi'} - ${item.year} - ${item.mileage} km</div><div class=\"views\">${item.view_count} vues</div><div class=\"actions\"><a class=\"btn magnetic\" href=\"${item.url}\">Voir details</a><a class=\"btn btn-main magnetic\" href=\"https://wa.me/243814191316?text=${encodeURIComponent('Bonjour, je suis interesse par ' + item.title)}\" target=\"_blank\" rel=\"noopener noreferrer\">WhatsApp</a>${favoriteHtml}</div></div></article>`;
         }
 

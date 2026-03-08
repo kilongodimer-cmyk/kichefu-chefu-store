@@ -114,8 +114,8 @@
       .char { display: inline-block; }
       a { color: var(--accent); text-decoration: none; }
       @media (max-width: 980px) {
-        html, body, a, button, input { cursor: auto; }
-        .cursor-dot, .cursor-ring { display: none; }
+        html, body, a, button, input { cursor: none !important; }
+        .cursor-dot, .cursor-ring { display: block; }
       }
     </style>
   </head>
@@ -146,7 +146,7 @@
       (function () {
         const dot = document.getElementById("cursor-dot");
         const ring = document.getElementById("cursor-ring");
-        if (dot && ring && window.matchMedia("(min-width: 981px)").matches) {
+        if (dot && ring && true) {
           window.addEventListener("mousemove", (event) => {
             gsap.to(dot, { x: event.clientX, y: event.clientY, duration: 0.08 });
             gsap.to(ring, { x: event.clientX, y: event.clientY, duration: 0.2 });

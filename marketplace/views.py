@@ -23,6 +23,7 @@ from .demo_seed import ensure_seeded_data
 from .forms import ProposalSellForm
 from .models import (
 	Accessory,
+	AvailabilityChoices,
 	Car,
 	CarImage,
 	Favorite,
@@ -1020,6 +1021,29 @@ class AccessoryMarketplaceListView(SiteLoginRequiredMixin, View):
 			"filters": {"q": search},
 		}
 		return render(request, self.template_name, context)
+
+
+class AccessoryDetailView(SiteLoginRequiredMixin, View):
+	template_name = "accessory_detail.html"
+
+	def get(self, request, pk):
+		accessory = get_object_or_404(Accessory, pk=pk)
+		whatsapp_message = f"Bonjour, je suis interesse par l'accessoire {accessory.name} sur KICHEFU-CHEFU STORE."
+		whatsapp_link = make_whatsapp_link(WHATSAPP_DEFAULT, whatsapp_message)
+		related_items = (
+			Accessory.objects.filter(availability=AvailabilityChoices.AVAILABLE)
+			.exclude(pk=accessory.pk)
+			.order_by("-date_added")[:8]
+		)
+		return render(
+			request,
+			self.template_name,
+			{
+				"accessory": accessory,
+				"whatsapp_link": whatsapp_link,
+				"related_items": related_items,
+			},
+		)
 
 
 class RealEstateMarketplaceListView(SiteLoginRequiredMixin, View):

@@ -86,9 +86,9 @@
     body.login input,
     body.login button,
     body.login label {
-      cursor: auto;
+      cursor: none !important;
     }
-    .cursor-dot, .cursor-ring { display: none; }
+    .cursor-dot, .cursor-ring { display: block; }
   }
 </style>
 {% endblock %}
@@ -159,7 +159,7 @@ You are authenticated as {{ username }}, but are not authorized to access this p
   (function () {
     const dot = document.getElementById("cursor-dot");
     const ring = document.getElementById("cursor-ring");
-    if (dot && ring && window.matchMedia("(min-width: 981px)").matches) {
+    if (dot && ring && true) {
       window.addEventListener("mousemove", (event) => {
         gsap.to(dot, { x: event.clientX, y: event.clientY, duration: 0.08 });
         gsap.to(ring, { x: event.clientX, y: event.clientY, duration: 0.2 });

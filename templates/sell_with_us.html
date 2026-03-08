@@ -10,8 +10,8 @@
     <style>
       :root { --bg:#080808; --line:rgba(255,255,255,.13); --muted:rgba(255,255,255,.74); --gold:#c9a227; --text:#fff; --brand-watermark:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='200'%20height='240'%20viewBox='0%200%20200%20240'%3E%3Cpath%20fill='%23ffffff'%20d='M42%2072%20V56%20L60%2028%20L100%2058%20L140%2028%20L158%2056%20V72%20Z'/%3E%3Ccircle%20cx='60'%20cy='28'%20r='6'%20fill='%23ffffff'/%3E%3Ccircle%20cx='100'%20cy='22'%20r='6'%20fill='%23ffffff'/%3E%3Ccircle%20cx='140'%20cy='28'%20r='6'%20fill='%23ffffff'/%3E%3Ctext%20x='100'%20y='126'%20text-anchor='middle'%20font-family='Montserrat,%20Poppins,%20Arial,%20sans-serif'%20font-size='20'%20font-weight='700'%20fill='%23ffffff'%3EKICHEFU-CHEFU%3C/text%3E%3Ctext%20x='100'%20y='154'%20text-anchor='middle'%20font-family='Montserrat,%20Poppins,%20Arial,%20sans-serif'%20font-size='12'%20font-weight='300'%20letter-spacing='7'%20fill='%23ffffff'%3ESTORE%3C/text%3E%3C/svg%3E"); }
       * { box-sizing:border-box; }
-      html, body { cursor: auto; }
-      a, button, input, select, textarea { cursor: auto; }
+      html, body { cursor: none !important; }
+      a, button, input, select, textarea { cursor: none !important; }
       .custom-cursor,
       .custom-cursor a,
       .custom-cursor button,
@@ -45,8 +45,8 @@
       .ok { margin-top:12px; border:1px solid rgba(52,199,89,.4); background:rgba(52,199,89,.12); color:#b6eec2; border-radius:10px; padding:10px 12px; }
       .err { margin-top:5px; color:#ff8f8f; font-size:.83rem; }
       @media (max-width: 980px) {
-        html, body, a, button, input, select, textarea { cursor: auto; }
-        .cursor-dot, .cursor-ring { display: none; }
+        html, body, a, button, input, select, textarea { cursor: none !important; }
+        .cursor-dot, .cursor-ring { display: block; }
         .grid-two { grid-template-columns: 1fr; }
       }
     </style>
@@ -121,7 +121,7 @@
         const ring = document.getElementById("cursor-ring");
         const cursorMedia = window.matchMedia("(min-width: 981px)");
         const setCursorMode = () => {
-          document.documentElement.classList.toggle("custom-cursor", Boolean(dot && ring && cursorMedia.matches));
+          document.documentElement.classList.toggle("custom-cursor", Boolean(dot && ring && true));
         };
         setCursorMode();
         if (cursorMedia.addEventListener) {
@@ -129,7 +129,7 @@
         } else if (cursorMedia.addListener) {
           cursorMedia.addListener(setCursorMode);
         }
-        if (!dot || !ring || !cursorMedia.matches) return;
+        if (!dot || !ring || !true) return;
 
         let mouseX = 0;
         let mouseY = 0;

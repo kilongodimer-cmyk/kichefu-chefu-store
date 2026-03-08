@@ -68,7 +68,7 @@
 
       @media (max-width:980px) {
         html, body, a, button, input { cursor:auto; }
-        .cursor-dot,.cursor-ring { display:none; }
+        .cursor-dot,.cursor-ring { display:block; }
         .nav { grid-template-columns:1fr; padding:10px 0; }
         .menu,.right-zone { justify-content:flex-start; }
         .hero { grid-template-columns:1fr; }
@@ -86,7 +86,7 @@
         <a class="logo magnetic" href="/">Kichefu Chefu Store</a>
         <nav class="menu"><a class="magnetic" href="/">Accueil</a><a class="magnetic" href="/voitures/">Voitures</a><a class="magnetic" href="/telephones/">Telephones</a><a class="magnetic" href="/parcelles/">Parcelles</a><a class="magnetic" href="/accessoires/">Accessoires</a></nav>
         <div class="right-zone">
-          <a class="icon-btn magnetic" href="/favoris/" title="Panier">&#10084;</a>
+          <a class="icon-btn magnetic" href="/favoris/" title="Panier">&#128722;</a>
           <a class="btn magnetic" href="{% url 'marketplace:car_list' %}">Retour</a>
           {% if user.is_authenticated %}
             <form class="inline-form" method="post" action="{% url 'marketplace:logout' %}">{% csrf_token %}<button class="btn magnetic" type="submit">Deconnexion</button></form>
@@ -125,9 +125,9 @@
           <a class="btn magnetic" href="tel:{{ contact_phone }}">Appeler</a>
           {% if user.is_authenticated %}
             <form method="post" action="{% url 'marketplace:toggle_price_alert' 'car' car.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}" /><button class="btn magnetic" type="submit">{% if price_alert_active %}Desactiver alerte prix{% else %}Alerte baisse de prix{% endif %}</button></form>
-            <form method="post" action="{% url 'marketplace:toggle_favorite' 'car' car.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}" /><button class="heart-btn magnetic{% if is_favorite %} active{% endif %}" type="submit">&#10084; Ajouter au panier</button></form>
+            <form method="post" action="{% url 'marketplace:toggle_favorite' 'car' car.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}" /><button class="heart-btn magnetic{% if is_favorite %} active{% endif %}" type="submit">&#128722; Ajouter au panier</button></form>
           {% else %}
-            <a class="btn magnetic" href="/connexion/?next={{ request.path }}">&#10084; Ajouter au panier</a>
+            <a class="btn magnetic" href="/connexion/?next={{ request.path }}">&#128722; Ajouter au panier</a>
           {% endif %}
         </div>
       </section>
@@ -161,7 +161,7 @@
         const ring = document.getElementById("cursor-ring");
         const cursorMedia = window.matchMedia("(min-width: 981px)");
         const setCursorMode = () => {
-          document.documentElement.classList.toggle("custom-cursor", Boolean(dot && ring && cursorMedia.matches));
+          document.documentElement.classList.toggle("custom-cursor", Boolean(dot && ring && true));
         };
         setCursorMode();
         if (cursorMedia.addEventListener) {
@@ -169,7 +169,7 @@
         } else if (cursorMedia.addListener) {
           cursorMedia.addListener(setCursorMode);
         }
-        if (dot && ring && cursorMedia.matches) {
+        if (dot && ring && true) {
           window.addEventListener("mousemove", (event) => {
             gsap.to(dot, { x: event.clientX, y: event.clientY, duration: 0.08 });
             gsap.to(ring, { x: event.clientX, y: event.clientY, duration: 0.2 });

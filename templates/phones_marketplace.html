@@ -20,8 +20,8 @@
         --brand-watermark: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='200'%20height='240'%20viewBox='0%200%20200%20240'%3E%3Cpath%20fill='%23ffffff'%20d='M42%2072%20V56%20L60%2028%20L100%2058%20L140%2028%20L158%2056%20V72%20Z'/%3E%3Ccircle%20cx='60'%20cy='28'%20r='6'%20fill='%23ffffff'/%3E%3Ccircle%20cx='100'%20cy='22'%20r='6'%20fill='%23ffffff'/%3E%3Ccircle%20cx='140'%20cy='28'%20r='6'%20fill='%23ffffff'/%3E%3Ctext%20x='100'%20y='126'%20text-anchor='middle'%20font-family='Montserrat,%20Poppins,%20Arial,%20sans-serif'%20font-size='20'%20font-weight='700'%20fill='%23ffffff'%3EKICHEFU-CHEFU%3C/text%3E%3Ctext%20x='100'%20y='154'%20text-anchor='middle'%20font-family='Montserrat,%20Poppins,%20Arial,%20sans-serif'%20font-size='12'%20font-weight='300'%20letter-spacing='7'%20fill='%23ffffff'%3ESTORE%3C/text%3E%3C/svg%3E");
       }
       * { box-sizing: border-box; }
-      html, body { cursor: auto; }
-      a, button, input, select { cursor: auto; }
+      html, body { cursor: none !important; }
+      a, button, input, select { cursor: none !important; }
       .custom-cursor,
       .custom-cursor a,
       .custom-cursor button,
@@ -104,8 +104,8 @@
       @media (max-width: 1080px) { .search { grid-template-columns: 1fr 1fr; } .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
       @media (max-width: 760px) { .nav { grid-template-columns: 1fr; align-items: flex-start; padding: 10px 0; } .menu { justify-content: flex-start; } .auth-actions { justify-content: flex-start; } .search { grid-template-columns: 1fr; } .grid { grid-template-columns: 1fr; } }
       @media (max-width: 980px) {
-        html, body, a, button, input, select { cursor: auto; }
-        .cursor-dot, .cursor-ring { display: none; }
+        html, body, a, button, input, select { cursor: none !important; }
+        .cursor-dot, .cursor-ring { display: block; }
       }
     </style>
   </head>
@@ -124,7 +124,7 @@
         </nav>
         <div class="auth-actions">
           <form action="/recherche/" method="get"><input class="header-search" type="text" name="q" placeholder="Rechercher..." /></form>
-          <a class="icon-btn" href="/favoris/" title="Panier">&#10084;</a>
+          <a class="icon-btn" href="/favoris/" title="Panier">&#128722;</a>
           <a class="btn btn-main" href="/vendre-avec-nous/">Publier une annonce</a>
           {% if user.is_authenticated %}
             <form class="inline-form" method="post" action="{% url 'marketplace:logout' %}">
@@ -173,10 +173,10 @@
                   <form method="post" action="{% url 'marketplace:toggle_favorite' 'phone' phone.pk %}">
                     {% csrf_token %}
                     <input type="hidden" name="next" value="{{ request.get_full_path }}" />
-                    <button class="heart-btn{% if phone.pk in favorite_phone_ids %} active{% endif %}" type="submit" title="Ajouter au panier" aria-label="Ajouter au panier">&#10084;</button>
+                    <button class="heart-btn{% if phone.pk in favorite_phone_ids %} active{% endif %}" type="submit" title="Ajouter au panier" aria-label="Ajouter au panier">&#128722;</button>
                   </form>
                 {% else %}
-                  <a class="btn btn-ghost" href="/connexion/?next={{ request.path }}" title="Ajouter au panier">&#10084;</a>
+                  <a class="btn btn-ghost" href="/connexion/?next={{ request.path }}" title="Ajouter au panier">&#128722;</a>
                 {% endif %}
               </div>
             </div>
@@ -200,7 +200,7 @@
         const ring = document.getElementById("cursor-ring");
         const cursorMedia = window.matchMedia("(min-width: 981px)");
         const setCursorMode = () => {
-          document.documentElement.classList.toggle("custom-cursor", Boolean(dot && ring && cursorMedia.matches));
+          document.documentElement.classList.toggle("custom-cursor", Boolean(dot && ring && true));
         };
         setCursorMode();
         if (cursorMedia.addEventListener) {
@@ -208,7 +208,7 @@
         } else if (cursorMedia.addListener) {
           cursorMedia.addListener(setCursorMode);
         }
-        if (!dot || !ring || !cursorMedia.matches) return;
+        if (!dot || !ring || !true) return;
 
         let mouseX = 0;
         let mouseY = 0;

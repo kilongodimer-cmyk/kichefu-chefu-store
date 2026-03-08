@@ -213,6 +213,9 @@ class Accessory(models.Model):
 	def __str__(self):
 		return self.name
 
+	def get_absolute_url(self):
+		return reverse("marketplace:accessory_detail", kwargs={"pk": self.pk})
+
 
 class RealEstateType(models.TextChoices):
 	HOUSE = "house", "Maison"

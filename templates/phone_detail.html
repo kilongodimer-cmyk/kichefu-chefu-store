@@ -61,7 +61,7 @@
         <a class="brand" href="/">KICHEFU-CHEFU STORE</a>
         <nav class="menu"><a href="/">Accueil</a><a href="/voitures/">Voitures</a><a href="/telephones/">Telephones</a><a href="/parcelles/">Parcelles</a><a href="/accessoires/">Accessoires</a></nav>
         <div class="auth-actions">
-          <a class="icon-btn" href="/favoris/" title="Panier">&#10084;</a>
+          <a class="icon-btn" href="/favoris/" title="Panier">&#128722;</a>
           <a class="btn btn-main" href="/vendre-avec-nous/">Publier une annonce</a>
           <a class="btn" href="{% url 'marketplace:phone_list' %}">Retour</a>
           {% if user.is_authenticated %}
@@ -107,10 +107,10 @@
             <form method="post" action="{% url 'marketplace:toggle_favorite' 'phone' phone.pk %}">
               {% csrf_token %}
               <input type="hidden" name="next" value="{{ request.get_full_path }}" />
-              <button class="heart-btn{% if is_favorite %} active{% endif %}" type="submit">&#10084; Panier</button>
+              <button class="heart-btn{% if is_favorite %} active{% endif %}" type="submit">&#128722; Panier</button>
             </form>
           {% else %}
-            <a class="btn" href="/connexion/?next={{ request.path }}">&#10084; Panier</a>
+            <a class="btn" href="/connexion/?next={{ request.path }}">&#128722; Panier</a>
           {% endif %}
         </div>
       </section>
