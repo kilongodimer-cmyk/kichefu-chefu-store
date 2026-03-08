@@ -27,9 +27,11 @@
       .btn-main { border-color:transparent; background:var(--orange); color:#111; }
       .hero { padding:28px 0 58px; display:grid; grid-template-columns:1.05fr .95fr; gap:20px; }
       .gallery { border:1px solid var(--line); border-radius:14px; background:#161616; overflow:hidden; }
-      .main-img { width:100%; aspect-ratio:16/10; object-fit:cover; display:block; }
+      .main-img { width:100%; aspect-ratio:16/10; object-fit:contain; object-position:center; background:#0b0b0b; display:block; touch-action:pan-y; }
       .thumbs { padding:10px; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; }
-      .thumbs img { width:100%; aspect-ratio:16/10; object-fit:cover; border-radius:8px; border:1px solid var(--line); }
+      .thumbs img { width:100%; aspect-ratio:16/10; object-fit:cover; border-radius:8px; border:1px solid var(--line); cursor:pointer; transition:border-color .18s ease, transform .18s ease; }
+      .thumbs img:hover { transform:translateY(-2px); }
+      .thumbs img.active { border-color:var(--orange); box-shadow:0 0 0 1px rgba(255,107,0,.35) inset; }
       .panel { border:1px solid var(--line); border-radius:14px; background:#161616; padding:16px; }
       h1 { margin:0; font-size:clamp(1.6rem,3vw,2.5rem); font-weight:900; }
       .price { margin-top:10px; color:#ff8a3c; font-size:1.45rem; font-weight:900; }
@@ -163,6 +165,44 @@
       </div>
     </section>
     <script>
+      (function () {
+        const gallery = document.querySelector(".gallery");
+        const mainImage = gallery ? gallery.querySelector(".main-img") : null;
+        const thumbImages = gallery ? Array.from(gallery.querySelectorAll(".thumbs img")) : [];
+        if (!mainImage || thumbImages.length === 0) {
+          return;
+        }
+
+        let activeIndex = Math.max(0, thumbImages.findIndex((img) => img.getAttribute("src") === mainImage.getAttribute("src")));
+
+        const setActive = (index) => {
+          activeIndex = (index + thumbImages.length) % thumbImages.length;
+          const activeThumb = thumbImages[activeIndex];
+          if (!activeThumb) return;
+          mainImage.src = activeThumb.src;
+          mainImage.alt = activeThumb.alt || mainImage.alt;
+          thumbImages.forEach((img, idx) => img.classList.toggle("active", idx === activeIndex));
+        };
+
+        thumbImages.forEach((thumb, index) => {
+          thumb.addEventListener("click", () => setActive(index));
+        });
+        setActive(activeIndex);
+
+        let startX = 0;
+        const threshold = 40;
+        mainImage.addEventListener("touchstart", (event) => {
+          if (event.changedTouches.length === 0) return;
+          startX = event.changedTouches[0].clientX;
+        }, { passive: true });
+        mainImage.addEventListener("touchend", (event) => {
+          if (event.changedTouches.length === 0) return;
+          const deltaX = event.changedTouches[0].clientX - startX;
+          if (Math.abs(deltaX) < threshold) return;
+          setActive(activeIndex + (deltaX < 0 ? 1 : -1));
+        }, { passive: true });
+      })();
+
       (function () {
         const canUseCustomCursor = window.matchMedia("(min-width: 981px) and (hover: hover) and (pointer: fine)").matches;
         if (!canUseCustomCursor) {
