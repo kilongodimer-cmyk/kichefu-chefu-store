@@ -1,7 +1,9 @@
 :root {
   --kc-black: #0f0f0f;
   --kc-panel: #171717;
+  --kc-panel-soft: rgba(255, 255, 255, 0.04);
   --kc-orange: #ff6b00;
+  --kc-amber: #ffc266;
   --kc-white: #ffffff;
   --kc-line: rgba(255, 255, 255, 0.15);
   --kc-muted: rgba(255, 255, 255, 0.72);
@@ -9,11 +11,25 @@
 }
 
 body {
+  font-family: "Space Grotesk", "Segoe UI", sans-serif;
   background:
     radial-gradient(circle at 10% 0%, rgba(255, 107, 0, 0.16), transparent 32%),
+    radial-gradient(circle at 0% 70%, rgba(255, 194, 102, 0.1), transparent 34%),
     radial-gradient(circle at 100% 0%, rgba(255, 107, 0, 0.08), transparent 30%),
     var(--kc-black);
   color: var(--kc-white);
+}
+
+#site-name a,
+h1,
+h2,
+h3,
+.module caption,
+.object-tools a,
+button,
+.button,
+input[type="submit"] {
+  font-family: "Sora", "Segoe UI", sans-serif;
 }
 
 body::before {
@@ -45,9 +61,10 @@ div.breadcrumbs,
 }
 
 #header {
-  background: rgba(17, 17, 17, 0.55);
+  background: linear-gradient(120deg, rgba(17, 17, 17, 0.7), rgba(255, 107, 0, 0.16));
   border-bottom: 1px solid var(--kc-line);
   backdrop-filter: blur(10px) saturate(140%);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
 }
 
 #branding #site-name a,
@@ -55,6 +72,9 @@ div.breadcrumbs,
 #header a:link,
 #header a:visited {
   color: var(--kc-white);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
 }
 
 div.breadcrumbs,
@@ -71,10 +91,11 @@ div.breadcrumbs,
 #content-related,
 .submit-row,
 #content-main {
-  background: rgba(255, 255, 255, 0.03);
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015));
   border: 1px solid var(--kc-line);
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(8px);
   color: var(--kc-white);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
 }
 
 #content h1,
@@ -83,7 +104,13 @@ div.breadcrumbs,
 #content-main h1,
 #content-main h2 {
   color: var(--kc-white);
-  letter-spacing: 0.02em;
+  letter-spacing: 0.03em;
+  font-weight: 700;
+}
+
+#content h1,
+#content-main h1 {
+  font-size: clamp(1.25rem, 2vw, 1.9rem);
 }
 
 input,
@@ -92,10 +119,11 @@ select,
 .selector,
 .selector-available h2,
 .selector-chosen h2 {
-  background: #101010;
+  background: rgba(10, 10, 10, 0.88);
   border: 1px solid var(--kc-line);
   color: var(--kc-white);
   border-radius: 10px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
 input:focus,
@@ -115,7 +143,7 @@ a.addlink,
 a.changelink {
   border-radius: 999px;
   border: 1px solid var(--kc-line);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--kc-panel-soft);
   color: var(--kc-white);
   transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
 }
@@ -124,7 +152,7 @@ a.changelink {
 input[type="submit"].default,
 .submit-row input.default,
 .object-tools a.addlink {
-  background: var(--kc-orange);
+  background: linear-gradient(120deg, var(--kc-orange), var(--kc-amber));
   color: #111;
   border-color: transparent;
   font-weight: 700;
@@ -157,6 +185,20 @@ tr:nth-child(even),
   background: rgba(255, 255, 255, 0.01);
 }
 
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+thead th {
+  background: rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid var(--kc-line);
+}
+
+.results tbody tr:hover {
+  background: rgba(255, 194, 102, 0.08);
+}
+
 .help,
 .helptext,
 .quiet,
@@ -166,6 +208,48 @@ small {
 
 .fade-admin {
   animation: kcFadeInUp 0.55s ease both;
+}
+
+@media (max-width: 1024px) {
+  #header,
+  .module,
+  .inline-group,
+  #changelist,
+  #content-main,
+  #changelist-filter {
+    border-radius: 12px;
+  }
+
+  #site-name a {
+    font-size: 0.92rem;
+    letter-spacing: 0.05em;
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    background:
+      radial-gradient(circle at 20% 0%, rgba(255, 107, 0, 0.18), transparent 36%),
+      radial-gradient(circle at 100% 0%, rgba(255, 194, 102, 0.09), transparent 34%),
+      var(--kc-black);
+  }
+
+  #content,
+  #content-main {
+    padding: 0.6rem;
+  }
+
+  .object-tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .submit-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
 }
 
 @keyframes kcFadeInUp {

@@ -24,6 +24,11 @@ from .models import (
 )
 
 
+admin.site.site_header = "Administration KICHEFU-CHEFU STORE"
+admin.site.site_title = "Administration KICHEFU-CHEFU"
+admin.site.index_title = "Pilotage du catalogue"
+
+
 class CarImageInline(admin.TabularInline):
 	model = CarImage
 	extra = 1
