@@ -105,7 +105,12 @@
 
           <div><label for="id_description">Description complete</label>{{ form.description }}{% if form.description.errors %}<div class="err">{{ form.description.errors|striptags }}</div>{% endif %}</div>
           <div><label for="id_desired_price">Prix souhaite</label>{{ form.desired_price }}{% if form.desired_price.errors %}<div class="err">{{ form.desired_price.errors|striptags }}</div>{% endif %}</div>
-          <div><label for="id_photos">Photos</label>{{ form.photos }}{% if form.photos.errors %}<div class="err">{{ form.photos.errors|striptags }}</div>{% endif %}</div>
+          <div>
+            <label for="id_photos">Photos (minimum 2)</label>
+            {{ form.photos }}
+            <div class="hint">Ajoutez au moins 2 photos nettes pour augmenter vos chances d'acceptation.</div>
+            {% if form.photos.errors %}<div class="err">{{ form.photos.errors|striptags }}</div>{% endif %}
+          </div>
           <button class="submit" type="submit">Envoyer ma proposition</button>
         </form>
       </section>

@@ -69,6 +69,41 @@ def make_whatsapp_link(phone_number, message):
 	return f"https://wa.me/{number}?text={quote(message)}"
 
 
+def build_proposal_whatsapp_message(proposal):
+	lines = [
+		"Bonjour, nouvelle proposition recue depuis le formulaire KICHEFU-CHEFU STORE.",
+		f"Nom: {proposal.name}",
+		f"Telephone: {proposal.phone_number}",
+		f"Type: {proposal.get_asset_type_display()}",
+		f"Ville: {proposal.city or '-'}",
+		f"Etat: {proposal.get_item_condition_display() if proposal.item_condition else '-'}",
+		f"Prix souhaite: {proposal.desired_price} USD",
+	]
+
+	if proposal.brand:
+		lines.append(f"Marque: {proposal.brand}")
+	if proposal.model_name:
+		lines.append(f"Modele: {proposal.model_name}")
+	if proposal.year:
+		lines.append(f"Annee: {proposal.year}")
+	if proposal.mileage is not None:
+		lines.append(f"Kilometrage: {proposal.mileage} km")
+	if proposal.storage:
+		lines.append(f"Stockage: {proposal.storage}")
+	if proposal.transmission:
+		lines.append(f"Transmission: {proposal.get_transmission_display()}")
+	if proposal.fuel_type:
+		lines.append(f"Carburant: {proposal.get_fuel_type_display()}")
+	if proposal.location_details:
+		lines.append(f"Localisation: {proposal.location_details}")
+	if proposal.surface_area:
+		lines.append(f"Surface: {proposal.surface_area}")
+
+	lines.append(f"Description: {proposal.description}")
+	lines.append("Photos: envoyees via formulaire (minimum 2).")
+	return "\n".join(lines)
+
+
 def build_badges(item, index=0):
 	badges = []
 	if item.date_added >= timezone.now() - timedelta(days=21):
@@ -1241,12 +1276,14 @@ class SellWithUsView(SiteLoginRequiredMixin, View):
 		if not form.is_valid():
 			return render(request, self.template_name, {"form": form})
 
+		photos = form.cleaned_data.get("photos") or []
 		proposal = form.save()
-		for image in request.FILES.getlist("photos"):
+		for image in photos:
 			ProposalImage.objects.create(proposal=proposal, image=image)
 
-		messages.success(request, "Votre annonce a ete envoyee. Notre equipe vous contacte rapidement.")
-		return redirect("marketplace:sell_with_us")
+		whatsapp_message = build_proposal_whatsapp_message(proposal)
+		whatsapp_link = make_whatsapp_link(WHATSAPP_DEFAULT, whatsapp_message)
+		return redirect(whatsapp_link)
 
 
 class RobotsTxtView(View):

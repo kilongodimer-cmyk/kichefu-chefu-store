@@ -1,4 +1,5 @@
 from django import forms
+from django.core.exceptions import ValidationError
 
 from .models import CarSellRequest, Proposal
 
@@ -7,9 +8,48 @@ class MultipleFileInput(forms.ClearableFileInput):
     allow_multiple_selected = True
 
 
+class MultipleImageField(forms.ImageField):
+    def __init__(self, *args, min_files=0, max_files=None, **kwargs):
+        self.min_files = min_files
+        self.max_files = max_files
+        super().__init__(*args, **kwargs)
+
+    def clean(self, data, initial=None):
+        files = []
+        if data is None:
+            files = []
+        elif isinstance(data, (list, tuple)):
+            files = [file for file in data if file]
+        else:
+            files = [data]
+
+        if self.required and not files:
+            raise ValidationError("Ajoutez au moins 2 photos.")
+
+        if self.min_files and len(files) < self.min_files:
+            raise ValidationError(f"Ajoutez au moins {self.min_files} photos.")
+
+        if self.max_files and len(files) > self.max_files:
+            raise ValidationError(f"Vous pouvez ajouter au maximum {self.max_files} photos.")
+
+        cleaned_files = []
+        errors = []
+        for file in files:
+            try:
+                cleaned_files.append(super().clean(file, initial))
+            except ValidationError as exc:
+                errors.extend(exc.error_list)
+
+        if errors:
+            raise ValidationError(errors)
+
+        return cleaned_files
+
+
 class CarSellRequestForm(forms.ModelForm):
-    photos = forms.ImageField(
-        required=False,
+    photos = MultipleImageField(
+        required=True,
+        min_files=2,
         widget=MultipleFileInput(attrs={"multiple": True, "accept": "image/*"}),
     )
 
@@ -26,8 +66,9 @@ class CarSellRequestForm(forms.ModelForm):
 
 
 class ProposalSellForm(forms.ModelForm):
-    photos = forms.ImageField(
-        required=False,
+    photos = MultipleImageField(
+        required=True,
+        min_files=2,
         widget=MultipleFileInput(attrs={"multiple": True, "accept": "image/*"}),
     )
 
