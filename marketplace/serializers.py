@@ -19,7 +19,7 @@ WHATSAPP_MESSAGE = "Bonjour, je suis intéressé par ce produit sur KICHEFU-CHEF
 
 
 def build_whatsapp_link():
-    return f"https://wa.me/243000000000?text={quote(WHATSAPP_MESSAGE)}"
+    return f"https://wa.me/243814191316?text={quote(WHATSAPP_MESSAGE)}"
 
 
 class CarImageSerializer(serializers.ModelSerializer):

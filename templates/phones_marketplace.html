@@ -168,7 +168,7 @@
               <div class="views">{{ phone.view_count }} vues</div>
               <div class="actions">
                 <a class="btn btn-ghost" href="{{ phone.get_absolute_url }}">Voir details</a>
-                <a class="btn btn-main" href="https://wa.me/243000000000?text=Bonjour,%20je%20veux%20le%20telephone%20{{ phone.brand }}%20{{ phone.model }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                <a class="btn btn-main" href="https://wa.me/243814191316?text=Bonjour,%20je%20veux%20le%20telephone%20{{ phone.brand }}%20{{ phone.model }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
                 {% if user.is_authenticated %}
                   <form method="post" action="{% url 'marketplace:toggle_favorite' 'phone' phone.pk %}">
                     {% csrf_token %}

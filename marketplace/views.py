@@ -50,7 +50,7 @@ from .serializers import (
 )
 
 
-WHATSAPP_DEFAULT = "+243000000000"
+WHATSAPP_DEFAULT = "+243814191316"
 LUBUMBASHI_NEIGHBORHOODS = ["Kenya", "Kamalondo", "Katuba", "Ruashi", "Golf", "Bel-Air", "Kalubwe"]
 RECENT_SESSION_KEY = "recently_viewed"
 USER_CITY_SESSION_KEY = "user_city"
@@ -842,7 +842,7 @@ class CarDetailView(SiteLoginRequiredMixin, View):
 		track_recent_view(request, "cars", car.pk)
 		favorite_map = get_favorite_id_map(request.user)
 		user_city = get_user_city(request)
-		contact_phone = car.seller_phone or "+243000000000"
+		contact_phone = car.seller_phone or WHATSAPP_DEFAULT
 		whatsapp_message = f"Bonjour, je suis interesse par {car.brand} {car.model} sur KICHEFU-CHEFU STORE."
 		whatsapp_link = make_whatsapp_link(contact_phone, whatsapp_message)
 		car_base_queryset = Car.objects.prefetch_related("images").all()
