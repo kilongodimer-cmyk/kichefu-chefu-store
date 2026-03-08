@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
@@ -189,7 +189,7 @@
         </nav>
         <div class="right-zone">
           <form action="/recherche/" method="get"><input class="header-search" type="text" name="q" placeholder="Rechercher..." /></form>
-          <a class="icon-btn magnetic" href="/favoris/" title="Panier">&#128722;</a>
+          <a class="icon-btn magnetic" href="/panier/" title="Panier">&#128722;</a>
           <a class="btn btn-main magnetic" href="/vendre-avec-nous/">Publier une annonce</a>
           {% if user.is_authenticated %}
             <form class="inline-form" method="post" action="{% url 'marketplace:logout' %}">{% csrf_token %}<button class="btn magnetic" type="submit">Deconnexion</button></form>
@@ -283,7 +283,7 @@
                   <a class="btn magnetic" href="{{ car.get_absolute_url }}">Voir details</a>
                   <a class="btn btn-main magnetic" href="https://wa.me/243814191316?text=Bonjour,%20je%20suis%20interesse%20par%20{{ car.brand }}%20{{ car.model }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
                   {% if user.is_authenticated %}
-                    <form method="post" action="{% url 'marketplace:toggle_favorite' 'car' car.pk %}">
+                    <form method="post" action="{% url 'marketplace:toggle_cart' 'car' car.pk %}">
                       {% csrf_token %}
                       <input type="hidden" name="next" value="{{ request.get_full_path }}" />
                       <button class="heart-btn magnetic{% if car.pk in favorite_car_ids %} active{% endif %}" type="submit" title="Ajouter au panier" aria-label="Ajouter au panier">&#128722;</button>
@@ -411,7 +411,7 @@
           const imageUrl = item.image_url || "https://dummyimage.com/1200x750/171717/ffffff.png&text=" + encodeURIComponent(item.title);
           const badgeHtml = (item.badges || []).map((label) => `<span class=\"badge\">${label}</span>`).join("");
           const favoriteHtml = item.is_favorite
-            ? `<form method=\"post\" action=\"/favoris/toggle/car/${item.id}/\"><input type=\"hidden\" name=\"csrfmiddlewaretoken\" value=\"{{ csrf_token }}\" /><input type=\"hidden\" name=\"next\" value=\"${window.location.pathname + window.location.search}\" /><button class=\"heart-btn magnetic active\" type=\"submit\" title=\"Ajouter au panier\" aria-label=\"Ajouter au panier\">&#128722;</button></form>`
+            ? `<form method=\"post\" action=\"/panier/toggle/car/${item.id}/\"><input type=\"hidden\" name=\"csrfmiddlewaretoken\" value=\"{{ csrf_token }}\" /><input type=\"hidden\" name=\"next\" value=\"${window.location.pathname + window.location.search}\" /><button class=\"heart-btn magnetic active\" type=\"submit\" title=\"Ajouter au panier\" aria-label=\"Ajouter au panier\">&#128722;</button></form>`
             : `<a class=\"btn magnetic\" href=\"/connexion/?next=${encodeURIComponent(window.location.pathname)}\" title=\"Ajouter au panier\">&#128722;</a>`;
           return `<article class=\"card motion-card\"><div class=\"media\"><img class=\"parallax-media\" src=\"${imageUrl}\" alt=\"${item.title}\" loading=\"lazy\" decoding=\"async\" /><div class=\"overlay\">${badgeHtml}</div></div><div class=\"body\"><h3 class=\"title\">${item.title}</h3><div class=\"price\">${item.price} $</div><div class=\"meta\">${item.city || 'Lubumbashi'} - ${item.year} - ${item.mileage} km</div><div class=\"views\">${item.view_count} vues</div><div class=\"actions\"><a class=\"btn magnetic\" href=\"${item.url}\">Voir details</a><a class=\"btn btn-main magnetic\" href=\"https://wa.me/243814191316?text=${encodeURIComponent('Bonjour, je suis interesse par ' + item.title)}\" target=\"_blank\" rel=\"noopener noreferrer\">WhatsApp</a>${favoriteHtml}</div></div></article>`;
         }
@@ -452,4 +452,5 @@
     </script>
   </body>
 </html>
+
 

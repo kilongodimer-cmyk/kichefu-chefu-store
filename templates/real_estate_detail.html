@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
@@ -62,7 +62,7 @@
         <a class="brand" href="/">KICHEFU-CHEFU STORE</a>
         <nav class="menu"><a href="/">Accueil</a><a href="/voitures/">Voitures</a><a href="/telephones/">Telephones</a><a href="/parcelles/">Parcelles</a><a href="/accessoires/">Accessoires</a></nav>
         <div class="auth-actions">
-          <a class="icon-btn" href="/favoris/" title="Panier">&#128722;</a>
+          <a class="icon-btn" href="/panier/" title="Panier">&#128722;</a>
           <a class="btn btn-main" href="/vendre-avec-nous/">Publier une annonce</a>
           <a class="btn" href="{% url 'marketplace:real_estate_list' %}">Retour</a>
           {% if user.is_authenticated %}
@@ -106,7 +106,7 @@
               <input type="hidden" name="next" value="{{ request.get_full_path }}" />
               <button class="btn" type="submit">{% if price_alert_active %}Desactiver alerte prix{% else %}Alerte baisse de prix{% endif %}</button>
             </form>
-            <form method="post" action="{% url 'marketplace:toggle_favorite' 'real_estate' listing.pk %}">
+            <form method="post" action="{% url 'marketplace:toggle_cart' 'real_estate' listing.pk %}">
               {% csrf_token %}
               <input type="hidden" name="next" value="{{ request.get_full_path }}" />
               <button class="heart-btn{% if is_favorite %} active{% endif %}" type="submit">&#128722; Panier</button>
@@ -197,4 +197,5 @@
     </script>
   </body>
 </html>
+
 

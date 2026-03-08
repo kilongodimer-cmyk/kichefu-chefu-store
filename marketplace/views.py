@@ -1224,7 +1224,7 @@ class FavoritesView(LoginRequiredMixin, View):
 		selected_items = request.POST.getlist("selected_items")
 		if not selected_items:
 			messages.info(request, "Selectionnez au moins un element du panier a supprimer.")
-			return redirect("marketplace:favorites")
+			return redirect("marketplace:cart")
 
 		model_map = {"car": Car, "phone": Phone, "real_estate": RealEstate}
 		ids_by_model = {"car": set(), "phone": set(), "real_estate": set()}
@@ -1257,7 +1257,7 @@ class FavoritesView(LoginRequiredMixin, View):
 		else:
 			messages.info(request, "Aucun element du panier n'a ete supprime.")
 
-		return redirect("marketplace:favorites")
+		return redirect("marketplace:cart")
 
 	def get(self, request):
 		favorite_map = get_favorite_id_map(request.user)
