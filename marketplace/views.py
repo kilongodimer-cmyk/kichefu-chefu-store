@@ -70,7 +70,7 @@ def make_whatsapp_link(phone_number, message):
 	return f"https://wa.me/{number}?text={quote(message)}"
 
 
-def build_proposal_whatsapp_message(proposal):
+def build_proposal_whatsapp_message(proposal, image_urls=None):
 	lines = [
 		"Bonjour, nouvelle proposition recue depuis le formulaire KICHEFU-CHEFU STORE.",
 		f"Nom: {proposal.name}",
@@ -101,7 +101,12 @@ def build_proposal_whatsapp_message(proposal):
 		lines.append(f"Surface: {proposal.surface_area}")
 
 	lines.append(f"Description: {proposal.description}")
-	lines.append("Photos: envoyees via formulaire (minimum 2).")
+	if image_urls:
+		lines.append("Photos:")
+		for index, image_url in enumerate(image_urls, start=1):
+			lines.append(f"Photo {index}: {image_url}")
+	else:
+		lines.append("Photos: envoyees via formulaire (minimum 2).")
 	return "\n".join(lines)
 
 
@@ -1341,10 +1346,13 @@ class SellWithUsView(SiteLoginRequiredMixin, View):
 
 		photos = form.cleaned_data.get("photos") or []
 		proposal = form.save()
+		image_urls = []
 		for image in photos:
-			ProposalImage.objects.create(proposal=proposal, image=image)
+			proposal_image = ProposalImage.objects.create(proposal=proposal, image=image)
+			if proposal_image.image:
+				image_urls.append(request.build_absolute_uri(proposal_image.image.url))
 
-		whatsapp_message = build_proposal_whatsapp_message(proposal)
+		whatsapp_message = build_proposal_whatsapp_message(proposal, image_urls=image_urls)
 		whatsapp_link = make_whatsapp_link(WHATSAPP_DEFAULT, whatsapp_message)
 		return redirect(whatsapp_link)
 

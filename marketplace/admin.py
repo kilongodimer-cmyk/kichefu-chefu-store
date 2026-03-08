@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.contrib import messages
+from django.utils.html import format_html
 from django.shortcuts import redirect, render
 from django.urls import path, reverse
 
@@ -32,6 +33,15 @@ admin.site.index_title = "Pilotage du catalogue"
 class CarImageInline(admin.TabularInline):
 	model = CarImage
 	extra = 1
+	fields = ("image", "preview", "created_at")
+	readonly_fields = ("preview", "created_at")
+
+	def preview(self, obj):
+		if obj and obj.image:
+			return format_html('<img src="{}" style="height:72px;border-radius:8px;border:1px solid #ddd;" />', obj.image.url)
+		return "-"
+
+	preview.short_description = "Apercu"
 
 
 @admin.register(Car)
@@ -99,6 +109,15 @@ class CarAdmin(admin.ModelAdmin):
 class PhoneImageInline(admin.TabularInline):
 	model = PhoneImage
 	extra = 1
+	fields = ("image", "preview", "created_at")
+	readonly_fields = ("preview", "created_at")
+
+	def preview(self, obj):
+		if obj and obj.image:
+			return format_html('<img src="{}" style="height:72px;border-radius:8px;border:1px solid #ddd;" />', obj.image.url)
+		return "-"
+
+	preview.short_description = "Apercu"
 
 
 @admin.register(Phone)
@@ -112,15 +131,32 @@ class PhoneAdmin(admin.ModelAdmin):
 
 @admin.register(Accessory)
 class AccessoryAdmin(admin.ModelAdmin):
-	list_display = ("name", "price", "availability", "date_added")
+	list_display = ("name", "image_preview", "price", "availability", "date_added")
 	list_filter = ("availability",)
 	search_fields = ("name", "description")
 	ordering = ("-date_added",)
+	readonly_fields = ("image_preview",)
+
+	def image_preview(self, obj):
+		if obj and obj.image:
+			return format_html('<img src="{}" style="height:72px;border-radius:8px;border:1px solid #ddd;" />', obj.image.url)
+		return "-"
+
+	image_preview.short_description = "Apercu"
 
 
 class RealEstateImageInline(admin.TabularInline):
 	model = RealEstateImage
 	extra = 1
+	fields = ("image", "preview", "created_at")
+	readonly_fields = ("preview", "created_at")
+
+	def preview(self, obj):
+		if obj and obj.image:
+			return format_html('<img src="{}" style="height:72px;border-radius:8px;border:1px solid #ddd;" />', obj.image.url)
+		return "-"
+
+	preview.short_description = "Apercu"
 
 
 @admin.register(RealEstate)
@@ -135,6 +171,15 @@ class RealEstateAdmin(admin.ModelAdmin):
 class ProposalImageInline(admin.TabularInline):
 	model = ProposalImage
 	extra = 1
+	fields = ("image", "preview", "created_at")
+	readonly_fields = ("preview", "created_at")
+
+	def preview(self, obj):
+		if obj and obj.image:
+			return format_html('<img src="{}" style="height:72px;border-radius:8px;border:1px solid #ddd;" />', obj.image.url)
+		return "-"
+
+	preview.short_description = "Apercu"
 
 
 @admin.register(Proposal)
