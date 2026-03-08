@@ -1,0 +1,180 @@
+:root {
+  --kc-black: #0f0f0f;
+  --kc-panel: #171717;
+  --kc-orange: #ff6b00;
+  --kc-white: #ffffff;
+  --kc-line: rgba(255, 255, 255, 0.15);
+  --kc-muted: rgba(255, 255, 255, 0.72);
+  --kc-watermark: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='200'%20height='240'%20viewBox='0%200%20200%20240'%3E%3Cpath%20fill='%23ffffff'%20d='M42%2072%20V56%20L60%2028%20L100%2058%20L140%2028%20L158%2056%20V72%20Z'/%3E%3Ccircle%20cx='60'%20cy='28'%20r='6'%20fill='%23ffffff'/%3E%3Ccircle%20cx='100'%20cy='22'%20r='6'%20fill='%23ffffff'/%3E%3Ccircle%20cx='140'%20cy='28'%20r='6'%20fill='%23ffffff'/%3E%3Ctext%20x='100'%20y='126'%20text-anchor='middle'%20font-family='Montserrat,%20Poppins,%20Arial,%20sans-serif'%20font-size='20'%20font-weight='700'%20fill='%23ffffff'%3EKICHEFU-CHEFU%3C/text%3E%3Ctext%20x='100'%20y='154'%20text-anchor='middle'%20font-family='Montserrat,%20Poppins,%20Arial,%20sans-serif'%20font-size='12'%20font-weight='300'%20letter-spacing='7'%20fill='%23ffffff'%3ESTORE%3C/text%3E%3C/svg%3E");
+}
+
+body {
+  background:
+    radial-gradient(circle at 10% 0%, rgba(255, 107, 0, 0.16), transparent 32%),
+    radial-gradient(circle at 100% 0%, rgba(255, 107, 0, 0.08), transparent 30%),
+    var(--kc-black);
+  color: var(--kc-white);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: var(--kc-watermark);
+  background-repeat: repeat;
+  background-size: 200px auto;
+  background-attachment: fixed;
+}
+
+#header,
+#changelist-filter,
+#changelist,
+.module,
+.inline-group,
+.submit-row,
+.breadcrumbs,
+div.breadcrumbs,
+.object-tools a,
+#content-related,
+#content-main,
+#content {
+  border-radius: 14px;
+}
+
+#header {
+  background: rgba(17, 17, 17, 0.55);
+  border-bottom: 1px solid var(--kc-line);
+  backdrop-filter: blur(10px) saturate(140%);
+}
+
+#branding #site-name a,
+#site-name a,
+#header a:link,
+#header a:visited {
+  color: var(--kc-white);
+}
+
+div.breadcrumbs,
+.breadcrumbs {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--kc-line);
+  color: var(--kc-muted);
+}
+
+.module,
+.inline-group,
+#changelist,
+#changelist-filter,
+#content-related,
+.submit-row,
+#content-main {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--kc-line);
+  backdrop-filter: blur(6px);
+  color: var(--kc-white);
+}
+
+#content h1,
+#content h2,
+#content h3,
+#content-main h1,
+#content-main h2 {
+  color: var(--kc-white);
+  letter-spacing: 0.02em;
+}
+
+input,
+textarea,
+select,
+.selector,
+.selector-available h2,
+.selector-chosen h2 {
+  background: #101010;
+  border: 1px solid var(--kc-line);
+  color: var(--kc-white);
+  border-radius: 10px;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: rgba(255, 107, 0, 0.75);
+  box-shadow: 0 0 0 2px rgba(255, 107, 0, 0.25);
+}
+
+.button,
+input[type="submit"],
+input[type="button"],
+.submit-row input,
+.object-tools a,
+a.addlink,
+a.changelink {
+  border-radius: 999px;
+  border: 1px solid var(--kc-line);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--kc-white);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.button.default,
+input[type="submit"].default,
+.submit-row input.default,
+.object-tools a.addlink {
+  background: var(--kc-orange);
+  color: #111;
+  border-color: transparent;
+  font-weight: 700;
+}
+
+.button:hover,
+input[type="submit"]:hover,
+input[type="button"]:hover,
+.submit-row input:hover,
+.object-tools a:hover,
+a.addlink:hover,
+a.changelink:hover {
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 10px 22px rgba(255, 107, 0, 0.25);
+  border-color: rgba(255, 107, 0, 0.55);
+}
+
+thead th,
+.results th,
+.results td,
+#changelist-filter h2,
+#changelist-filter h3,
+#changelist-filter li {
+  color: var(--kc-white);
+}
+
+tr:nth-child(even),
+.row1,
+.form-row {
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.help,
+.helptext,
+.quiet,
+small {
+  color: var(--kc-muted);
+}
+
+.fade-admin {
+  animation: kcFadeInUp 0.55s ease both;
+}
+
+@keyframes kcFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
