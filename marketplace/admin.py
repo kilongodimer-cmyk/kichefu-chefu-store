@@ -139,9 +139,9 @@ class ProposalImageInline(admin.TabularInline):
 
 @admin.register(Proposal)
 class ProposalAdmin(admin.ModelAdmin):
-	list_display = ("name", "asset_type", "desired_price", "phone_number", "created_at")
+	list_display = ("name", "asset_type", "brand", "model_name", "city", "desired_price", "phone_number", "created_at")
 	list_filter = ("asset_type", "created_at")
-	search_fields = ("name", "phone_number", "description")
+	search_fields = ("name", "phone_number", "brand", "model_name", "city", "location_details", "description")
 	ordering = ("-created_at",)
 	inlines = [ProposalImageInline]
 

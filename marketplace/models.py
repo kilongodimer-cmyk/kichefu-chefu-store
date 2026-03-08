@@ -275,10 +275,45 @@ class ProposalAssetType(models.TextChoices):
 	PHONE = "phone", "Telephone"
 
 
+class ProposalConditionChoices(models.TextChoices):
+	NEW = "new", "Neuf"
+	USED = "used", "Occasion"
+	REFURBISHED = "refurbished", "Reconditionne"
+
+
+class ProposalTransmissionChoices(models.TextChoices):
+	MANUAL = "manual", "Manuelle"
+	AUTOMATIC = "automatic", "Automatique"
+	OTHER = "other", "Autre"
+
+
+class ProposalFuelChoices(models.TextChoices):
+	PETROL = "petrol", "Essence"
+	DIESEL = "diesel", "Diesel"
+	HYBRID = "hybrid", "Hybride"
+	ELECTRIC = "electric", "Electrique"
+	OTHER = "other", "Autre"
+
+
 class Proposal(models.Model):
 	name = models.CharField(max_length=120)
 	phone_number = models.CharField(max_length=30)
 	asset_type = models.CharField(max_length=10, choices=ProposalAssetType.choices)
+	brand = models.CharField(max_length=80, blank=True)
+	model_name = models.CharField(max_length=80, blank=True)
+	year = models.PositiveIntegerField(
+		null=True,
+		blank=True,
+		validators=[MinValueValidator(1950), MaxValueValidator(timezone.now().year + 1)],
+	)
+	mileage = models.PositiveIntegerField(null=True, blank=True)
+	storage = models.CharField(max_length=40, blank=True)
+	transmission = models.CharField(max_length=12, choices=ProposalTransmissionChoices.choices, blank=True)
+	fuel_type = models.CharField(max_length=12, choices=ProposalFuelChoices.choices, blank=True)
+	city = models.CharField(max_length=120, blank=True)
+	location_details = models.CharField(max_length=180, blank=True)
+	surface_area = models.CharField(max_length=80, blank=True)
+	item_condition = models.CharField(max_length=12, choices=ProposalConditionChoices.choices, blank=True)
 	description = models.TextField(blank=True)
 	desired_price = models.DecimalField(max_digits=12, decimal_places=2)
 	created_at = models.DateTimeField(auto_now_add=True, db_index=True)

@@ -25,7 +25,7 @@
       .cursor-dot { width:8px; height:8px; border-radius:50%; background:#fff; transform:translate(-50%,-50%); }
       .cursor-ring { width:34px; height:34px; border:1px solid #fff; border-radius:50%; transform:translate(-50%,-50%); transition:width .2s ease,height .2s ease,border-color .2s ease; }
       .cursor-ring.is-hover { width:56px; height:56px; border-color:var(--gold); }
-      .container { width:min(760px,92vw); margin:0 auto; }
+      .container { width:min(920px,92vw); margin:0 auto; }
       .top { border-bottom:1px solid var(--line); background:#050505; }
       .top .inner { min-height:74px; display:flex; align-items:center; justify-content:space-between; }
       .brand { color:#fff; text-decoration:none; font-weight:700; }
@@ -35,6 +35,10 @@
       h1 { margin:0; font-size:clamp(1.6rem,3vw,2.2rem); }
       .sub { margin-top:10px; color:var(--muted); }
       form { margin-top:16px; display:grid; gap:12px; }
+      .hint { margin: 10px 0 0; color: #d9d9d9; font-size: .92rem; }
+      .grid-two { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+      .block-title { margin: 10px 0 2px; color:#f5d67d; font-weight:700; font-size:.92rem; letter-spacing:.04em; text-transform:uppercase; }
+      .conditional[data-show="false"] { display:none; }
       label { font-size:.86rem; color:var(--muted); display:block; margin-bottom:4px; }
       input,select,textarea { width:100%; border:1px solid var(--line); background:#0c0c0c; color:#fff; border-radius:10px; padding:10px 12px; font-family:inherit; }
       .submit { border:none; border-radius:999px; padding:12px 16px; font-weight:700; background:linear-gradient(135deg,#c9a227,#e2c363); color:#000; cursor:pointer; }
@@ -43,6 +47,7 @@
       @media (max-width: 980px) {
         html, body, a, button, input, select, textarea { cursor: auto; }
         .cursor-dot, .cursor-ring { display: none; }
+        .grid-two { grid-template-columns: 1fr; }
       }
     </style>
   </head>
@@ -55,14 +60,50 @@
       <section class="panel">
         <h1>Vendre avec nous</h1>
         <p class="sub">Proposez une voiture, une parcelle, une maison, un accessoire ou un telephone. Notre equipe analysera votre dossier et vous contactera rapidement.</p>
+        <p class="hint">Plus votre dossier est detaille, plus il a de chance d'etre accepte rapidement.</p>
         {% if messages %}{% for message in messages %}<div class="ok">{{ message }}</div>{% endfor %}{% endif %}
+        {% if form.non_field_errors %}<div class="err">{{ form.non_field_errors|striptags }}</div>{% endif %}
 
         <form method="post" enctype="multipart/form-data">
           {% csrf_token %}
-          <div><label for="id_name">Nom</label>{{ form.name }}{% if form.name.errors %}<div class="err">{{ form.name.errors|striptags }}</div>{% endif %}</div>
-          <div><label for="id_phone_number">Numero telephone</label>{{ form.phone_number }}{% if form.phone_number.errors %}<div class="err">{{ form.phone_number.errors|striptags }}</div>{% endif %}</div>
-          <div><label for="id_asset_type">Type de bien</label>{{ form.asset_type }}{% if form.asset_type.errors %}<div class="err">{{ form.asset_type.errors|striptags }}</div>{% endif %}</div>
-          <div><label for="id_description">Description</label>{{ form.description }}{% if form.description.errors %}<div class="err">{{ form.description.errors|striptags }}</div>{% endif %}</div>
+          <div class="grid-two">
+            <div><label for="id_name">Nom</label>{{ form.name }}{% if form.name.errors %}<div class="err">{{ form.name.errors|striptags }}</div>{% endif %}</div>
+            <div><label for="id_phone_number">Numero telephone</label>{{ form.phone_number }}{% if form.phone_number.errors %}<div class="err">{{ form.phone_number.errors|striptags }}</div>{% endif %}</div>
+          </div>
+
+          <div class="grid-two">
+            <div><label for="id_asset_type">Type d'element a proposer</label>{{ form.asset_type }}{% if form.asset_type.errors %}<div class="err">{{ form.asset_type.errors|striptags }}</div>{% endif %}</div>
+            <div><label for="id_city">Ville</label>{{ form.city }}{% if form.city.errors %}<div class="err">{{ form.city.errors|striptags }}</div>{% endif %}</div>
+          </div>
+
+          <p class="block-title">Details par type</p>
+          <div class="grid-two conditional" data-for="house land" data-show="true">
+            <div><label for="id_location_details">Localisation precise</label>{{ form.location_details }}{% if form.location_details.errors %}<div class="err">{{ form.location_details.errors|striptags }}</div>{% endif %}</div>
+            <div><label for="id_surface_area">Surface / dimension</label>{{ form.surface_area }}{% if form.surface_area.errors %}<div class="err">{{ form.surface_area.errors|striptags }}</div>{% endif %}</div>
+          </div>
+
+          <div class="grid-two conditional" data-for="car phone accessory" data-show="true">
+            <div><label for="id_brand">Marque ou nom de l'article</label>{{ form.brand }}{% if form.brand.errors %}<div class="err">{{ form.brand.errors|striptags }}</div>{% endif %}</div>
+            <div><label for="id_model_name">Modele</label>{{ form.model_name }}{% if form.model_name.errors %}<div class="err">{{ form.model_name.errors|striptags }}</div>{% endif %}</div>
+          </div>
+
+          <div class="grid-two conditional" data-for="car" data-show="true">
+            <div><label for="id_year">Annee</label>{{ form.year }}{% if form.year.errors %}<div class="err">{{ form.year.errors|striptags }}</div>{% endif %}</div>
+            <div><label for="id_mileage">Kilometrage</label>{{ form.mileage }}{% if form.mileage.errors %}<div class="err">{{ form.mileage.errors|striptags }}</div>{% endif %}</div>
+          </div>
+
+          <div class="grid-two conditional" data-for="car" data-show="true">
+            <div><label for="id_transmission">Transmission</label>{{ form.transmission }}{% if form.transmission.errors %}<div class="err">{{ form.transmission.errors|striptags }}</div>{% endif %}</div>
+            <div><label for="id_fuel_type">Carburant</label>{{ form.fuel_type }}{% if form.fuel_type.errors %}<div class="err">{{ form.fuel_type.errors|striptags }}</div>{% endif %}</div>
+          </div>
+
+          <div class="grid-two conditional" data-for="phone" data-show="true">
+            <div><label for="id_storage">Stockage</label>{{ form.storage }}{% if form.storage.errors %}<div class="err">{{ form.storage.errors|striptags }}</div>{% endif %}</div>
+          </div>
+
+          <div><label for="id_item_condition">Etat</label>{{ form.item_condition }}{% if form.item_condition.errors %}<div class="err">{{ form.item_condition.errors|striptags }}</div>{% endif %}</div>
+
+          <div><label for="id_description">Description complete</label>{{ form.description }}{% if form.description.errors %}<div class="err">{{ form.description.errors|striptags }}</div>{% endif %}</div>
           <div><label for="id_desired_price">Prix souhaite</label>{{ form.desired_price }}{% if form.desired_price.errors %}<div class="err">{{ form.desired_price.errors|striptags }}</div>{% endif %}</div>
           <div><label for="id_photos">Photos</label>{{ form.photos }}{% if form.photos.errors %}<div class="err">{{ form.photos.errors|striptags }}</div>{% endif %}</div>
           <button class="submit" type="submit">Envoyer ma proposition</button>
@@ -107,6 +148,22 @@
           item.addEventListener("mouseenter", () => ring.classList.add("is-hover"));
           item.addEventListener("mouseleave", () => ring.classList.remove("is-hover"));
         });
+
+        const typeSelect = document.getElementById("id_asset_type");
+        const conditionalBlocks = document.querySelectorAll(".conditional[data-for]");
+        const toggleConditionalFields = () => {
+          const typeValue = (typeSelect && typeSelect.value) || "";
+          conditionalBlocks.forEach((block) => {
+            const allowed = (block.getAttribute("data-for") || "").split(" ");
+            const show = !typeValue || allowed.includes(typeValue);
+            block.setAttribute("data-show", show ? "true" : "false");
+          });
+        };
+
+        if (typeSelect) {
+          typeSelect.addEventListener("change", toggleConditionalFields);
+          toggleConditionalFields();
+        }
 
         loop();
       })();
