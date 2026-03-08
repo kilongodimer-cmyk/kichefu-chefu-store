@@ -1196,6 +1196,45 @@ class FavoritesView(LoginRequiredMixin, View):
 	login_url = "/connexion/"
 	template_name = "favorites.html"
 
+	def post(self, request):
+		selected_items = request.POST.getlist("selected_items")
+		if not selected_items:
+			messages.info(request, "Selectionnez au moins un element du panier a supprimer.")
+			return redirect("marketplace:favorites")
+
+		model_map = {"car": Car, "phone": Phone, "real_estate": RealEstate}
+		ids_by_model = {"car": set(), "phone": set(), "real_estate": set()}
+
+		for token in selected_items:
+			parts = token.split(":", 1)
+			if len(parts) != 2:
+				continue
+			model_name, object_id = parts
+			if model_name not in model_map:
+				continue
+			if not object_id.isdigit():
+				continue
+			ids_by_model[model_name].add(int(object_id))
+
+		removed_count = 0
+		for model_name, object_ids in ids_by_model.items():
+			if not object_ids:
+				continue
+			content_type = ContentType.objects.get_for_model(model_map[model_name])
+			deleted, _ = Favorite.objects.filter(
+				user=request.user,
+				content_type=content_type,
+				object_id__in=list(object_ids),
+			).delete()
+			removed_count += deleted
+
+		if removed_count:
+			messages.success(request, f"{removed_count} element(s) retire(s) du panier.")
+		else:
+			messages.info(request, "Aucun element du panier n'a ete supprime.")
+
+		return redirect("marketplace:favorites")
+
 	def get(self, request):
 		favorite_map = get_favorite_id_map(request.user)
 		cars = Car.objects.prefetch_related("images").filter(pk__in=favorite_map["cars"])

@@ -414,7 +414,7 @@
               <form action="/recherche/" method="get">
                 <input class="header-search" type="text" name="q" placeholder="Rechercher..." />
               </form>
-              <a class="icon-btn magnetic" href="/favoris/" title="Favoris">&#10084;</a>
+              <a class="icon-btn magnetic" href="/favoris/" title="Panier">&#10084;</a>
               {% if user.is_authenticated %}
                 <form class="inline-form" method="post" action="{% url 'marketplace:logout' %}">
                   {% csrf_token %}

@@ -86,7 +86,7 @@
         <a class="logo magnetic" href="/">Kichefu Chefu Store</a>
         <nav class="menu"><a class="magnetic" href="/">Accueil</a><a class="magnetic" href="/voitures/">Voitures</a><a class="magnetic" href="/telephones/">Telephones</a><a class="magnetic" href="/parcelles/">Parcelles</a><a class="magnetic" href="/accessoires/">Accessoires</a></nav>
         <div class="right-zone">
-          <a class="icon-btn magnetic" href="/favoris/" title="Favoris">&#10084;</a>
+          <a class="icon-btn magnetic" href="/favoris/" title="Panier">&#10084;</a>
           <a class="btn magnetic" href="{% url 'marketplace:car_list' %}">Retour</a>
           {% if user.is_authenticated %}
             <form class="inline-form" method="post" action="{% url 'marketplace:logout' %}">{% csrf_token %}<button class="btn magnetic" type="submit">Deconnexion</button></form>
@@ -125,9 +125,9 @@
           <a class="btn magnetic" href="tel:{{ contact_phone }}">Appeler</a>
           {% if user.is_authenticated %}
             <form method="post" action="{% url 'marketplace:toggle_price_alert' 'car' car.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}" /><button class="btn magnetic" type="submit">{% if price_alert_active %}Desactiver alerte prix{% else %}Alerte baisse de prix{% endif %}</button></form>
-            <form method="post" action="{% url 'marketplace:toggle_favorite' 'car' car.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}" /><button class="heart-btn magnetic{% if is_favorite %} active{% endif %}" type="submit">&#10084; Ajouter aux favoris</button></form>
+            <form method="post" action="{% url 'marketplace:toggle_favorite' 'car' car.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}" /><button class="heart-btn magnetic{% if is_favorite %} active{% endif %}" type="submit">&#10084; Ajouter au panier</button></form>
           {% else %}
-            <a class="btn magnetic" href="/connexion/?next={{ request.path }}">&#10084; Ajouter aux favoris</a>
+            <a class="btn magnetic" href="/connexion/?next={{ request.path }}">&#10084; Ajouter au panier</a>
           {% endif %}
         </div>
       </section>
