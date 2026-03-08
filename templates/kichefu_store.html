@@ -1,4 +1,5 @@
 ﻿<!DOCTYPE html>
+{% load media_extras %}
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
@@ -463,7 +464,7 @@
                   <article class="card motion-card">
                     {% with img=item.images.first %}
                       <div class="media">
-                        {% if img %}<img class="parallax-media" src="{{ img.image.url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img class="parallax-media" src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}
+                        {% if img.image|safe_image_url %}<img class="parallax-media" src="{{ img.image|safe_image_url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img class="parallax-media" src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}
                         <div class="veil"></div>
                         <span class="badge">voiture</span>
                       </div>
@@ -488,7 +489,7 @@
                   <article class="card motion-card">
                     {% with img=item.images.first %}
                       <div class="media">
-                        {% if img %}<img class="parallax-media" src="{{ img.image.url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img class="parallax-media" src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}
+                        {% if img.image|safe_image_url %}<img class="parallax-media" src="{{ img.image|safe_image_url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img class="parallax-media" src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}
                         <div class="veil"></div>
                         <span class="badge">telephone</span>
                       </div>
@@ -513,7 +514,7 @@
                   <article class="card motion-card">
                     {% with img=item.images.first %}
                       <div class="media">
-                        {% if img %}<img class="parallax-media" src="{{ img.image.url }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% else %}<img class="parallax-media" src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.location|urlencode }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% endif %}
+                        {% if img.image|safe_image_url %}<img class="parallax-media" src="{{ img.image|safe_image_url }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% else %}<img class="parallax-media" src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.location|urlencode }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% endif %}
                         <div class="veil"></div>
                         <span class="badge">parcelle</span>
                       </div>
@@ -764,5 +765,7 @@
     </script>
   </body>
 </html>
+
+
 
 

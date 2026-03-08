@@ -1,4 +1,5 @@
 ﻿<!DOCTYPE html>
+{% load media_extras %}
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
@@ -82,9 +83,9 @@
     <main class="container hero">
       <section class="gallery">
         {% with first=phone.images.first %}
-          {% if first %}<img class="main-img" src="{{ first.image.url }}" alt="{{ phone.brand }} {{ phone.model }}" loading="lazy" decoding="async" />{% else %}<img class="main-img" src="https://dummyimage.com/1300x800/171717/ffffff.png&text={{ phone.brand|urlencode }}+{{ phone.model|urlencode }}" alt="{{ phone.brand }} {{ phone.model }}" loading="lazy" decoding="async" />{% endif %}
+          {% if first.image|safe_image_url %}<img class="main-img" src="{{ first.image|safe_image_url }}" alt="{{ phone.brand }} {{ phone.model }}" loading="lazy" decoding="async" />{% else %}<img class="main-img" src="https://dummyimage.com/1300x800/171717/ffffff.png&text={{ phone.brand|urlencode }}+{{ phone.model|urlencode }}" alt="{{ phone.brand }} {{ phone.model }}" loading="lazy" decoding="async" />{% endif %}
         {% endwith %}
-        <div class="thumbs">{% for img in phone.images.all|slice:':8' %}<img src="{{ img.image.url }}" alt="Image {{ forloop.counter }}" loading="lazy" decoding="async" />{% endfor %}</div>
+        <div class="thumbs">{% for img in phone.images.all|slice:':8' %}{% if img.image|safe_image_url %}<img src="{{ img.image|safe_image_url }}" alt="Image {{ forloop.counter }}" loading="lazy" decoding="async" />{% endif %}{% endfor %}</div>
       </section>
 
       <section class="panel">
@@ -122,7 +123,7 @@
       <h2>Produits similaires</h2>
       <div class="grid">
         {% for item in similar_phones %}
-          <article class="mini">{% with img=item.images.first %}{% if img %}<img src="{{ img.image.url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}{% endwith %}<div class="body"><h3>{{ item.brand }} {{ item.model }}</h3><div class="p">{{ item.price }} $</div><a class="btn" href="{{ item.get_absolute_url }}">Voir details</a></div></article>
+          <article class="mini">{% with img=item.images.first %}{% if img.image|safe_image_url %}<img src="{{ img.image|safe_image_url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}{% endwith %}<div class="body"><h3>{{ item.brand }} {{ item.model }}</h3><div class="p">{{ item.price }} $</div><a class="btn" href="{{ item.get_absolute_url }}">Voir details</a></div></article>
         {% empty %}<p>Pas de telephones similaires.</p>{% endfor %}
       </div>
     </section>
@@ -131,7 +132,7 @@
       <h2>Meme gamme de prix</h2>
       <div class="grid">
         {% for item in same_price_phones %}
-          <article class="mini">{% with img=item.images.first %}{% if img %}<img src="{{ img.image.url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}{% endwith %}<div class="body"><h3>{{ item.brand }} {{ item.model }}</h3><div class="p">{{ item.price }} $</div><a class="btn" href="{{ item.get_absolute_url }}">Voir details</a></div></article>
+          <article class="mini">{% with img=item.images.first %}{% if img.image|safe_image_url %}<img src="{{ img.image|safe_image_url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}{% endwith %}<div class="body"><h3>{{ item.brand }} {{ item.model }}</h3><div class="p">{{ item.price }} $</div><a class="btn" href="{{ item.get_absolute_url }}">Voir details</a></div></article>
         {% empty %}<p>Pas encore de produits dans la meme gamme de prix.</p>{% endfor %}
       </div>
     </section>
@@ -140,7 +141,7 @@
       <h2>Les plus consultes aujourd'hui</h2>
       <div class="grid">
         {% for item in popular_today_phones %}
-          <article class="mini">{% with img=item.images.first %}{% if img %}<img src="{{ img.image.url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}{% endwith %}<div class="body"><h3>{{ item.brand }} {{ item.model }}</h3><div class="p">{{ item.price }} $</div><a class="btn" href="{{ item.get_absolute_url }}">Voir details</a></div></article>
+          <article class="mini">{% with img=item.images.first %}{% if img.image|safe_image_url %}<img src="{{ img.image|safe_image_url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}{% endwith %}<div class="body"><h3>{{ item.brand }} {{ item.model }}</h3><div class="p">{{ item.price }} $</div><a class="btn" href="{{ item.get_absolute_url }}">Voir details</a></div></article>
         {% empty %}<p>Pas encore de tendance aujourd'hui.</p>{% endfor %}
       </div>
     </section>
@@ -149,7 +150,7 @@
       <h2>Nouveaux arrivages</h2>
       <div class="grid">
         {% for item in new_arrivals_phones %}
-          <article class="mini">{% with img=item.images.first %}{% if img %}<img src="{{ img.image.url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}{% endwith %}<div class="body"><h3>{{ item.brand }} {{ item.model }}</h3><div class="p">{{ item.price }} $</div><a class="btn" href="{{ item.get_absolute_url }}">Voir details</a></div></article>
+          <article class="mini">{% with img=item.images.first %}{% if img.image|safe_image_url %}<img src="{{ img.image|safe_image_url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}{% endwith %}<div class="body"><h3>{{ item.brand }} {{ item.model }}</h3><div class="p">{{ item.price }} $</div><a class="btn" href="{{ item.get_absolute_url }}">Voir details</a></div></article>
         {% empty %}<p>Pas de nouveaux arrivages pour le moment.</p>{% endfor %}
       </div>
     </section>
@@ -158,7 +159,7 @@
       <h2>Vous pourriez aussi aimer</h2>
       <div class="grid">
         {% for item in recommended_phones %}
-          <article class="mini">{% with img=item.images.first %}{% if img %}<img src="{{ img.image.url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}{% endwith %}<div class="body"><h3>{{ item.brand }} {{ item.model }}</h3><div class="p">{{ item.price }} $</div><a class="btn" href="{{ item.get_absolute_url }}">Voir details</a></div></article>
+          <article class="mini">{% with img=item.images.first %}{% if img.image|safe_image_url %}<img src="{{ img.image|safe_image_url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}{% endwith %}<div class="body"><h3>{{ item.brand }} {{ item.model }}</h3><div class="p">{{ item.price }} $</div><a class="btn" href="{{ item.get_absolute_url }}">Voir details</a></div></article>
         {% empty %}<p>Pas de recommandations pour ce produit.</p>{% endfor %}
       </div>
     </section>
@@ -249,5 +250,7 @@
     </script>
   </body>
 </html>
+
+
 
 

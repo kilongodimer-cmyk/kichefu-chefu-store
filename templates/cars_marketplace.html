@@ -1,4 +1,5 @@
 ﻿<!DOCTYPE html>
+{% load media_extras %}
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
@@ -266,8 +267,8 @@
             <article class="card motion-card">
               {% with first_image=car.images.first %}
                 <div class="media">
-                  {% if first_image %}
-                    <img class="parallax-media" src="{{ first_image.image.url }}" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />
+                  {% if first_image.image|safe_image_url %}
+                    <img class="parallax-media" src="{{ first_image.image|safe_image_url }}" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />
                   {% else %}
                     <img class="parallax-media" src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ car.brand|urlencode }}+{{ car.model|urlencode }}" alt="{{ car.brand }} {{ car.model }}" loading="lazy" decoding="async" />
                   {% endif %}
@@ -452,5 +453,6 @@
     </script>
   </body>
 </html>
+
 
 

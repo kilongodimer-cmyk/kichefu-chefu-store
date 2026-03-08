@@ -1,4 +1,5 @@
 ﻿<!DOCTYPE html>
+{% load media_extras %}
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
@@ -157,7 +158,7 @@
           <article class="card">
             {% with img=phone.images.first %}
               <div class="media">
-                {% if img %}<img src="{{ img.image.url }}" alt="{{ phone.brand }} {{ phone.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ phone.brand|urlencode }}+{{ phone.model|urlencode }}" alt="{{ phone.brand }} {{ phone.model }}" loading="lazy" decoding="async" />{% endif %}
+                {% if img.image|safe_image_url %}<img src="{{ img.image|safe_image_url }}" alt="{{ phone.brand }} {{ phone.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ phone.brand|urlencode }}+{{ phone.model|urlencode }}" alt="{{ phone.brand }} {{ phone.model }}" loading="lazy" decoding="async" />{% endif %}
                 <div class="overlay">{% for badge in badges %}<span class="badge">{{ badge }}</span>{% endfor %}</div>
               </div>
             {% endwith %}
@@ -238,5 +239,7 @@
     </script>
   </body>
 </html>
+
+
 
 
