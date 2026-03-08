@@ -271,6 +271,8 @@ class ProposalAssetType(models.TextChoices):
 	CAR = "car", "Voiture"
 	HOUSE = "house", "Maison"
 	LAND = "land", "Parcelle"
+	ACCESSORY = "accessory", "Accessoire"
+	PHONE = "phone", "Telephone"
 
 
 class Proposal(models.Model):
