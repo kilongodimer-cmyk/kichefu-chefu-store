@@ -1,4 +1,5 @@
 import re
+import logging
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
@@ -18,6 +19,7 @@ from rest_framework import filters, permissions, viewsets
 from urllib.parse import quote
 from datetime import timedelta
 from decimal import Decimal
+from xml.sax.saxutils import escape as xml_escape
 
 from .demo_seed import ensure_seeded_data
 from .forms import ProposalSellForm
@@ -56,6 +58,7 @@ WHATSAPP_DEFAULT = "+243814191316"
 LUBUMBASHI_NEIGHBORHOODS = ["Kenya", "Kamalondo", "Katuba", "Ruashi", "Golf", "Bel-Air", "Kalubwe"]
 RECENT_SESSION_KEY = "recently_viewed"
 USER_CITY_SESSION_KEY = "user_city"
+logger = logging.getLogger(__name__)
 
 
 def ensure_seeded_data_safe():
@@ -1439,27 +1442,34 @@ class RobotsTxtView(View):
 
 class SitemapXmlView(View):
 	def get(self, request):
-		urls = [
+		urls = {
 			request.build_absolute_uri("/"),
 			request.build_absolute_uri("/voitures/"),
 			request.build_absolute_uri("/telephones/"),
 			request.build_absolute_uri("/parcelles/"),
 			request.build_absolute_uri("/recherche/"),
-		]
+		}
 
-		for car in Car.objects.only("slug").all()[:5000]:
-			urls.append(request.build_absolute_uri(car.get_absolute_url()))
-		for phone in Phone.objects.only("slug").all()[:5000]:
-			urls.append(request.build_absolute_uri(phone.get_absolute_url()))
-		for listing in RealEstate.objects.only("slug").all()[:5000]:
-			urls.append(request.build_absolute_uri(listing.get_absolute_url()))
+		querysets = (
+			("Car", Car.objects.only("slug").all()[:5000]),
+			("Phone", Phone.objects.only("slug").all()[:5000]),
+			("RealEstate", RealEstate.objects.only("slug").all()[:5000]),
+		)
+
+		for label, queryset in querysets:
+			try:
+				for item in queryset:
+					urls.add(request.build_absolute_uri(item.get_absolute_url()))
+			except Exception:
+				# Keep sitemap available even if one model query fails.
+				logger.exception("Sitemap generation failed for %s", label)
 
 		body = [
 			'<?xml version="1.0" encoding="UTF-8"?>',
 			'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
 		]
-		for link in urls:
-			body.append(f"<url><loc>{link}</loc></url>")
+		for link in sorted(urls):
+			body.append(f"<url><loc>{xml_escape(link)}</loc></url>")
 		body.append("</urlset>")
 		return HttpResponse("".join(body), content_type="application/xml")
 
