@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
@@ -106,7 +106,7 @@
       a { color: var(--gold); text-decoration: none; }
       @media (max-width: 980px) {
         html, body, a, button, input { cursor: none !important; }
-        .cursor-dot, .cursor-ring { display: block; }
+        .cursor-dot, .cursor-ring { display: none; }
       }
     </style>
   </head>
@@ -136,9 +136,9 @@
       (function () {
         const dot = document.getElementById("cursor-dot");
         const ring = document.getElementById("cursor-ring");
-        const cursorMedia = window.matchMedia("(min-width: 981px)");
+        const cursorMedia = window.matchMedia("(min-width: 981px) and (hover: hover) and (pointer: fine)");
         const setCursorMode = () => {
-          document.documentElement.classList.toggle("custom-cursor", Boolean(dot && ring && true));
+          document.documentElement.classList.toggle("custom-cursor", Boolean(dot && ring && cursorMedia.matches));
         };
         setCursorMode();
         if (cursorMedia.addEventListener) {
@@ -176,3 +176,4 @@
     </script>
   </body>
 </html>
+

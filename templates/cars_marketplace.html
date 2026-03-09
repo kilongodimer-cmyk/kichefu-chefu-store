@@ -163,7 +163,7 @@
 
       @media (max-width: 1140px) {
         html, body, a, button, input, select { cursor: none !important; }
-        .cursor-dot, .cursor-ring { display: block; }
+        .cursor-dot, .cursor-ring { display: none; }
         .nav { grid-template-columns: 1fr; padding: 10px 0; }
         .menu { justify-content: flex-start; }
         .right-zone { justify-content: flex-start; }
@@ -320,9 +320,9 @@
 
         const dot = document.getElementById("cursor-dot");
         const ring = document.getElementById("cursor-ring");
-        const cursorMedia = window.matchMedia("(min-width: 1141px)");
+        const cursorMedia = window.matchMedia("(min-width: 981px) and (hover: hover) and (pointer: fine)");
         const setCursorMode = () => {
-          document.documentElement.classList.toggle("custom-cursor", Boolean(dot && ring && true));
+          document.documentElement.classList.toggle("custom-cursor", Boolean(dot && ring && cursorMedia.matches));
         };
         setCursorMode();
         if (cursorMedia.addEventListener) {
@@ -453,6 +453,7 @@
     </script>
   </body>
 </html>
+
 
 
 

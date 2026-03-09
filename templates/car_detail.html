@@ -162,9 +162,9 @@
 
         const dot = document.getElementById("cursor-dot");
         const ring = document.getElementById("cursor-ring");
-        const cursorMedia = window.matchMedia("(min-width: 981px)");
+        const cursorMedia = window.matchMedia("(min-width: 981px) and (hover: hover) and (pointer: fine)");
         const setCursorMode = () => {
-          document.documentElement.classList.toggle("custom-cursor", Boolean(dot && ring && true));
+          document.documentElement.classList.toggle("custom-cursor", Boolean(dot && ring && cursorMedia.matches));
         };
         setCursorMode();
         if (cursorMedia.addEventListener) {
@@ -172,7 +172,7 @@
         } else if (cursorMedia.addListener) {
           cursorMedia.addListener(setCursorMode);
         }
-        if (dot && ring && true) {
+        if (dot && ring && cursorMedia.matches) {
           window.addEventListener("mousemove", (event) => {
             gsap.to(dot, { x: event.clientX, y: event.clientY, duration: 0.08 });
             gsap.to(ring, { x: event.clientX, y: event.clientY, duration: 0.2 });

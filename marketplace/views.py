@@ -33,6 +33,7 @@ from .models import (
 	Proposal,
 	ProposalImage,
 	RealEstate,
+	RealEstateType,
 	RealEstateImage,
 	UserMarketplaceProfile,
 	UserNotification,
@@ -108,6 +109,70 @@ def build_proposal_whatsapp_message(proposal, image_urls=None):
 	else:
 		lines.append("Photos: envoyees via formulaire (minimum 2).")
 	return "\n".join(lines)
+
+
+def publish_proposal_to_catalog(proposal):
+	"""Create a live marketplace listing from a submitted proposal."""
+	asset_type = proposal.asset_type
+	created_object = None
+
+	if asset_type == "car":
+		created_object = Car.objects.create(
+			brand=proposal.brand,
+			model=proposal.model_name,
+			vehicle_type=Car.VehicleType.OTHER,
+			year=proposal.year,
+			mileage=proposal.mileage,
+			transmission=proposal.transmission,
+			fuel_type=proposal.fuel_type,
+			price=proposal.desired_price,
+			description=proposal.description,
+			seller_phone=proposal.phone_number,
+			city=proposal.city or "Lubumbashi",
+			is_commission=True,
+			availability=AvailabilityChoices.AVAILABLE,
+		)
+		for proposal_image in proposal.images.all():
+			CarImage.objects.create(car=created_object, image=proposal_image.image)
+
+	elif asset_type == "phone":
+		created_object = Phone.objects.create(
+			brand=proposal.brand,
+			model=proposal.model_name,
+			storage=proposal.storage,
+			price=proposal.desired_price,
+			description=proposal.description,
+			availability=AvailabilityChoices.AVAILABLE,
+		)
+		for proposal_image in proposal.images.all():
+			PhoneImage.objects.create(phone=created_object, image=proposal_image.image)
+
+	elif asset_type in {"house", "land"}:
+		real_estate_type = RealEstateType.HOUSE if asset_type == "house" else RealEstateType.LAND
+		created_object = RealEstate.objects.create(
+			real_estate_type=real_estate_type,
+			location=proposal.location_details or proposal.city or "Lubumbashi",
+			price=proposal.desired_price,
+			description=proposal.description,
+			is_commission=True,
+			availability=AvailabilityChoices.AVAILABLE,
+		)
+		for proposal_image in proposal.images.all():
+			RealEstateImage.objects.create(real_estate=created_object, image=proposal_image.image)
+
+	elif asset_type == "accessory":
+		created_object = Accessory.objects.create(
+			name=proposal.brand or proposal.model_name or "Accessoire",
+			price=proposal.desired_price,
+			description=proposal.description,
+			availability=AvailabilityChoices.AVAILABLE,
+		)
+		first_image = proposal.images.first()
+		if first_image and first_image.image:
+			created_object.image = first_image.image
+			created_object.save(update_fields=["image"])
+
+	return created_object
 
 
 def build_badges(item, index=0):
@@ -1351,6 +1416,11 @@ class SellWithUsView(SiteLoginRequiredMixin, View):
 			proposal_image = ProposalImage.objects.create(proposal=proposal, image=image)
 			if proposal_image.image:
 				image_urls.append(request.build_absolute_uri(proposal_image.image.url))
+
+		created_listing = publish_proposal_to_catalog(proposal)
+		if created_listing:
+			listing_url = request.build_absolute_uri(created_listing.get_absolute_url())
+			image_urls.append(listing_url)
 
 		whatsapp_message = build_proposal_whatsapp_message(proposal, image_urls=image_urls)
 		whatsapp_link = make_whatsapp_link(WHATSAPP_DEFAULT, whatsapp_message)
