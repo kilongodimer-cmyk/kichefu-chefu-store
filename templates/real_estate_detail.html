@@ -107,23 +107,19 @@
           {% else %}
             <form method="post" action="/admin/marketplace/realestate/{{ listing.pk }}/publish/">{% csrf_token %}<button class="btn btn-main" type="submit">Publier l'annonce</button></form>
           {% endif %}
-          {% if listing.stock == 0 or listing.availability != 'available' %}
-            <button class="btn" disabled style="opacity:.6;cursor:not-allowed;">Rupture de stock</button>
+          {% if user.is_authenticated %}
+            <form method="post" action="{% url 'marketplace:toggle_price_alert' 'real_estate' listing.pk %}">
+              {% csrf_token %}
+              <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+              <button class="btn" type="submit">{% if price_alert_active %}Desactiver alerte prix{% else %}Alerte baisse de prix{% endif %}</button>
+            </form>
+            <form method="post" action="{% url 'marketplace:toggle_cart' 'real_estate' listing.pk %}">
+              {% csrf_token %}
+              <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+              <button class="heart-btn{% if is_favorite %} active{% endif %}" type="submit">&#128722; Panier</button>
+            </form>
           {% else %}
-            {% if user.is_authenticated %}
-              <form method="post" action="{% url 'marketplace:toggle_price_alert' 'real_estate' listing.pk %}">
-                {% csrf_token %}
-                <input type="hidden" name="next" value="{{ request.get_full_path }}" />
-                <button class="btn" type="submit">{% if price_alert_active %}Desactiver alerte prix{% else %}Alerte baisse de prix{% endif %}</button>
-              </form>
-              <form method="post" action="{% url 'marketplace:toggle_cart' 'real_estate' listing.pk %}">
-                {% csrf_token %}
-                <input type="hidden" name="next" value="{{ request.get_full_path }}" />
-                <button class="heart-btn{% if is_favorite %} active{% endif %}" type="submit">&#128722; Panier</button>
-              </form>
-            {% else %}
-              <a class="btn" href="/connexion/?next={{ request.path }}">&#128722; Panier</a>
-            {% endif %}
+            <a class="btn" href="/connexion/?next={{ request.path }}">&#128722; Panier</a>
           {% endif %}
         </div>
       </section>

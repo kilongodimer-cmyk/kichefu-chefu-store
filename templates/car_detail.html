@@ -130,15 +130,11 @@
             <form method="post" action="/admin/marketplace/car/{{ car.pk }}/publish/">{% csrf_token %}<button class="btn btn-main magnetic" type="submit">Publier l'annonce</button></form>
           {% endif %}
           <a class="btn magnetic" href="tel:{{ contact_phone }}">Appeler</a>
-          {% if car.stock == 0 or car.availability != 'available' %}
-            <button class="btn" disabled style="opacity:.6;cursor:not-allowed;">Rupture de stock</button>
+          {% if user.is_authenticated %}
+            <form method="post" action="{% url 'marketplace:toggle_price_alert' 'car' car.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}" /><button class="btn magnetic" type="submit">{% if price_alert_active %}Desactiver alerte prix{% else %}Alerte baisse de prix{% endif %}</button></form>
+            <form method="post" action="{% url 'marketplace:toggle_cart' 'car' car.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}" /><button class="heart-btn magnetic{% if is_favorite %} active{% endif %}" type="submit">&#128722; Ajouter au panier</button></form>
           {% else %}
-            {% if user.is_authenticated %}
-              <form method="post" action="{% url 'marketplace:toggle_price_alert' 'car' car.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}" /><button class="btn magnetic" type="submit">{% if price_alert_active %}Desactiver alerte prix{% else %}Alerte baisse de prix{% endif %}</button></form>
-              <form method="post" action="{% url 'marketplace:toggle_cart' 'car' car.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}" /><button class="heart-btn magnetic{% if is_favorite %} active{% endif %}" type="submit">&#128722; Ajouter au panier</button></form>
-            {% else %}
-              <a class="btn magnetic" href="/connexion/?next={{ request.path }}">&#128722; Ajouter au panier</a>
-            {% endif %}
+            <a class="btn magnetic" href="/connexion/?next={{ request.path }}">&#128722; Ajouter au panier</a>
           {% endif %}
         </div>
       </section>

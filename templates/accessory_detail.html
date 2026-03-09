@@ -10,8 +10,8 @@
     <style>
       :root { --bg:#080808; --line:rgba(255,255,255,.13); --muted:rgba(255,255,255,.74); --gold:#c9a227; --text:#fff; }
       * { box-sizing:border-box; }
-      html, body { cursor: none !important; }
-      a, button, input { cursor: none !important; }
+      html, body { cursor: auto; }
+      a, button, input { cursor: auto; }
       .custom-cursor, .custom-cursor a, .custom-cursor button, .custom-cursor input { cursor:none !important; }
       body { margin:0; color:var(--text); font-family:"Poppins",system-ui,sans-serif; background:var(--bg); }
       .cursor-dot,.cursor-ring { position:fixed; top:0; left:0; pointer-events:none; z-index:220; mix-blend-mode:difference; opacity:0; }
@@ -63,7 +63,7 @@
         <a class="brand" href="/">KICHEFU-CHEFU STORE</a>
         <div class="actions">
           <a class="btn" href="/accessoires/">Retour accessoires</a>
-          <a class="btn" href="/panier/" title="Panier">&#128722; Panier</a>
+          <a class="btn" href="/favoris/" title="Panier">&#128722; Panier</a>
           <a class="btn btn-main" href="{{ whatsapp_link }}" target="_blank" rel="noopener noreferrer">Contacter WhatsApp</a>
         </div>
       </div>
@@ -91,11 +91,7 @@
             <div class="spec"><b>Date d'ajout</b><span>{{ accessory.date_added|date:"d/m/Y" }}</span></div>
           </div>
           <div class="actions" style="margin-top:14px;">
-            {% if accessory.stock == 0 or accessory.availability != 'available' %}
-              <button class="btn" disabled style="opacity:.6;cursor:not-allowed;">Rupture de stock</button>
-            {% else %}
-              <a class="btn btn-main" href="{{ whatsapp_link }}" target="_blank" rel="noopener noreferrer">Commander via WhatsApp</a>
-            {% endif %}
+            <a class="btn btn-main" href="{{ whatsapp_link }}" target="_blank" rel="noopener noreferrer">Commander via WhatsApp</a>
           </div>
         </article>
       </section>
@@ -158,4 +154,3 @@
     </script>
   </body>
 </html>
-

@@ -88,7 +88,6 @@ class Car(models.Model):
 		validators=[MinValueValidator(1950), MaxValueValidator(timezone.now().year + 1)]
 	)
 	mileage = models.PositiveIntegerField(validators=[MinValueValidator(0)])
-	stock = models.PositiveIntegerField(default=1, validators=[MinValueValidator(0)], help_text="Quantité disponible en stock.")
 	transmission = models.CharField(
 		max_length=12,
 		choices=TransmissionType.choices,
@@ -132,11 +131,6 @@ class Car(models.Model):
 	def save(self, *args, **kwargs):
 		if not self.slug:
 			self.slug = _build_unique_slug(Car, f"{self.brand} {self.model} {self.year}", self.pk)
-		# Gestion automatique du statut rupture de stock
-		if hasattr(self, 'stock') and self.stock == 0:
-			self.availability = AvailabilityChoices.RESERVED
-		elif hasattr(self, 'stock') and self.stock > 0 and self.availability != AvailabilityChoices.SOLD:
-			self.availability = AvailabilityChoices.AVAILABLE
 		super().save(*args, **kwargs)
 
 
@@ -160,7 +154,6 @@ class Phone(models.Model):
 	price = models.DecimalField(max_digits=10, decimal_places=2, db_index=True)
 	description = models.TextField(blank=True)
 	view_count = models.PositiveIntegerField(default=0, db_index=True)
-	stock = models.PositiveIntegerField(default=1, validators=[MinValueValidator(0)], help_text="Quantité disponible en stock.")
 	availability = models.CharField(
 		max_length=12,
 		choices=AvailabilityChoices.choices,
@@ -185,11 +178,6 @@ class Phone(models.Model):
 	def save(self, *args, **kwargs):
 		if not self.slug:
 			self.slug = _build_unique_slug(Phone, f"{self.brand} {self.model}", self.pk)
-		# Gestion automatique du statut rupture de stock
-		if hasattr(self, 'stock') and self.stock == 0:
-			self.availability = AvailabilityChoices.RESERVED
-		elif hasattr(self, 'stock') and self.stock > 0 and self.availability != AvailabilityChoices.SOLD:
-			self.availability = AvailabilityChoices.AVAILABLE
 		super().save(*args, **kwargs)
 
 
@@ -210,7 +198,6 @@ class Accessory(models.Model):
 	price = models.DecimalField(max_digits=10, decimal_places=2, db_index=True)
 	description = models.TextField(blank=True)
 	image = models.ImageField(upload_to=upload_accessory_image, blank=True, null=True)
-	stock = models.PositiveIntegerField(default=1, validators=[MinValueValidator(0)], help_text="Quantité disponible en stock.")
 	availability = models.CharField(
 		max_length=12,
 		choices=AvailabilityChoices.choices,
@@ -229,14 +216,6 @@ class Accessory(models.Model):
 	def get_absolute_url(self):
 		return reverse("marketplace:accessory_detail", kwargs={"pk": self.pk})
 
-	def save(self, *args, **kwargs):
-		# Gestion automatique du statut rupture de stock
-		if hasattr(self, 'stock') and self.stock == 0:
-			self.availability = AvailabilityChoices.RESERVED
-		elif hasattr(self, 'stock') and self.stock > 0 and self.availability != AvailabilityChoices.SOLD:
-			self.availability = AvailabilityChoices.AVAILABLE
-		super().save(*args, **kwargs)
-
 
 class RealEstateType(models.TextChoices):
 	HOUSE = "house", "Maison"
@@ -251,7 +230,6 @@ class RealEstate(models.Model):
 	description = models.TextField(blank=True)
 	is_commission = models.BooleanField(default=False, db_index=True)
 	view_count = models.PositiveIntegerField(default=0, db_index=True)
-	stock = models.PositiveIntegerField(default=1, validators=[MinValueValidator(0)], help_text="Quantité disponible en stock.")
 	availability = models.CharField(
 		max_length=12,
 		choices=AvailabilityChoices.choices,
@@ -277,11 +255,6 @@ class RealEstate(models.Model):
 		if not self.slug:
 			type_label = self.get_real_estate_type_display() if self.real_estate_type else "parcelle"
 			self.slug = _build_unique_slug(RealEstate, f"{type_label} {self.location}", self.pk)
-		# Gestion automatique du statut rupture de stock
-		if hasattr(self, 'stock') and self.stock == 0:
-			self.availability = AvailabilityChoices.RESERVED
-		elif hasattr(self, 'stock') and self.stock > 0 and self.availability != AvailabilityChoices.SOLD:
-			self.availability = AvailabilityChoices.AVAILABLE
 		super().save(*args, **kwargs)
 
 
