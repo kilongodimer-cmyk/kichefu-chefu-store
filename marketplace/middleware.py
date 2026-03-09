@@ -10,7 +10,15 @@ class AdminSuperuserRequiredMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        if request.path.startswith('/admin/'):
+        # Ne bloque pas les requêtes internes (static, media, login, logout)
+        admin_path = request.path.startswith('/admin/')
+        is_static = request.path.startswith('/static/') or request.path.startswith('/media/')
+        is_login = request.path.startswith('/admin/login') or request.path.startswith('/admin/logout')
+        if admin_path and not is_static and not is_login:
             if not request.user.is_authenticated or not request.user.is_superuser:
-                return redirect(reverse('home'))
+                try:
+                    return redirect(reverse('home'))
+                except Exception:
+                    from django.http import HttpResponseRedirect
+                    return HttpResponseRedirect('/')
         return self.get_response(request)

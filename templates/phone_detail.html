@@ -105,19 +105,23 @@
           {% else %}
             <form method="post" action="/admin/marketplace/phone/{{ phone.pk }}/publish/">{% csrf_token %}<button class="btn btn-main" type="submit">Publier l'annonce</button></form>
           {% endif %}
-          {% if user.is_authenticated %}
-            <form method="post" action="{% url 'marketplace:toggle_price_alert' 'phone' phone.pk %}">
-              {% csrf_token %}
-              <input type="hidden" name="next" value="{{ request.get_full_path }}" />
-              <button class="btn" type="submit">{% if price_alert_active %}Desactiver alerte prix{% else %}Alerte baisse de prix{% endif %}</button>
-            </form>
-            <form method="post" action="{% url 'marketplace:toggle_cart' 'phone' phone.pk %}">
-              {% csrf_token %}
-              <input type="hidden" name="next" value="{{ request.get_full_path }}" />
-              <button class="heart-btn{% if is_favorite %} active{% endif %}" type="submit">&#128722; Panier</button>
-            </form>
+          {% if phone.stock == 0 or phone.availability != 'available' %}
+            <button class="btn" disabled style="opacity:.6;cursor:not-allowed;">Rupture de stock</button>
           {% else %}
-            <a class="btn" href="/connexion/?next={{ request.path }}">&#128722; Panier</a>
+            {% if user.is_authenticated %}
+              <form method="post" action="{% url 'marketplace:toggle_price_alert' 'phone' phone.pk %}">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+                <button class="btn" type="submit">{% if price_alert_active %}Desactiver alerte prix{% else %}Alerte baisse de prix{% endif %}</button>
+              </form>
+              <form method="post" action="{% url 'marketplace:toggle_cart' 'phone' phone.pk %}">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+                <button class="heart-btn{% if is_favorite %} active{% endif %}" type="submit">&#128722; Panier</button>
+              </form>
+            {% else %}
+              <a class="btn" href="/connexion/?next={{ request.path }}">&#128722; Panier</a>
+            {% endif %}
           {% endif %}
         </div>
       </section>
