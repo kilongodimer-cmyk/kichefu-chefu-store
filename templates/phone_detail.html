@@ -100,7 +100,11 @@
           <div class="spec"><b>Disponibilite</b><span>{{ phone.get_availability_display }}</span></div>
         </div>
         <div class="actions">
-          <a class="btn btn-main" href="{{ whatsapp_link }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+          {% if not user.is_superuser %}
+            <a class="btn btn-main" href="{{ whatsapp_link }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+          {% else %}
+            <form method="post" action="/admin/marketplace/phone/{{ phone.pk }}/publish/">{% csrf_token %}<button class="btn btn-main" type="submit">Publier l'annonce</button></form>
+          {% endif %}
           {% if user.is_authenticated %}
             <form method="post" action="{% url 'marketplace:toggle_price_alert' 'phone' phone.pk %}">
               {% csrf_token %}

@@ -124,7 +124,11 @@
           <div class="spec"><b>Disponibilite</b><span>{{ car.get_availability_display }}</span></div>
         </div>
         <div class="actions">
-          <a class="btn btn-main magnetic" href="{{ whatsapp_link }}" target="_blank" rel="noopener noreferrer">Contacter via WhatsApp</a>
+          {% if not user.is_superuser %}
+            <a class="btn btn-main magnetic" href="{{ whatsapp_link }}" target="_blank" rel="noopener noreferrer">Contacter via WhatsApp</a>
+          {% else %}
+            <form method="post" action="/admin/marketplace/car/{{ car.pk }}/publish/">{% csrf_token %}<button class="btn btn-main magnetic" type="submit">Publier l'annonce</button></form>
+          {% endif %}
           <a class="btn magnetic" href="tel:{{ contact_phone }}">Appeler</a>
           {% if user.is_authenticated %}
             <form method="post" action="{% url 'marketplace:toggle_price_alert' 'car' car.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}" /><button class="btn magnetic" type="submit">{% if price_alert_active %}Desactiver alerte prix{% else %}Alerte baisse de prix{% endif %}</button></form>
