@@ -11,6 +11,10 @@ class AdminSuperuserRequiredMiddleware:
 
     def __call__(self, request):
         if request.path.startswith('/admin/'):
+            # Permettre l'accès à la page de connexion admin
+            if request.path == '/admin/login/' or request.path.startswith('/admin/css/') or request.path.startswith('/admin/js/'):
+                return self.get_response(request)
+            
             if not request.user.is_authenticated or not request.user.is_superuser:
                 return redirect(reverse('home'))
         return self.get_response(request)
