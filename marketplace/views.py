@@ -682,16 +682,6 @@ class HomePageView(SiteLoginRequiredMixin, View):
 				"cta": "Ajouter au panier en 1 clic",
 				"sub": "Passez votre commande en moins de 30 secondes",
 			},
-			"flash_offer": {
-				"expires_at": timezone.now() + timedelta(hours=24),
-				"headline": "Offre Flash: livraison express +10$",
-				"description": "Fin de promo dans moins de 24h sur les best sellers automobiles.",
-			},
-			"customer_reviews": [
-				{"name": "Gloria M.", "city": "Lubumbashi", "comment": "Equipe tres pro, verification du vehicule et livraison rapide.", "avatar": "https://i.pravatar.cc/120?img=9"},
-				{"name": "Junior K.", "city": "Kinshasa", "comment": "Excellent service pour trouver un iPhone en stock immediat.", "avatar": "https://i.pravatar.cc/120?img=22"},
-				{"name": "Chantal B.", "city": "Kolwezi", "comment": "La gestion du dossier immobilier est rassurante et transparente.", "avatar": "https://i.pravatar.cc/120?img=45"},
-			],
 		}
 		return render(request, self.template_name, context)
 

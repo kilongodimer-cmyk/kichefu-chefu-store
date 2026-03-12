@@ -362,21 +362,6 @@
       }
       .map-frame { width: 100%; min-height: 320px; border: 0; border-radius: 10px; }
 
-      .flash-offer {
-        margin-top: 24px;
-        border: 1px solid rgba(255,107,0,.45);
-        border-radius: 18px;
-        background: rgba(255,107,0,.08);
-        padding: 18px;
-        display: flex;
-        gap: 18px;
-        align-items: center;
-        flex-wrap: wrap;
-      }
-      .flash-offer h3 { margin: 0; font-size: 1.4rem; }
-      .flash-countdown { display: flex; gap: 16px; font-weight: 700; }
-      .flash-countdown span { font-size: 1.2rem; }
-
       footer h4 { margin: 0 0 10px; }
       footer a,
       footer p { margin: 0; color: #c7c7c7; text-decoration: none; line-height: 1.8; }
@@ -461,19 +446,6 @@
                 </form>
               </div>
 
-              {% if flash_offer %}
-                <div class="flash-offer fade-item">
-                  <div>
-                    <h3>{{ flash_offer.headline }}</h3>
-                    <p style="margin:6px 0 0; color:#ffd5b8;">{{ flash_offer.description }}</p>
-                  </div>
-                  <div class="flash-countdown" data-expires="{{ flash_offer.expires_at|date:'c' }}">
-                    <span><strong id="flash-hours">00</strong>h</span>
-                    <span><strong id="flash-mins">00</strong>m</span>
-                    <span><strong id="flash-secs">00</strong>s</span>
-                  </div>
-                </div>
-              {% endif %}
             </div>
           </section>
 
@@ -603,24 +575,6 @@
               </div>
             </div>
           </section>
-
-          {% if customer_reviews %}
-            <section class="section reviews fade-item">
-              <div class="container">
-                <div class="section-head"><div><h2 class="split-text">Avis clients verifies</h2><p class="sub">Preuve sociale reelle : photos + temoignages.</p></div></div>
-                <div class="review-grid">
-                  {% for review in customer_reviews %}
-                    <article class="review-card">
-                      <img src="{{ review.avatar }}" alt="{{ review.name }}" loading="lazy" decoding="async" />
-                      <strong>{{ review.name }}</strong>
-                      <small style="color:#bbb;">{{ review.city }}</small>
-                      <p style="margin-top:8px; color:#ddd;">{{ review.comment }}</p>
-                    </article>
-                  {% endfor %}
-                </div>
-              </div>
-            </section>
-          {% endif %}
 
           <section class="section fade-item" id="notre-localisation">
             <div class="container">
@@ -824,26 +778,6 @@
               categoryInput.value = "all";
             }
           });
-        }
-
-        const countdown = document.querySelector(".flash-countdown");
-        if (countdown) {
-          const expires = new Date(countdown.getAttribute("data-expires"));
-          const hoursEl = document.getElementById("flash-hours");
-          const minsEl = document.getElementById("flash-mins");
-          const secsEl = document.getElementById("flash-secs");
-          const tick = () => {
-            const diff = expires - new Date();
-            if (diff <= 0) return;
-            const hrs = String(Math.floor(diff / (1000 * 60 * 60))).padStart(2, "0");
-            const mins = String(Math.floor((diff / (1000 * 60)) % 60)).padStart(2, "0");
-            const secs = String(Math.floor((diff / 1000) % 60)).padStart(2, "0");
-            hoursEl.textContent = hrs;
-            minsEl.textContent = mins;
-            secsEl.textContent = secs;
-          };
-          tick();
-          setInterval(tick, 1000);
         }
 
         const sticky = document.getElementById("sticky-cart");
