@@ -739,6 +739,7 @@ class GlobalSearchView(SiteLoginRequiredMixin, View):
 		min_price, max_price = _normalize_price_filters(request)
 
 		results = []
+		approximate_used = False
 
 		if category in {"all", "cars"}:
 			cars = Car.objects.prefetch_related("images").all()
@@ -807,6 +808,89 @@ class GlobalSearchView(SiteLoginRequiredMixin, View):
 					}
 				)
 
+		if not results and query:
+			approximate_results = []
+			prefix = query.split()[0]
+			if prefix:
+				approx_cars = (
+					Car.objects.prefetch_related("images")
+					.filter(Q(brand__istartswith=prefix) | Q(model__istartswith=prefix))
+					.order_by("-view_count", "-date_added")[:6]
+				)
+				for item in approx_cars:
+					approximate_results.append(
+						{
+							"category": "Voiture",
+							"title": f"{item.brand} {item.model}",
+							"price": item.price,
+							"url": item.get_absolute_url(),
+							"image_url": _first_image_url(item),
+						}
+					)
+
+				approx_phones = (
+					Phone.objects.prefetch_related("images")
+					.filter(Q(brand__istartswith=prefix) | Q(model__istartswith=prefix))
+					.order_by("-view_count", "-date_added")[:6]
+				)
+				for item in approx_phones:
+					approximate_results.append(
+						{
+							"category": "Telephone",
+							"title": f"{item.brand} {item.model}",
+							"price": item.price,
+							"url": item.get_absolute_url(),
+							"image_url": _first_image_url(item),
+						}
+					)
+
+				approx_estates = (
+					RealEstate.objects.prefetch_related("images")
+					.filter(Q(location__istartswith=prefix))
+					.order_by("-view_count", "-date_added")[:6]
+				)
+				for item in approx_estates:
+					approximate_results.append(
+						{
+							"category": item.get_real_estate_type_display(),
+							"title": f"{item.get_real_estate_type_display()} - {item.location}",
+							"price": item.price,
+							"url": item.get_absolute_url(),
+							"image_url": _first_image_url(item),
+						}
+					)
+
+			if not results and not query:
+				approximate_results = []
+
+			if not approximate_results:
+				fallback_querysets = [
+					Car.objects.prefetch_related("images").order_by("-view_count", "-date_added")[:6],
+					Phone.objects.prefetch_related("images").order_by("-view_count", "-date_added")[:6],
+					RealEstate.objects.prefetch_related("images").order_by("-view_count", "-date_added")[:6],
+				]
+				for queryset in fallback_querysets:
+					for item in queryset:
+						if hasattr(item, "brand") and hasattr(item, "model"):
+							category_label = "Voiture" if isinstance(item, Car) else "Telephone"
+							title = f"{item.brand} {item.model}"
+						else:
+							category_label = item.get_real_estate_type_display()
+							title = f"{category_label} - {item.location}"
+						approximate_results.append(
+							{
+								"category": category_label,
+								"title": title,
+								"price": item.price,
+								"url": item.get_absolute_url(),
+								"image_url": _first_image_url(item),
+							}
+						)
+
+			if approximate_results:
+				results = approximate_results
+				approximate_used = True
+
 		results.sort(key=lambda result: result["price"])
 
 		paginator = Paginator(results, 18)
@@ -815,6 +899,7 @@ class GlobalSearchView(SiteLoginRequiredMixin, View):
 		context = {
 			"page_obj": page_obj,
 			"total_results": len(results),
+			"approximate_used": approximate_used,
 			"filters": {
 				"q": query,
 				"category": category,
