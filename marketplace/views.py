@@ -11,6 +11,7 @@ from django.db.models import F, Prefetch, Q
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.urls import reverse
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views import View
@@ -1293,7 +1294,8 @@ class RegisterView(View):
 	template_name = "auth/register.html"
 
 	def _next_url(self, request):
-		return request.GET.get("next") or request.POST.get("next") or ""
+		candidate = request.GET.get("next") or request.POST.get("next") or ""
+		return sanitize_next_url(request, candidate)
 
 	def get(self, request):
 		if request.user.is_authenticated:
@@ -1327,7 +1329,7 @@ class AgentLoginView(LoginView):
 		return super().form_valid(form)
 
 	def get_success_url(self):
-		next_url = self.request.GET.get("next") or self.request.POST.get("next")
+		next_url = sanitize_next_url(self.request, self.request.GET.get("next") or self.request.POST.get("next"))
 		if next_url:
 			return next_url
 		return reverse("marketplace:agent_dashboard")
@@ -1373,7 +1375,7 @@ class ToggleFavoriteView(LoginRequiredMixin, View):
 				or getattr(object_instance, "stock", 1) == 0
 			):
 				messages.error(request, "Produit en rupture de stock.")
-				next_url = request.POST.get("next", "")
+				next_url = sanitize_next_url(request, request.POST.get("next", ""))
 				return redirect(next_url or object_instance.get_absolute_url())
 		content_type = ContentType.objects.get_for_model(model_class)
 		favorite, created = Favorite.objects.get_or_create(
@@ -1384,7 +1386,7 @@ class ToggleFavoriteView(LoginRequiredMixin, View):
 		if not created:
 			favorite.delete()
 
-		next_url = request.POST.get("next", "")
+		next_url = sanitize_next_url(request, request.POST.get("next", ""))
 		if next_url:
 			return redirect(next_url)
 		return redirect("home")
@@ -1485,7 +1487,7 @@ class TogglePriceAlertView(LoginRequiredMixin, View):
 		else:
 			messages.success(request, "Alerte de prix activee.")
 
-		next_url = request.POST.get("next") or request.GET.get("next")
+		next_url = sanitize_next_url(request, request.POST.get("next") or request.GET.get("next"))
 		if next_url:
 			return redirect(next_url)
 		return redirect(instance.get_absolute_url())
@@ -1539,6 +1541,15 @@ class RobotsTxtView(View):
 			f"Sitemap: {request.build_absolute_uri('/sitemap.xml')}",
 		]
 		return HttpResponse("\n".join(lines), content_type="text/plain")
+
+
+def sanitize_next_url(request, candidate):
+	candidate = (candidate or "").strip()
+	if not candidate:
+		return ""
+	if url_has_allowed_host_and_scheme(candidate, {request.get_host()}, require_https=request.is_secure()):
+		return candidate
+	return ""
 
 
 class SitemapXmlView(View):

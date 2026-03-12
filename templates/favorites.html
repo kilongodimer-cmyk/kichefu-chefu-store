@@ -1,3 +1,4 @@
+{% load media_extras %}
 <!DOCTYPE html>
 <html lang="fr">
   <head>
@@ -57,13 +58,13 @@
       <section class="section">
         <h1>Mon panier</h1>
         <p class="sub">Cochez un ou plusieurs elements pour les retirer rapidement du panier.</p>
-        {% if messages %}
-          {% for message in messages %}
-            <div class="msg">{{ message }}</div>
-          {% endfor %}
-        {% endif %}
         <form method="post">
           {% csrf_token %}
+          {% if messages %}
+            {% for message in messages %}
+              <div class="msg">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
           <div class="toolbar">
             <button class="remove-btn" type="submit">Retirer la selection du panier</button>
             <span class="note">Astuce: utilisez les coches sur chaque carte.</span>
@@ -74,7 +75,18 @@
         <h2>Voitures dans le panier</h2>
         <div class="grid">
           {% for item in cars %}
-            <article class="card">{% with img=item.images.first %}{% if img %}<img src="{{ img.image.url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/0f1117/e8edf6.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}{% endwith %}<div class="body"><label class="select-row"><input type="checkbox" name="selected_items" value="car:{{ item.pk }}" /> Retirer du panier</label><strong>{{ item.brand }} {{ item.model }}</strong><div class="price">{{ item.price }} $</div><a class="btn" href="{{ item.get_absolute_url }}">Voir details</a></div></article>
+            <article class="card">
+              {% with img=item.images.first %}
+                {% with safe_url=img.image|safe_image_url %}
+                  {% if safe_url %}
+                    <img src="{{ safe_url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />
+                  {% else %}
+                    <img src="https://dummyimage.com/1200x750/0f1117/e8edf6.webp&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />
+                  {% endif %}
+                {% endwith %}
+              {% endwith %}
+              <div class="body"><label class="select-row"><input type="checkbox" name="selected_items" value="car:{{ item.pk }}" /> Retirer du panier</label><strong>{{ item.brand }} {{ item.model }}</strong><div class="price">{{ item.price }} $</div><a class="btn" href="{{ item.get_absolute_url }}">Voir details</a></div>
+            </article>
           {% empty %}<p>Aucune voiture dans le panier.</p>{% endfor %}
         </div>
       </section>
@@ -83,7 +95,18 @@
         <h2>Telephones dans le panier</h2>
         <div class="grid">
           {% for item in phones %}
-            <article class="card">{% with img=item.images.first %}{% if img %}<img src="{{ img.image.url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/0f1117/e8edf6.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}{% endwith %}<div class="body"><label class="select-row"><input type="checkbox" name="selected_items" value="phone:{{ item.pk }}" /> Retirer du panier</label><strong>{{ item.brand }} {{ item.model }}</strong><div class="price">{{ item.price }} $</div><a class="btn" href="{{ item.get_absolute_url }}">Voir details</a></div></article>
+            <article class="card">
+              {% with img=item.images.first %}
+                {% with safe_url=img.image|safe_image_url %}
+                  {% if safe_url %}
+                    <img src="{{ safe_url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />
+                  {% else %}
+                    <img src="https://dummyimage.com/1200x750/0f1117/e8edf6.webp&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />
+                  {% endif %}
+                {% endwith %}
+              {% endwith %}
+              <div class="body"><label class="select-row"><input type="checkbox" name="selected_items" value="phone:{{ item.pk }}" /> Retirer du panier</label><strong>{{ item.brand }} {{ item.model }}</strong><div class="price">{{ item.price }} $</div><a class="btn" href="{{ item.get_absolute_url }}">Voir details</a></div>
+            </article>
           {% empty %}<p>Aucun telephone dans le panier.</p>{% endfor %}
         </div>
       </section>
@@ -92,7 +115,18 @@
         <h2>Parcelles et maisons dans le panier</h2>
         <div class="grid">
           {% for item in real_estates %}
-            <article class="card">{% with img=item.images.first %}{% if img %}<img src="{{ img.image.url }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% else %}<img src="https://dummyimage.com/1200x750/0f1117/e8edf6.png&text={{ item.get_real_estate_type_display|urlencode }}+{{ item.location|urlencode }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% endif %}{% endwith %}<div class="body"><label class="select-row"><input type="checkbox" name="selected_items" value="real_estate:{{ item.pk }}" /> Retirer du panier</label><strong>{{ item.get_real_estate_type_display }} - {{ item.location }}</strong><div class="price">{{ item.price }} $</div><a class="btn" href="{{ item.get_absolute_url }}">Voir details</a></div></article>
+            <article class="card">
+              {% with img=item.images.first %}
+                {% with safe_url=img.image|safe_image_url %}
+                  {% if safe_url %}
+                    <img src="{{ safe_url }}" alt="{{ item.location }}" loading="lazy" decoding="async" />
+                  {% else %}
+                    <img src="https://dummyimage.com/1200x750/0f1117/e8edf6.webp&text={{ item.get_real_estate_type_display|urlencode }}+{{ item.location|urlencode }}" alt="{{ item.location }}" loading="lazy" decoding="async" />
+                  {% endif %}
+                {% endwith %}
+              {% endwith %}
+              <div class="body"><label class="select-row"><input type="checkbox" name="selected_items" value="real_estate:{{ item.pk }}" /> Retirer du panier</label><strong>{{ item.get_real_estate_type_display }} - {{ item.location }}</strong><div class="price">{{ item.price }} $</div><a class="btn" href="{{ item.get_absolute_url }}">Voir details</a></div>
+            </article>
           {% empty %}<p>Aucune annonce immobiliere dans le panier.</p>{% endfor %}
         </div>
       </section>
