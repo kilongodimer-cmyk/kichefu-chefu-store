@@ -1255,11 +1255,17 @@ class AgentDashboardView(LoginRequiredMixin, View):
 			messages.error(request, "Cet espace est reserve aux agents du site.")
 			return redirect("home")
 
+		is_admin_role = bool(
+			request.user.is_superuser
+			or request.user.groups.filter(name="Admin").exists()
+		)
+
 		context = {
 			"cars_count": Car.objects.count(),
 			"phones_count": Phone.objects.count(),
 			"accessories_count": Accessory.objects.count(),
 			"real_estate_count": RealEstate.objects.count(),
+			"is_admin_role": is_admin_role,
 		}
 		return render(request, self.template_name, context)
 
@@ -1274,6 +1280,14 @@ class ToggleFavoriteView(LoginRequiredMixin, View):
 			return redirect("home")
 
 		object_instance = get_object_or_404(model_class, pk=pk)
+		if model_name == "phone":
+			if (
+				getattr(object_instance, "availability", "") == AvailabilityChoices.OUT_OF_STOCK
+				or getattr(object_instance, "stock", 1) == 0
+			):
+				messages.error(request, "Produit en rupture de stock.")
+				next_url = request.POST.get("next", "")
+				return redirect(next_url or object_instance.get_absolute_url())
 		content_type = ContentType.objects.get_for_model(model_class)
 		favorite, created = Favorite.objects.get_or_create(
 			user=request.user,

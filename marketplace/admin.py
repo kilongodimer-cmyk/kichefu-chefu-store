@@ -58,12 +58,28 @@ class CarAdmin(admin.ModelAdmin):
 		urls = super().get_urls()
 		custom_urls = [
 			path(
+				"<int:car_id>/publish/",
+				self.admin_site.admin_view(self.publish_view),
+				name="marketplace_car_publish",
+			),
+			path(
 				"import-csv/",
 				self.admin_site.admin_view(self.import_csv_view),
 				name="marketplace_car_import_csv",
 			),
 		]
 		return custom_urls + urls
+
+	def publish_view(self, request, car_id):
+		car = self.get_queryset(request).filter(pk=car_id).first()
+		if not car:
+			messages.error(request, "Annonce introuvable.")
+			return redirect(reverse("admin:marketplace_car_changelist"))
+
+		car.availability = "available"
+		car.save(update_fields=["availability"])
+		messages.success(request, "Annonce publiee.")
+		return redirect(reverse("admin:marketplace_car_change", args=[car.pk]))
 
 	def import_csv_view(self, request):
 		if request.method == "POST":
@@ -127,6 +143,28 @@ class PhoneAdmin(admin.ModelAdmin):
 	search_fields = ("brand", "model", "description")
 	ordering = ("-date_added",)
 	inlines = [PhoneImageInline]
+
+	def get_urls(self):
+		urls = super().get_urls()
+		custom_urls = [
+			path(
+				"<int:phone_id>/publish/",
+				self.admin_site.admin_view(self.publish_view),
+				name="marketplace_phone_publish",
+			),
+		]
+		return custom_urls + urls
+
+	def publish_view(self, request, phone_id):
+		phone = self.get_queryset(request).filter(pk=phone_id).first()
+		if not phone:
+			messages.error(request, "Annonce introuvable.")
+			return redirect(reverse("admin:marketplace_phone_changelist"))
+
+		phone.availability = "available"
+		phone.save(update_fields=["availability"])
+		messages.success(request, "Annonce publiee.")
+		return redirect(reverse("admin:marketplace_phone_change", args=[phone.pk]))
 
 
 @admin.register(Accessory)

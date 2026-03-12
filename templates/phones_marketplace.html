@@ -171,11 +171,15 @@
                 <a class="btn btn-ghost" href="{{ phone.get_absolute_url }}">Voir details</a>
                 <a class="btn btn-main" href="https://wa.me/243814191316?text=Bonjour,%20je%20veux%20le%20telephone%20{{ phone.brand }}%20{{ phone.model }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
                 {% if user.is_authenticated %}
-                  <form method="post" action="{% url 'marketplace:toggle_cart' 'phone' phone.pk %}">
-                    {% csrf_token %}
-                    <input type="hidden" name="next" value="{{ request.get_full_path }}" />
-                    <button class="heart-btn{% if phone.pk in favorite_phone_ids %} active{% endif %}" type="submit" title="Ajouter au panier" aria-label="Ajouter au panier">&#128722;</button>
-                  </form>
+                  {% if phone.stock == 0 or phone.availability == 'out_of_stock' %}
+                    <button class="heart-btn" type="button" disabled title="Rupture de stock">X</button>
+                  {% else %}
+                    <form method="post" action="{% url 'marketplace:toggle_cart' 'phone' phone.pk %}">
+                      {% csrf_token %}
+                      <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+                      <button class="heart-btn{% if phone.pk in favorite_phone_ids %} active{% endif %}" type="submit" title="Ajouter au panier" aria-label="Ajouter au panier">&#128722;</button>
+                    </form>
+                  {% endif %}
                 {% else %}
                   <a class="btn btn-ghost" href="/connexion/?next={{ request.path }}" title="Ajouter au panier">&#128722;</a>
                 {% endif %}

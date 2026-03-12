@@ -1,7 +1,18 @@
 from django import forms
 from django.core.exceptions import ValidationError
+from django.utils.html import strip_tags
 
 from .models import CarSellRequest, Proposal
+
+
+def _sanitize_text(value):
+	if value is None:
+		return value
+	if not isinstance(value, str):
+		return value
+	cleaned = strip_tags(value)
+	cleaned = " ".join(cleaned.split())
+	return cleaned
 
 
 class MultipleFileInput(forms.ClearableFileInput):
@@ -63,6 +74,15 @@ class CarSellRequestForm(forms.ModelForm):
             "year": forms.NumberInput(attrs={"placeholder": "Ex: 2020"}),
             "desired_price": forms.NumberInput(attrs={"placeholder": "Ex: 25000"}),
         }
+
+    def clean_name(self):
+        return _sanitize_text(self.cleaned_data.get("name"))
+
+    def clean_phone_number(self):
+        return _sanitize_text(self.cleaned_data.get("phone_number"))
+
+    def clean_model(self):
+        return _sanitize_text(self.cleaned_data.get("model"))
 
 
 class ProposalSellForm(forms.ModelForm):
@@ -132,6 +152,21 @@ class ProposalSellForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
+
+        for field_name in (
+            "name",
+            "phone_number",
+            "city",
+            "location_details",
+            "surface_area",
+            "brand",
+            "model_name",
+            "storage",
+            "description",
+        ):
+            if field_name in cleaned_data:
+                cleaned_data[field_name] = _sanitize_text(cleaned_data.get(field_name))
+
         asset_type = cleaned_data.get("asset_type")
 
         required_common = ("city", "item_condition", "description")

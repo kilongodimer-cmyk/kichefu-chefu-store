@@ -111,11 +111,15 @@
               <input type="hidden" name="next" value="{{ request.get_full_path }}" />
               <button class="btn" type="submit">{% if price_alert_active %}Desactiver alerte prix{% else %}Alerte baisse de prix{% endif %}</button>
             </form>
-            <form method="post" action="{% url 'marketplace:toggle_cart' 'phone' phone.pk %}">
-              {% csrf_token %}
-              <input type="hidden" name="next" value="{{ request.get_full_path }}" />
-              <button class="heart-btn{% if is_favorite %} active{% endif %}" type="submit">&#128722; Panier</button>
-            </form>
+            {% if phone.stock == 0 or phone.availability == 'out_of_stock' %}
+              <button class="heart-btn" type="button" disabled>Rupture de stock</button>
+            {% else %}
+              <form method="post" action="{% url 'marketplace:toggle_cart' 'phone' phone.pk %}">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+                <button class="heart-btn{% if is_favorite %} active{% endif %}" type="submit">&#128722; Panier</button>
+              </form>
+            {% endif %}
           {% else %}
             <a class="btn" href="/connexion/?next={{ request.path }}">&#128722; Panier</a>
           {% endif %}

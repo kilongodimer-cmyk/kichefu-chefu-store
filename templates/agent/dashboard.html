@@ -142,7 +142,9 @@
         <div class="brand split-text">Espace Agent - KICHEFU-CHEFU STORE</div>
         <div class="actions">
           <a class="btn btn-outline magnetic" href="/">Voir le site</a>
-          <a class="btn btn-outline magnetic" href="/admin/">Admin Django</a>
+          {% if is_admin_role %}
+            <a class="btn btn-outline magnetic" href="/admin/">Admin Django</a>
+          {% endif %}
           <a class="btn btn-accent magnetic" href="/agent/deconnexion/">Se deconnecter</a>
         </div>
       </div>
@@ -165,41 +167,51 @@
           <h3>Voitures</h3>
           <p>Ajouter, modifier et importer massivement les annonces auto.</p>
           <div class="links">
-            <a class="btn btn-outline magnetic" href="/admin/marketplace/car/">Lister</a>
-            <a class="btn btn-outline magnetic" href="/admin/marketplace/car/add/">Ajouter</a>
-            <a class="btn btn-accent magnetic" href="/admin/marketplace/car/import-csv/">Importer CSV</a>
+            {% if is_admin_role %}
+              <a class="btn btn-outline magnetic" href="/admin/marketplace/car/">Lister</a>
+              <a class="btn btn-outline magnetic" href="/admin/marketplace/car/add/">Ajouter</a>
+              <a class="btn btn-accent magnetic" href="/admin/marketplace/car/import-csv/">Importer CSV</a>
+            {% endif %}
           </div>
         </article>
         <article class="card motion-card">
           <h3>Telephones</h3>
           <p>Mettre a jour les fiches smartphones et leurs images.</p>
           <div class="links">
-            <a class="btn btn-outline magnetic" href="/admin/marketplace/phone/">Lister</a>
-            <a class="btn btn-outline magnetic" href="/admin/marketplace/phone/add/">Ajouter</a>
+            {% if is_admin_role %}
+              <a class="btn btn-outline magnetic" href="/admin/marketplace/phone/">Lister</a>
+              <a class="btn btn-outline magnetic" href="/admin/marketplace/phone/add/">Ajouter</a>
+            {% endif %}
           </div>
         </article>
         <article class="card motion-card">
           <h3>Accessoires</h3>
           <p>Modifier noms, prix et photos d'accessoires en direct.</p>
           <div class="links">
-            <a class="btn btn-outline magnetic" href="/admin/marketplace/accessory/">Lister</a>
-            <a class="btn btn-outline magnetic" href="/admin/marketplace/accessory/add/">Ajouter</a>
+            {% if is_admin_role %}
+              <a class="btn btn-outline magnetic" href="/admin/marketplace/accessory/">Lister</a>
+              <a class="btn btn-outline magnetic" href="/admin/marketplace/accessory/add/">Ajouter</a>
+            {% endif %}
           </div>
         </article>
         <article class="card motion-card">
           <h3>Immobilier</h3>
           <p>Ajouter ou mettre a jour parcelles et maisons.</p>
           <div class="links">
-            <a class="btn btn-outline magnetic" href="/admin/marketplace/realestate/">Lister</a>
-            <a class="btn btn-outline magnetic" href="/admin/marketplace/realestate/add/">Ajouter</a>
+            {% if is_admin_role %}
+              <a class="btn btn-outline magnetic" href="/admin/marketplace/realestate/">Lister</a>
+              <a class="btn btn-outline magnetic" href="/admin/marketplace/realestate/add/">Ajouter</a>
+            {% endif %}
           </div>
         </article>
         <article class="card motion-card">
           <h3>Utilisateurs agents</h3>
           <p>L'administrateur peut creer des agents et activer leurs permissions.</p>
           <div class="links">
-            <a class="btn btn-outline magnetic" href="/admin/auth/user/">Gerer utilisateurs</a>
-            <a class="btn btn-outline magnetic" href="/admin/auth/group/">Gerer groupes</a>
+            {% if is_admin_role %}
+              <a class="btn btn-outline magnetic" href="/admin/auth/user/">Gerer utilisateurs</a>
+              <a class="btn btn-outline magnetic" href="/admin/auth/group/">Gerer groupes</a>
+            {% endif %}
           </div>
         </article>
       </section>

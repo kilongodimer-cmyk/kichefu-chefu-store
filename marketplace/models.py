@@ -50,6 +50,7 @@ def _build_unique_slug(model_class, raw_text, current_pk=None):
 
 class AvailabilityChoices(models.TextChoices):
 	AVAILABLE = "available", "Disponible"
+	OUT_OF_STOCK = "out_of_stock", "Rupture de stock"
 	RESERVED = "reserved", "Reserve"
 	SOLD = "sold", "Vendu"
 
@@ -152,6 +153,7 @@ class Phone(models.Model):
 	slug = models.SlugField(max_length=180, unique=True, blank=True, null=True, db_index=True)
 	storage = models.CharField(max_length=40)
 	price = models.DecimalField(max_digits=10, decimal_places=2, db_index=True)
+	stock = models.PositiveIntegerField(default=1, db_index=True)
 	description = models.TextField(blank=True)
 	view_count = models.PositiveIntegerField(default=0, db_index=True)
 	availability = models.CharField(
@@ -178,6 +180,8 @@ class Phone(models.Model):
 	def save(self, *args, **kwargs):
 		if not self.slug:
 			self.slug = _build_unique_slug(Phone, f"{self.brand} {self.model}", self.pk)
+		if self.stock == 0 and self.availability != AvailabilityChoices.SOLD:
+			self.availability = AvailabilityChoices.OUT_OF_STOCK
 		super().save(*args, **kwargs)
 
 
@@ -197,6 +201,7 @@ class Accessory(models.Model):
 	name = models.CharField(max_length=120)
 	price = models.DecimalField(max_digits=10, decimal_places=2, db_index=True)
 	description = models.TextField(blank=True)
+	stock = models.PositiveIntegerField(default=1, db_index=True)
 	image = models.ImageField(upload_to=upload_accessory_image, blank=True, null=True)
 	availability = models.CharField(
 		max_length=12,
@@ -215,6 +220,11 @@ class Accessory(models.Model):
 
 	def get_absolute_url(self):
 		return reverse("marketplace:accessory_detail", kwargs={"pk": self.pk})
+
+	def save(self, *args, **kwargs):
+		if self.stock == 0 and self.availability != AvailabilityChoices.SOLD:
+			self.availability = AvailabilityChoices.OUT_OF_STOCK
+		super().save(*args, **kwargs)
 
 
 class RealEstateType(models.TextChoices):
