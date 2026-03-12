@@ -678,10 +678,6 @@ class HomePageView(SiteLoginRequiredMixin, View):
 			"favorite_phone_ids": favorite_map["phones"],
 			"favorite_real_estate_ids": favorite_map["real_estate"],
 			"lubumbashi_areas": LUBUMBASHI_NEIGHBORHOODS,
-			"sticky_cart": {
-				"cta": "Ajouter au panier en 1 clic",
-				"sub": "Passez votre commande en moins de 30 secondes",
-			},
 		}
 		return render(request, self.template_name, context)
 
