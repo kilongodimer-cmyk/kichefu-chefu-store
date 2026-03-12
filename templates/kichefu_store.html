@@ -333,6 +333,7 @@
       .price { margin-top: 8px; color: #ff9b53; font-weight: 900; }
       .card-actions { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; opacity: 0; transform: translateY(6px); transition: opacity 0.22s ease, transform 0.22s ease; }
       .card:hover .card-actions { opacity: 1; transform: translateY(0); }
+      .stock-alert { margin-top: 6px; color:#ffb347; font-size:0.9rem; font-weight:700; }
 
       .simple-list { margin-top: 18px; display: grid; gap: 10px; }
       .simple-item {
@@ -361,15 +362,21 @@
       }
       .map-frame { width: 100%; min-height: 320px; border: 0; border-radius: 10px; }
 
-      footer {
-        padding: 52px 0 34px;
-        background: #0f0f0f;
+      .flash-offer {
+        margin-top: 24px;
+        border: 1px solid rgba(255,107,0,.45);
+        border-radius: 18px;
+        background: rgba(255,107,0,.08);
+        padding: 18px;
+        display: flex;
+        gap: 18px;
+        align-items: center;
+        flex-wrap: wrap;
       }
-      .footer-grid {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 20px;
-      }
+      .flash-offer h3 { margin: 0; font-size: 1.4rem; }
+      .flash-countdown { display: flex; gap: 16px; font-weight: 700; }
+      .flash-countdown span { font-size: 1.2rem; }
+
       footer h4 { margin: 0 0 10px; }
       footer a,
       footer p { margin: 0; color: #c7c7c7; text-decoration: none; line-height: 1.8; }
@@ -390,7 +397,7 @@
       @media (max-width: 760px) {
         .search-grid, .cards-4, .cards-3, .footer-grid { grid-template-columns: 1fr; }
       }
-  .char { display: inline-block; }
+      .char { display: inline-block; }
     </style>
   </head>
   <body>
@@ -453,6 +460,20 @@
                   <input id="search-category" type="hidden" name="category" value="all" />
                 </form>
               </div>
+
+              {% if flash_offer %}
+                <div class="flash-offer fade-item">
+                  <div>
+                    <h3>{{ flash_offer.headline }}</h3>
+                    <p style="margin:6px 0 0; color:#ffd5b8;">{{ flash_offer.description }}</p>
+                  </div>
+                  <div class="flash-countdown" data-expires="{{ flash_offer.expires_at|date:'c' }}">
+                    <span><strong id="flash-hours">00</strong>h</span>
+                    <span><strong id="flash-mins">00</strong>m</span>
+                    <span><strong id="flash-secs">00</strong>s</span>
+                  </div>
+                </div>
+              {% endif %}
             </div>
           </section>
 
@@ -464,9 +485,13 @@
                   <article class="card motion-card">
                     {% with img=item.images.first %}
                       <div class="media">
-                        {% if img.image|safe_image_url %}<img class="parallax-media" src="{{ img.image|safe_image_url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img class="parallax-media" src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}
+                        {% if img.image|safe_image_url %}
+                          <img class="parallax-media" src="{{ img.image|safe_image_url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />
+                        {% else %}
+                          <img class="parallax-media" src="https://dummyimage.com/1200x750/171717/ffffff.webp&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />
+                        {% endif %}
                         <div class="veil"></div>
-                        <span class="badge">voiture</span>
+                        <div class="overlay">{% for badge in item_badges %}<span class="badge">{{ badge }}</span>{% endfor %}</div>
                       </div>
                     {% endwith %}
                     <div class="body">
@@ -489,15 +514,22 @@
                   <article class="card motion-card">
                     {% with img=item.images.first %}
                       <div class="media">
-                        {% if img.image|safe_image_url %}<img class="parallax-media" src="{{ img.image|safe_image_url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% else %}<img class="parallax-media" src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />{% endif %}
+                        {% if img.image|safe_image_url %}
+                          <img class="parallax-media" src="{{ img.image|safe_image_url }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />
+                        {% else %}
+                          <img class="parallax-media" src="https://dummyimage.com/1200x750/171717/ffffff.webp&text={{ item.brand|urlencode }}+{{ item.model|urlencode }}" alt="{{ item.brand }} {{ item.model }}" loading="lazy" decoding="async" />
+                        {% endif %}
                         <div class="veil"></div>
-                        <span class="badge">telephone</span>
+                        <div class="overlay">{% for badge in item_badges %}<span class="badge">{{ badge }}</span>{% endfor %}</div>
                       </div>
                     {% endwith %}
                     <div class="body">
                       <h3 class="title">{{ item.brand }} {{ item.model }}</h3>
                       <div class="meta">Lubumbashi</div>
                       <div class="price">{{ item.price }} $</div>
+                      {% if item.stock|default:0 and item.stock|default:0 <= 3 %}
+                        <div class="stock-alert">Plus que {{ item.stock }} articles !</div>
+                      {% endif %}
                       <div class="card-actions"><a class="btn magnetic" href="{{ item.get_absolute_url }}">Voir details</a></div>
                     </div>
                   </article>
@@ -514,9 +546,13 @@
                   <article class="card motion-card">
                     {% with img=item.images.first %}
                       <div class="media">
-                        {% if img.image|safe_image_url %}<img class="parallax-media" src="{{ img.image|safe_image_url }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% else %}<img class="parallax-media" src="https://dummyimage.com/1200x750/171717/ffffff.png&text={{ item.location|urlencode }}" alt="{{ item.location }}" loading="lazy" decoding="async" />{% endif %}
+                        {% if img.image|safe_image_url %}
+                          <img class="parallax-media" src="{{ img.image|safe_image_url }}" alt="{{ item.location }}" loading="lazy" decoding="async" />
+                        {% else %}
+                          <img class="parallax-media" src="https://dummyimage.com/1200x750/171717/ffffff.webp&text={{ item.location|urlencode }}" alt="{{ item.location }}" loading="lazy" decoding="async" />
+                        {% endif %}
                         <div class="veil"></div>
-                        <span class="badge">parcelle</span>
+                        <div class="overlay">{% for badge in item_badges %}<span class="badge">{{ badge }}</span>{% endfor %}</div>
                       </div>
                     {% endwith %}
                     <div class="body">
@@ -567,6 +603,24 @@
               </div>
             </div>
           </section>
+
+          {% if customer_reviews %}
+            <section class="section reviews fade-item">
+              <div class="container">
+                <div class="section-head"><div><h2 class="split-text">Avis clients verifies</h2><p class="sub">Preuve sociale reelle : photos + temoignages.</p></div></div>
+                <div class="review-grid">
+                  {% for review in customer_reviews %}
+                    <article class="review-card">
+                      <img src="{{ review.avatar }}" alt="{{ review.name }}" loading="lazy" decoding="async" />
+                      <strong>{{ review.name }}</strong>
+                      <small style="color:#bbb;">{{ review.city }}</small>
+                      <p style="margin-top:8px; color:#ddd;">{{ review.comment }}</p>
+                    </article>
+                  {% endfor %}
+                </div>
+              </div>
+            </section>
+          {% endif %}
 
           <section class="section fade-item" id="notre-localisation">
             <div class="container">
@@ -623,6 +677,16 @@
         </footer>
       </div>
     </div>
+
+    {% if sticky_cart %}
+      <div class="sticky-cart" id="sticky-cart">
+        <div>
+          <strong>{{ sticky_cart.cta }}</strong>
+          <span style="color:#bbb;">{{ sticky_cart.sub }}</span>
+        </div>
+        <a class="btn btn-main" href="/panier/">Voir mon panier</a>
+      </div>
+    {% endif %}
 
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
@@ -760,6 +824,39 @@
               categoryInput.value = "all";
             }
           });
+        }
+
+        const countdown = document.querySelector(".flash-countdown");
+        if (countdown) {
+          const expires = new Date(countdown.getAttribute("data-expires"));
+          const hoursEl = document.getElementById("flash-hours");
+          const minsEl = document.getElementById("flash-mins");
+          const secsEl = document.getElementById("flash-secs");
+          const tick = () => {
+            const diff = expires - new Date();
+            if (diff <= 0) return;
+            const hrs = String(Math.floor(diff / (1000 * 60 * 60))).padStart(2, "0");
+            const mins = String(Math.floor((diff / (1000 * 60)) % 60)).padStart(2, "0");
+            const secs = String(Math.floor((diff / 1000) % 60)).padStart(2, "0");
+            hoursEl.textContent = hrs;
+            minsEl.textContent = mins;
+            secsEl.textContent = secs;
+          };
+          tick();
+          setInterval(tick, 1000);
+        }
+
+        const sticky = document.getElementById("sticky-cart");
+        if (sticky) {
+          const toggleSticky = () => {
+            if (window.scrollY > 200) {
+              sticky.classList.add("visible");
+            } else {
+              sticky.classList.remove("visible");
+            }
+          };
+          toggleSticky();
+          window.addEventListener("scroll", toggleSticky);
         }
       })();
     </script>

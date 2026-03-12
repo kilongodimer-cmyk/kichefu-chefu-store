@@ -184,6 +184,8 @@ def build_badges(item, index=0):
 		badges.append("Nouveau")
 	if index < 3:
 		badges.append("Populaire")
+	if getattr(item, "view_count", 0) >= 75:
+		badges.append("Best Seller")
 	if str(getattr(item, "availability", "")) == "reserved":
 		badges.append("Stock limite")
 	if str(getattr(item, "availability", "")) == "available" and index % 4 == 0:
@@ -676,6 +678,20 @@ class HomePageView(SiteLoginRequiredMixin, View):
 			"favorite_phone_ids": favorite_map["phones"],
 			"favorite_real_estate_ids": favorite_map["real_estate"],
 			"lubumbashi_areas": LUBUMBASHI_NEIGHBORHOODS,
+			"sticky_cart": {
+				"cta": "Ajouter au panier en 1 clic",
+				"sub": "Passez votre commande en moins de 30 secondes",
+			},
+			"flash_offer": {
+				"expires_at": timezone.now() + timedelta(hours=24),
+				"headline": "Offre Flash: livraison express +10$",
+				"description": "Fin de promo dans moins de 24h sur les best sellers automobiles.",
+			},
+			"customer_reviews": [
+				{"name": "Gloria M.", "city": "Lubumbashi", "comment": "Equipe tres pro, verification du vehicule et livraison rapide.", "avatar": "https://i.pravatar.cc/120?img=9"},
+				{"name": "Junior K.", "city": "Kinshasa", "comment": "Excellent service pour trouver un iPhone en stock immediat.", "avatar": "https://i.pravatar.cc/120?img=22"},
+				{"name": "Chantal B.", "city": "Kolwezi", "comment": "La gestion du dossier immobilier est rassurante et transparente.", "avatar": "https://i.pravatar.cc/120?img=45"},
+			],
 		}
 		return render(request, self.template_name, context)
 

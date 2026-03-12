@@ -1,3 +1,5 @@
+from urllib.parse import quote
+
 from django import template
 
 register = template.Library()
@@ -16,6 +18,16 @@ def safe_image_url(image_field):
             return ""
         if not storage.exists(name):
             return ""
-        return image_field.url
+        original_url = image_field.url
+        encoded = quote(original_url, safe="")
+        return f"https://wsrv.nl/?url={encoded}&output=webp"
     except Exception:
         return ""
+
+
+@register.filter
+def dummy_webp(url):
+    """Ensure dummyimage links also use WebP output."""
+    if not url:
+        return ""
+    return url.replace(".png", ".webp")
