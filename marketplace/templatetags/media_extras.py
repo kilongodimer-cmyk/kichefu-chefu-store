@@ -1,4 +1,4 @@
-from urllib.parse import quote
+from urllib.parse import quote, urlparse
 
 from django import template
 
@@ -19,10 +19,18 @@ def safe_image_url(image_field):
         if not storage.exists(name):
             return ""
         original_url = image_field.url
-        encoded = quote(original_url, safe="")
-        return f"https://wsrv.nl/?url={encoded}&output=webp"
     except Exception:
         return ""
+
+    parsed = urlparse(original_url)
+    if parsed.scheme and parsed.netloc:
+        try:
+            encoded = quote(original_url, safe="")
+            return f"https://wsrv.nl/?url={encoded}&output=webp"
+        except Exception:
+            return original_url
+
+    return original_url
 
 
 @register.filter
