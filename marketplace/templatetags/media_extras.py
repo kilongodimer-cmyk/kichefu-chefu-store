@@ -16,8 +16,6 @@ def safe_image_url(image_field):
         storage = image_field.storage
         if not name or storage is None:
             return ""
-        if not storage.exists(name):
-            return ""
         original_url = image_field.url
     except Exception:
         return ""
