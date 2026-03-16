@@ -1,0 +1,81 @@
+version: "3.9"
+
+x-env-common: &env_common
+  BINANCE_API_KEY: ${BINANCE_API_KEY}
+  BINANCE_API_SECRET: ${BINANCE_API_SECRET}
+  TELEMETRY_WEBHOOK: ${TELEMETRY_WEBHOOK}
+
+services:
+  api:
+    image: "${BACKEND_IMAGE:-ghcr.io/your-org/quant-backend}:${BACKEND_TAG:-latest}"
+    env_file:
+      - env/backend.env
+    environment:
+      <<: *env_common
+    depends_on:
+      - redis
+      - postgres
+    restart: unless-stopped
+    networks:
+      - internal
+
+  worker:
+    image: "${BACKEND_IMAGE:-ghcr.io/your-org/quant-backend}:${BACKEND_TAG:-latest}"
+    command: python -m app.workers.market_stream
+    env_file:
+      - env/backend.env
+    environment:
+      <<: *env_common
+    depends_on:
+      - redis
+    restart: unless-stopped
+    networks:
+      - internal
+
+  frontend:
+    image: "${FRONTEND_IMAGE:-ghcr.io/your-org/quant-frontend}:${FRONTEND_TAG:-latest}"
+    env_file:
+      - env/frontend.env
+    restart: unless-stopped
+    networks:
+      - internal
+      - edge
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    networks:
+      - internal
+
+  postgres:
+    image: postgres:15-alpine
+    env_file:
+      - env/postgres.env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - internal
+
+  nginx:
+    image: nginx:1.25-alpine
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - api
+      - frontend
+    networks:
+      - edge
+      - internal
+
+networks:
+  internal:
+    driver: bridge
+  edge:
+    driver: bridge
+
+volumes:
+  pgdata:

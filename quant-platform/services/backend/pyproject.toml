@@ -1,0 +1,42 @@
+[project]
+name = "quant-backend"
+version = "0.1.0"
+description = "FastAPI backend for the quant trading platform"
+authors = [{ name = "Quant Team" }]
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.110.0",
+    "uvicorn[standard]>=0.27.1",
+    "pydantic-settings>=2.2.1",
+    "httpx>=0.27.0",
+    "ccxtpro>=1.0.89",
+    "pandas>=2.2.1",
+    "numpy>=1.26.4",
+    "scikit-learn>=1.4.1",
+    "redis>=5.0.1",
+    "aioredis>=2.0.1",
+    "SQLAlchemy>=2.0.28",
+    "asyncpg>=0.29.0",
+    "alembic>=1.13.1",
+    "python-dotenv>=1.0.1",
+    "tenacity>=8.2.3",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.3.0",
+    "mypy>=1.8.0",
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.5",
+]
+
+[tool.uvicorn]
+factory = true
+app = "app.main:create_app"
+host = "0.0.0.0"
+port = 8000
+reload = true
+
+[build-system]
+requires = ["setuptools>=68.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
