@@ -374,7 +374,7 @@
             <div class="right-zone">
               <form action="/recherche/" method="get"><input class="header-search" type="text" name="q" placeholder="Rechercher..." /></form>
               <a class="icon-btn magnetic" href="/panier/" title="Panier">&#128722;</a>
-              <a class="btn btn-main magnetic" href="/vendre-avec-nous/">Publier une annonce</a>
+              <a class="btn btn-main magnetic" href="https://wa.me/243814191316?text=Bonjour%2C%20je%20souhaite%20vendre%20un%20produit%20avec%20Kichefu%20Chefu%20Store." target="_blank" rel="noopener noreferrer"><span aria-hidden="true">&#9993;</span> Vendre avec Kichefu Chefu</a>
               {% if user.is_authenticated %}
                 <form class="inline-form" method="post" action="{% url 'marketplace:logout' %}">{% csrf_token %}<button class="btn magnetic" type="submit">Deconnexion</button></form>
               {% else %}
