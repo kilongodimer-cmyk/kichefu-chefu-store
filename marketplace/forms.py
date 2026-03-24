@@ -1,11 +1,85 @@
+import re
+
 from django import forms
+from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.core.exceptions import ValidationError
 from django.utils.html import strip_tags
 
 from .models import CarSellRequest, Proposal
 
 
+User = get_user_model()
+
+
+PHONE_REGEX = re.compile(r"^\+?\d{6,15}$")
+
+
+class PhoneSignupForm(UserCreationForm):
+    """Formulaire d'inscription utilisant le numéro comme identifiant principal."""
+
+    full_name = forms.CharField(
+        label="Nom complet",
+        max_length=120,
+        widget=forms.TextInput(attrs={"placeholder": "Nom et prenom"}),
+    )
+
+    class Meta(UserCreationForm.Meta):
+        model = User
+        fields = ("username",)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        phone_field = self.fields["username"]
+        phone_field.label = "Numero de telephone"
+        phone_field.help_text = "Utilisez un numero unique (ex: +24381...)."
+        phone_field.widget.attrs.update({"placeholder": "+243 ...", "inputmode": "tel", "autocomplete": "tel"})
+        self.fields["full_name"].widget.attrs.setdefault("autocomplete", "name")
+        self.fields["password1"].label = "Mot de passe"
+        self.fields["password1"].widget.attrs.setdefault("autocomplete", "new-password")
+        self.fields["password2"].label = "Confirmer le mot de passe"
+
+    def clean_username(self):
+        """Valide et normalise le numéro (pas d'espaces, 6-15 chiffres)."""
+
+        username = super().clean_username()
+        sanitized = username.replace(" ", "").replace("-", "")
+        if not PHONE_REGEX.match(sanitized):
+            raise ValidationError("Format invalide. Utilisez uniquement chiffres et un '+' optionnel.")
+        return sanitized
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.first_name = self.cleaned_data["full_name"].strip()
+        user.last_name = ""
+        user.email = user.email or ""
+        if commit:
+            user.save()
+        return user
+
+    def clean_full_name(self):
+        value = _sanitize_text(self.cleaned_data.get("full_name"))
+        if not value:
+            raise ValidationError("Le nom complet est obligatoire pour l'affichage.")
+        return value
+
+
+class PhoneAuthenticationForm(AuthenticationForm):
+    """Formulaire de connexion dédié au couple (numero, mot de passe)."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        username_field = self.fields[self.username_field]
+        username_field.label = "Numero de telephone"
+        username_field.widget.attrs.setdefault("placeholder", "+243 ...")
+        username_field.widget.attrs.setdefault("inputmode", "tel")
+        username_field.widget.attrs.setdefault("autocomplete", "tel")
+        self.fields["password"].label = "Mot de passe"
+        self.fields["password"].widget.attrs.setdefault("autocomplete", "current-password")
+
+
 def _sanitize_text(value):
+	"""Nettoie les champs texte pour éviter le HTML et réduire les espaces."""
 	if value is None:
 		return value
 	if not isinstance(value, str):
@@ -16,10 +90,14 @@ def _sanitize_text(value):
 
 
 class MultipleFileInput(forms.ClearableFileInput):
+    """Widget HTML permettant la sélection de plusieurs fichiers à la fois."""
+
     allow_multiple_selected = True
 
 
 class MultipleImageField(forms.ImageField):
+    """Champ custom qui impose un nombre min/max d'images."""
+
     def __init__(self, *args, min_files=0, max_files=None, **kwargs):
         self.min_files = min_files
         self.max_files = max_files
@@ -58,6 +136,10 @@ class MultipleImageField(forms.ImageField):
 
 
 class CarSellRequestForm(forms.ModelForm):
+    """
+    Formulaire ultra-court affiché sur la page d'accueil (lead voiture).
+    """
+
     photos = MultipleImageField(
         required=True,
         min_files=2,
@@ -65,6 +147,9 @@ class CarSellRequestForm(forms.ModelForm):
     )
 
     class Meta:
+        """
+        Métadonnées du formulaire.
+        """
         model = CarSellRequest
         fields = ("name", "phone_number", "model", "year", "desired_price")
         widgets = {
@@ -76,16 +161,34 @@ class CarSellRequestForm(forms.ModelForm):
         }
 
     def clean_name(self):
+        """
+        Suppression des balises et espaces multiples pour le nom.
+        
+        :return: Le nom nettoyé
+        """
         return _sanitize_text(self.cleaned_data.get("name"))
 
     def clean_phone_number(self):
+        """
+        Normalisation légère du numéro pour éviter les caractères parasites.
+        
+        :return: Le numéro de téléphone nettoyé
+        """
         return _sanitize_text(self.cleaned_data.get("phone_number"))
 
     def clean_model(self):
+        """
+        Le modèle est aussi dépoussiéré avant insertion DB.
+        
+        :return: Le modèle nettoyé
+        """
         return _sanitize_text(self.cleaned_data.get("model"))
 
 
 class ProposalSellForm(forms.ModelForm):
+    """
+    Formulaire principal 'Vendre avec nous' multi-catégories.
+    """
     photos = MultipleImageField(
         required=True,
         min_files=2,
@@ -93,6 +196,9 @@ class ProposalSellForm(forms.ModelForm):
     )
 
     class Meta:
+        """
+        Métadonnées du formulaire.
+        """
         model = Proposal
         fields = (
             "name",
@@ -151,6 +257,11 @@ class ProposalSellForm(forms.ModelForm):
         }
 
     def clean(self):
+        """
+        Nettoie les champs texte et applique les règles métier selon le type d'actif.
+        
+        :return: Les données nettoyées
+        """
         cleaned_data = super().clean()
 
         for field_name in (
@@ -194,6 +305,10 @@ class ProposalSellForm(forms.ModelForm):
 
 
 class CarCSVImportForm(forms.Form):
+    """
+    Formulaire admin pour importer massivement des véhicules via CSV/ZIP.
+    """
+
     DUPLICATE_STRATEGIES = (
         ("skip", "Ignorer les doublons"),
         ("update", "Mettre a jour les doublons"),

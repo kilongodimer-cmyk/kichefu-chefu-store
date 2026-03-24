@@ -6,6 +6,7 @@ from .views import (
     AccessoryMarketplaceListView,
     AgentDashboardView,
     AgentLoginView,
+    PhoneLoginView,
     CarDetailView,
     CarMarketplaceListView,
     FavoritesView,
@@ -29,7 +30,7 @@ app_name = "marketplace"
 
 urlpatterns = [
     re_path(r"^(?P<filename>google[a-zA-Z0-9]+\.html)$", GoogleSiteVerificationView.as_view(), name="google_site_verification"),
-    path("connexion/", auth_views.LoginView.as_view(template_name="auth/login.html"), name="login"),
+    path("connexion/", PhoneLoginView.as_view(), name="login"),
     path("inscription/", RegisterView.as_view(), name="register"),
     path("deconnexion/", auth_views.LogoutView.as_view(next_page="home"), name="logout"),
     path("agent/connexion/", AgentLoginView.as_view(), name="agent_login"),

@@ -131,7 +131,9 @@
     <div class="cursor-ring" id="cursor-ring"></div>
     <main class="card">
       <h1 class="split-text">Connexion obligatoire</h1>
-      <p class="fade-item">Vous devez creer un compte ou vous connecter avant d'acceder au marketplace.</p>
+      <p class="fade-item">
+        Renseignez votre <strong>numero de telephone</strong> (identifiant unique) et votre mot de passe pour acceder au marketplace.
+      </p>
       <form method="post">
         {% csrf_token %}
         {{ form.non_field_errors }}

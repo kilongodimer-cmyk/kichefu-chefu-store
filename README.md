@@ -77,5 +77,13 @@ Base: `/api/marketplace/`
 - Produits: lecture publique, ecriture reservee aux utilisateurs authentifies.
 - Propositions: creation publique, lecture/detail reservee au staff.
 
+### Connexion via numero de telephone
+- Identifiant = `username` = numero (ex: `+24381...`).
+- Le formulaire d'inscription demande numero + nom complet + mot de passe.
+- Le nom complet est utilise uniquement pour l'affichage public (profil / annonces).
+- Pour se connecter: renseigner le meme numero + mot de passe (#pas d'adresse e-mail).
+
+> Astuce: sur mobile, le champ numero active le clavier telephonique (attribut `inputmode="tel"`).
+
 ## Message WhatsApp
 `Bonjour, je suis interesse par ce produit sur KICHEFU-CHEFU STORE.`

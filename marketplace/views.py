@@ -2,7 +2,6 @@ import re
 import logging
 from django.contrib import messages
 from django.contrib.auth import login
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
 from django.contrib.contenttypes.models import ContentType
@@ -23,7 +22,7 @@ from decimal import Decimal
 from xml.sax.saxutils import escape as xml_escape
 
 from .demo_seed import ensure_seeded_data
-from .forms import ProposalSellForm
+from .forms import PhoneAuthenticationForm, PhoneSignupForm, ProposalSellForm
 from .models import (
 	Accessory,
 	AvailabilityChoices,
@@ -62,7 +61,9 @@ USER_CITY_SESSION_KEY = "user_city"
 logger = logging.getLogger(__name__)
 
 
+
 def ensure_seeded_data_safe():
+	"""Initialise silencieusement les données de démonstration si la base est vide."""
 	try:
 		ensure_seeded_data()
 	except Exception:
@@ -71,11 +72,13 @@ def ensure_seeded_data_safe():
 
 
 def make_whatsapp_link(phone_number, message):
+	"""Construit l'URL wa.me avec numéro formaté et message prérempli."""
 	number = (phone_number or WHATSAPP_DEFAULT).replace("+", "").replace(" ", "")
 	return f"https://wa.me/{number}?text={quote(message)}"
 
 
 def build_proposal_whatsapp_message(proposal, image_urls=None):
+	"""Assemble un message multi-ligne récapitulant la proposition vendeur."""
 	lines = [
 		"Bonjour, nouvelle proposition recue depuis le formulaire KICHEFU-CHEFU STORE.",
 		f"Nom: {proposal.name}",
@@ -116,7 +119,7 @@ def build_proposal_whatsapp_message(proposal, image_urls=None):
 
 
 def publish_proposal_to_catalog(proposal):
-	"""Create a live marketplace listing from a submitted proposal."""
+	"""Convertit une proposition approuvée en annonce publique (car, phone...)."""
 	asset_type = proposal.asset_type
 	created_object = None
 
@@ -180,6 +183,7 @@ def publish_proposal_to_catalog(proposal):
 
 
 def build_badges(item, index=0):
+	"""Calcule les labels marketing visibles sur les cartes produit."""
 	badges = []
 	if item.date_added >= timezone.now() - timedelta(days=21):
 		badges.append("Nouveau")
@@ -199,6 +203,7 @@ def _price_range(item):
 
 
 def _collect_unique_candidates(tier_querysets, max_items=6):
+	"""Fusionne des queryset en évitant les doublons et en limitant la taille."""
 	collected = []
 	seen_ids = set()
 	for queryset in tier_querysets:
@@ -213,6 +218,7 @@ def _collect_unique_candidates(tier_querysets, max_items=6):
 
 
 def similar_items_by_rules(base_queryset, item, tier_filters, min_items=4, max_items=6):
+	"""Cherche des annonces proches selon filtres métier et tranche de prix."""
 	price_delta = _price_range(item)
 	price_filter = {
 		"price__gte": item.price - price_delta,
@@ -254,6 +260,7 @@ def similar_items_by_rules(base_queryset, item, tier_filters, min_items=4, max_i
 
 
 def recommended_items_for_you(base_queryset, item, category_filters, min_items=4, max_items=6):
+	"""Compose un mix d'articles populaires/récents pour alimenter le carrousel."""
 	category_queryset = base_queryset.exclude(pk=item.pk).filter(**category_filters)
 
 	popular_in_category = category_queryset.order_by("-view_count", "-date_added")[:max_items]
@@ -357,10 +364,12 @@ def build_smart_recommendations(
 
 
 def _get_recent_session_map(request):
+	"""Récupère la structure des derniers produits vus stockée en session."""
 	return request.session.get(RECENT_SESSION_KEY, {"cars": [], "phones": [], "real_estate": []})
 
 
 def track_recent_view(request, bucket, object_id):
+	"""Empile un identifiant vu récemment pour personnaliser la page d'accueil."""
 	recent_map = _get_recent_session_map(request)
 	bucket_items = [obj_id for obj_id in recent_map.get(bucket, []) if obj_id != object_id]
 	bucket_items.insert(0, object_id)
@@ -370,6 +379,7 @@ def track_recent_view(request, bucket, object_id):
 
 
 def get_recommended_from_history(request):
+	"""Construit une liste courte basée sur l'historique de navigation local."""
 	recent_map = _get_recent_session_map(request)
 	cars = list(Car.objects.prefetch_related("images").filter(pk__in=recent_map.get("cars", [])[:3]))
 	phones = list(Phone.objects.prefetch_related("images").filter(pk__in=recent_map.get("phones", [])[:3]))
@@ -393,6 +403,7 @@ def get_recommended_from_history(request):
 
 
 def get_favorite_id_map(user):
+	"""Retourne les IDs favoris de l'utilisateur par catégorie (voitures, téléphones, immobilier)."""
 	if not user.is_authenticated:
 		return {"cars": set(), "phones": set(), "real_estate": set()}
 
@@ -412,6 +423,7 @@ def get_favorite_id_map(user):
 
 
 def get_user_city(request):
+	"""Lit la ville préférée dans la requête ou la session et synchronise le profil si connecté."""
 	city = (request.GET.get("city") or "").strip()
 	if city:
 		request.session[USER_CITY_SESSION_KEY] = city
@@ -431,6 +443,7 @@ def get_user_city(request):
 
 
 def _serialize_car_cards(car_queryset, request, favorite_ids=None):
+	"""Prépare la structure JSON utilisée par l'UI (cards voitures + états favoris)."""
 	if favorite_ids is None:
 		favorite_ids = get_favorite_id_map(request.user)["cars"]
 	items = []
@@ -465,6 +478,7 @@ def _first_image_url(item):
 
 
 def _normalize_price_filters(request):
+	"""Convertit les filtres min/max en Decimal en gérant les valeurs invalides."""
 	min_price = request.GET.get("min_price", "").strip()
 	max_price = request.GET.get("max_price", "").strip()
 	parsed_min = None
@@ -481,6 +495,7 @@ def _normalize_price_filters(request):
 
 
 class CarViewSet(viewsets.ModelViewSet):
+	"""API REST CRUD complète pour les voitures, filtrable et triable."""
 	serializer_class = CarSerializer
 	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 	filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
@@ -494,12 +509,14 @@ class CarViewSet(viewsets.ModelViewSet):
 
 
 class CarImageViewSet(viewsets.ModelViewSet):
+	"""Permet d'ajouter ou supprimer les photos rattachées à une voiture."""
 	queryset = CarImage.objects.select_related("car").all()
 	serializer_class = CarImageSerializer
 	permission_classes = [permissions.IsAuthenticated]
 
 
 class PhoneViewSet(viewsets.ModelViewSet):
+	"""Expose la liste des téléphones avec recherche texte et filtres courants."""
 	serializer_class = PhoneSerializer
 	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 	filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
@@ -513,12 +530,14 @@ class PhoneViewSet(viewsets.ModelViewSet):
 
 
 class PhoneImageViewSet(viewsets.ModelViewSet):
+	"""Gestion des médias pour les fiches téléphones (upload sécurisé)."""
 	queryset = PhoneImage.objects.select_related("phone").all()
 	serializer_class = PhoneImageSerializer
 	permission_classes = [permissions.IsAuthenticated]
 
 
 class AccessoryViewSet(viewsets.ModelViewSet):
+	"""CRUD API des accessoires (chargeurs, coques, etc.)."""
 	serializer_class = AccessorySerializer
 	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 	filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
@@ -532,6 +551,7 @@ class AccessoryViewSet(viewsets.ModelViewSet):
 
 
 class RealEstateViewSet(viewsets.ModelViewSet):
+	"""Expose les biens immobiliers avec possibilités de filtrer par type/quartier."""
 	serializer_class = RealEstateSerializer
 	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 	filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
@@ -545,28 +565,32 @@ class RealEstateViewSet(viewsets.ModelViewSet):
 
 
 class RealEstateImageViewSet(viewsets.ModelViewSet):
+	"""Upload et suppression des visuels pour chaque bien immobilier."""
 	queryset = RealEstateImage.objects.select_related("real_estate").all()
 	serializer_class = RealEstateImageSerializer
 	permission_classes = [permissions.IsAuthenticated]
 
 
 class ProposalViewSet(viewsets.ModelViewSet):
+	"""Back-office REST pour suivre les propositions entrantes et leurs statuts."""
 	queryset = Proposal.objects.prefetch_related("images").all()
 	serializer_class = ProposalSerializer
 	permission_classes = [ProposalPermission]
 
 
 class ProposalImageViewSet(viewsets.ModelViewSet):
+	"""Expose les pièces jointes envoyées par les vendeurs."""
 	queryset = ProposalImage.objects.select_related("proposal").all()
 	serializer_class = ProposalImageSerializer
 	permission_classes = [permissions.IsAuthenticated]
 
 
 class SiteLoginRequiredMixin:
-	"""Public storefront mixin kept for compatibility with existing class hierarchy."""
+	"""Mixin d'héritage gardé pour compatibilité (pas de contrainte supplémentaire)."""
 
 
 class HomePageView(SiteLoginRequiredMixin, View):
+	"""Construit la page vitrine en agrégeant statistiques, tendances et favoris."""
 	template_name = "kichefu_store.html"
 
 	def get(self, request):
@@ -684,6 +708,7 @@ class HomePageView(SiteLoginRequiredMixin, View):
 
 
 class SearchSuggestionsView(SiteLoginRequiredMixin, View):
+	"""Retourne des suggestions rapides (JSON) pour l'autocomplétion globale."""
 	def get(self, request):
 		query = request.GET.get("q", "").strip()
 		if len(query) < 2:
@@ -728,6 +753,7 @@ class GlobalSearchView(SiteLoginRequiredMixin, View):
 	template_name = "search_results.html"
 
 	def get(self, request):
+		"""Exécute une recherche multi-catégories avec filtres dynamiques."""
 		query = request.GET.get("q", "").strip()
 		category = request.GET.get("category", "all").strip() or "all"
 		brand = request.GET.get("brand", "").strip()
@@ -806,6 +832,7 @@ class GlobalSearchView(SiteLoginRequiredMixin, View):
 				)
 
 		if not results and query:
+			# Lorsque la requête précise ne retourne rien, on tente un préfixe pour aider l'utilisateur.
 			approximate_results = []
 			prefix = query.split()[0]
 			if prefix:
@@ -861,6 +888,7 @@ class GlobalSearchView(SiteLoginRequiredMixin, View):
 				approximate_results = []
 
 			if not approximate_results:
+				# Aucun préfixe pertinent : on retombe sur un lot "best sellers" pour éviter une page vide.
 				fallback_querysets = [
 					Car.objects.prefetch_related("images").order_by("-view_count", "-date_added")[:6],
 					Phone.objects.prefetch_related("images").order_by("-view_count", "-date_added")[:6],
@@ -911,6 +939,7 @@ class GlobalSearchView(SiteLoginRequiredMixin, View):
 
 
 class CarMarketplaceListView(SiteLoginRequiredMixin, View):
+	"""Page de listing voitures avec filtres avancés et export JSON pour l'UI."""
 	template_name = "cars_marketplace.html"
 
 	def get(self, request):
@@ -1024,6 +1053,7 @@ class CarMarketplaceListView(SiteLoginRequiredMixin, View):
 
 
 class CarDetailView(SiteLoginRequiredMixin, View):
+	"""Fiche détaillée voiture : comptabilise la vue et calcule les recommandations."""
 	template_name = "car_detail.html"
 
 	def get(self, request, slug):
@@ -1079,6 +1109,7 @@ class CarDetailView(SiteLoginRequiredMixin, View):
 
 
 class PhoneMarketplaceListView(SiteLoginRequiredMixin, View):
+	"""Catalogue téléphones avec tri prix/marque pour la page /telephones/."""
 	template_name = "phones_marketplace.html"
 
 	def get(self, request):
@@ -1116,6 +1147,7 @@ class PhoneMarketplaceListView(SiteLoginRequiredMixin, View):
 
 
 class PhoneDetailView(SiteLoginRequiredMixin, View):
+	"""Affiche une fiche téléphone et active les recommandations liées (stockage/marque)."""
 	template_name = "phone_detail.html"
 
 	def get(self, request, slug):
@@ -1165,6 +1197,7 @@ class PhoneDetailView(SiteLoginRequiredMixin, View):
 
 
 class AccessoryMarketplaceListView(SiteLoginRequiredMixin, View):
+	"""Mini marketplace accessoires avec pagination simple et recherche libre."""
 	template_name = "accessories_marketplace.html"
 
 	def get(self, request):
@@ -1208,6 +1241,7 @@ class AccessoryDetailView(SiteLoginRequiredMixin, View):
 
 
 class RealEstateMarketplaceListView(SiteLoginRequiredMixin, View):
+	"""Listing immobilier avec filtres par type, quartier et recherche libre."""
 	template_name = "real_estate_marketplace.html"
 
 	def get(self, request):
@@ -1239,6 +1273,7 @@ class RealEstateMarketplaceListView(SiteLoginRequiredMixin, View):
 
 
 class RealEstateDetailView(SiteLoginRequiredMixin, View):
+	"""Fiche immobilier : incrémente les vues et génère des blocs similaires/prix."""
 	template_name = "real_estate_detail.html"
 
 	def get(self, request, slug):
@@ -1290,6 +1325,16 @@ class RealEstateDetailView(SiteLoginRequiredMixin, View):
 		)
 
 
+class PhoneLoginView(LoginView):
+	template_name = "auth/login.html"
+	form_class = PhoneAuthenticationForm
+	redirect_authenticated_user = True
+
+	def get_success_url(self):
+		next_url = sanitize_next_url(self.request, self.request.POST.get("next") or self.request.GET.get("next"))
+		return next_url or reverse("home")
+
+
 class RegisterView(View):
 	template_name = "auth/register.html"
 
@@ -1300,13 +1345,13 @@ class RegisterView(View):
 	def get(self, request):
 		if request.user.is_authenticated:
 			return redirect("home")
-		return render(request, self.template_name, {"form": UserCreationForm(), "next": self._next_url(request)})
+		return render(request, self.template_name, {"form": PhoneSignupForm(), "next": self._next_url(request)})
 
 	def post(self, request):
 		if request.user.is_authenticated:
 			return redirect("home")
 
-		form = UserCreationForm(request.POST)
+		form = PhoneSignupForm(request.POST)
 		if not form.is_valid():
 			return render(request, self.template_name, {"form": form, "next": self._next_url(request)})
 
@@ -1360,6 +1405,7 @@ class AgentDashboardView(LoginRequiredMixin, View):
 
 
 class ToggleFavoriteView(LoginRequiredMixin, View):
+	"""Ajoute/enlève un produit (voiture/tel/immobilier) du panier-favoris."""
 	login_url = "/connexion/"
 
 	def post(self, request, model_name, pk):
@@ -1393,6 +1439,7 @@ class ToggleFavoriteView(LoginRequiredMixin, View):
 
 
 class FavoritesView(LoginRequiredMixin, View):
+	"""Page panier : permet suppression groupée ou visualisation des favoris."""
 	login_url = "/connexion/"
 	template_name = "favorites.html"
 
@@ -1452,6 +1499,7 @@ class FavoritesView(LoginRequiredMixin, View):
 
 
 class TogglePriceAlertView(LoginRequiredMixin, View):
+	"""Active/désactive une alerte de prix sur un objet donné (tous catalogues)."""
 	login_url = "/connexion/"
 
 	def post(self, request, model_name, pk):
