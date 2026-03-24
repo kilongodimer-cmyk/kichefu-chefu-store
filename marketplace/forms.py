@@ -69,7 +69,7 @@ class PhoneAuthenticationForm(AuthenticationForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        username_field = self.fields[self.username_field]
+        username_field = self.fields[User.USERNAME_FIELD]
         username_field.label = "Numero de telephone"
         username_field.widget.attrs.setdefault("placeholder", "+243 ...")
         username_field.widget.attrs.setdefault("inputmode", "tel")
