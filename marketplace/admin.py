@@ -16,12 +16,14 @@ from .models import (
 	PriceDropAlert,
 	Phone,
 	PhoneImage,
+	Product,
 	Proposal,
 	ProposalImage,
 	RealEstate,
 	RealEstateImage,
 	UserMarketplaceProfile,
 	UserNotification,
+	Video,
 )
 
 
@@ -181,6 +183,22 @@ class AccessoryAdmin(admin.ModelAdmin):
 		return "-"
 
 	image_preview.short_description = "Apercu"
+
+
+@admin.register(Product)
+class ProductAdmin(admin.ModelAdmin):
+	list_display = ("titre", "prix", "url_produit", "created_at")
+	search_fields = ("titre", "description", "url_produit")
+	ordering = ("-created_at",)
+
+
+@admin.register(Video)
+class VideoAdmin(admin.ModelAdmin):
+	list_display = ("titre", "produit", "is_active", "created_at")
+	list_filter = ("is_active", "created_at")
+	search_fields = ("titre", "description", "produit__titre")
+	autocomplete_fields = ("produit",)
+	ordering = ("-created_at",)
 
 
 class RealEstateImageInline(admin.TabularInline):

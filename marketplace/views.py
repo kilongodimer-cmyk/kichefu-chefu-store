@@ -39,6 +39,7 @@ from .models import (
 	RealEstateImage,
 	UserMarketplaceProfile,
 	UserNotification,
+	Video,
 )
 from .permissions import ProposalPermission
 from .serializers import (
@@ -599,6 +600,7 @@ class HomePageView(SiteLoginRequiredMixin, View):
 		phones = Phone.objects.prefetch_related("images").all()
 		accessories = Accessory.objects.all()
 		real_estates = RealEstate.objects.prefetch_related("images").all()
+		videos = Video.objects.select_related("produit").filter(is_active=True)[:12]
 		user_city = get_user_city(request)
 		available_cars_count = cars.filter(availability="available").count()
 
@@ -703,6 +705,7 @@ class HomePageView(SiteLoginRequiredMixin, View):
 			"favorite_phone_ids": favorite_map["phones"],
 			"favorite_real_estate_ids": favorite_map["real_estate"],
 			"lubumbashi_areas": LUBUMBASHI_NEIGHBORHOODS,
+			"spotlight_videos": videos,
 		}
 		return render(request, self.template_name, context)
 

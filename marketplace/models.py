@@ -9,30 +9,43 @@ from django.utils import timezone
 
 
 def upload_car_image(instance, filename):
+	"""Stocke les photos de voitures dans un dossier dédié par annonce."""
 	return f"marketplace/cars/{instance.car_id}/{filename}"
 
 
 def upload_phone_image(instance, filename):
+	"""Range les photos de téléphones dans un répertoire propre à l'appareil."""
 	return f"marketplace/phones/{instance.phone_id}/{filename}"
 
 
 def upload_accessory_image(instance, filename):
+	"""Utilise la PK directe car l'image est uploadée sur le modèle Accessory."""
 	return f"marketplace/accessories/{instance.pk}/{filename}"
 
 
 def upload_real_estate_image(instance, filename):
+	"""Construit un chemin lisible pour chaque bien immobilier."""
 	return f"marketplace/real_estate/{instance.real_estate_id}/{filename}"
 
 
 def upload_proposal_image(instance, filename):
+	"""Permet de retracer les fichiers soumis via le formulaire 'Vendre avec nous'."""
 	return f"marketplace/proposals/{instance.proposal_id}/{filename}"
 
 
 def upload_sell_car_image(instance, filename):
+	"""Stockage temporaire pour les demandes rapides de vente de voiture."""
 	return f"marketplace/sell_car/{instance.sell_request_id}/{filename}"
 
 
+def upload_product_video(instance, filename):
+	"""Stocke les videos marketing en les regroupant par produit."""
+	product_id = instance.produit_id or "unassigned"
+	return f"marketplace/videos/{product_id}/{filename}"
+
+
 def _build_unique_slug(model_class, raw_text, current_pk=None):
+	"""Génère un slug unique en ajoutant un suffixe numérique si nécessaire."""
 	base_slug = slugify(raw_text)[:170] or "item"
 	candidate = base_slug
 	counter = 2
@@ -49,6 +62,7 @@ def _build_unique_slug(model_class, raw_text, current_pk=None):
 
 
 class AvailabilityChoices(models.TextChoices):
+	"""Enumération commune pour l'état de disponibilité des produits."""
 	AVAILABLE = "available", "Disponible"
 	OUT_OF_STOCK = "out_of_stock", "Rupture de stock"
 	RESERVED = "reserved", "Reserve"
@@ -56,6 +70,7 @@ class AvailabilityChoices(models.TextChoices):
 
 
 class Car(models.Model):
+	"""Représente une voiture complète publiée dans le catalogue principal."""
 	class VehicleType(models.TextChoices):
 		SEDAN = "sedan", "Berline"
 		SUV = "suv", "SUV"
@@ -148,6 +163,7 @@ class CarImage(models.Model):
 
 
 class Phone(models.Model):
+	"""Inventaire des téléphones/Smartphones proposés sur la plateforme."""
 	brand = models.CharField(max_length=60, db_index=True)
 	model = models.CharField(max_length=60, db_index=True)
 	slug = models.SlugField(max_length=180, unique=True, blank=True, null=True, db_index=True)
@@ -198,6 +214,7 @@ class PhoneImage(models.Model):
 
 
 class Accessory(models.Model):
+	"""Modélise les accessoires (chargeurs, coques, etc.) vendus au détail."""
 	name = models.CharField(max_length=120)
 	price = models.DecimalField(max_digits=10, decimal_places=2, db_index=True)
 	description = models.TextField(blank=True)
@@ -227,12 +244,53 @@ class Accessory(models.Model):
 		super().save(*args, **kwargs)
 
 
+class Product(models.Model):
+	"""Fiche produit simplifiee pour relier les contenus marketing video."""
+	titre = models.CharField(max_length=160, db_index=True)
+	slug = models.SlugField(max_length=180, unique=True, blank=True, null=True, db_index=True)
+	description = models.TextField(blank=True)
+	prix = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, db_index=True)
+	url_produit = models.URLField(max_length=500)
+	created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+	class Meta:
+		ordering = ["-created_at"]
+
+	def __str__(self):
+		return self.titre
+
+	def get_absolute_url(self):
+		return self.url_produit
+
+	def save(self, *args, **kwargs):
+		if not self.slug:
+			self.slug = _build_unique_slug(Product, self.titre, self.pk)
+		super().save(*args, **kwargs)
+
+
+class Video(models.Model):
+	"""Videos promotionnelles affichables sur la page d'accueil."""
+	titre = models.CharField(max_length=160)
+	video = models.FileField(upload_to=upload_product_video)
+	description = models.TextField(blank=True)
+	produit = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="videos")
+	is_active = models.BooleanField(default=True, db_index=True)
+	created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+	class Meta:
+		ordering = ["-created_at"]
+
+	def __str__(self):
+		return self.titre
+
+
 class RealEstateType(models.TextChoices):
 	HOUSE = "house", "Maison"
 	LAND = "land", "Parcelle"
 
 
 class RealEstate(models.Model):
+	"""Structure commune pour les maisons et parcelles listées."""
 	real_estate_type = models.CharField(max_length=10, choices=RealEstateType.choices)
 	location = models.CharField(max_length=140, db_index=True)
 	slug = models.SlugField(max_length=180, unique=True, blank=True, null=True, db_index=True)
@@ -309,6 +367,7 @@ class ProposalFuelChoices(models.TextChoices):
 
 
 class Proposal(models.Model):
+	"""Conserve les informations brutes saisies par les vendeurs."""
 	name = models.CharField(max_length=120)
 	phone_number = models.CharField(max_length=30)
 	asset_type = models.CharField(max_length=10, choices=ProposalAssetType.choices)
@@ -351,6 +410,7 @@ class ProposalImage(models.Model):
 
 
 class CarSellRequest(models.Model):
+	"""Formulaire court pour capter des leads voiture sans créer de compte."""
 	name = models.CharField(max_length=120)
 	phone_number = models.CharField(max_length=30)
 	model = models.CharField(max_length=120)
@@ -384,6 +444,7 @@ class CarSellRequestImage(models.Model):
 
 
 class Favorite(models.Model):
+	"""Relation générique pour suivre favoris/panier d’un utilisateur."""
 	user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="favorites")
 	content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
 	object_id = models.PositiveIntegerField()
