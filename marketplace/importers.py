@@ -9,8 +9,9 @@ from urllib.parse import urlparse
 from urllib.request import urlopen
 import unicodedata
 
+from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
-from django.db import transaction
+from django.db import IntegrityError, transaction
 
 from .models import AvailabilityChoices, Car, CarImage
 
@@ -87,7 +88,7 @@ class CarCSVImporter:
                 result.processed += 1
                 try:
                     self._import_row(row, header_map, image_archive, result)
-                except Exception as exc:  # noqa: BLE001
+                except (ValueError, TypeError, InvalidOperation, ValidationError, IntegrityError) as exc:
                     result.errors.append(f"Ligne {index}: {exc}")
 
         return result

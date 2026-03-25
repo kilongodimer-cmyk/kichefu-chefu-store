@@ -15,7 +15,7 @@ def safe_image_url(image_field):
         if not name or storage is None:
             return ""
         return image_field.url
-    except Exception:
+    except (AttributeError, OSError, ValueError):
         return ""
 
 

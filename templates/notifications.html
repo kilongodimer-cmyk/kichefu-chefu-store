@@ -14,8 +14,11 @@
       body::before { content:""; position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.05; background-image:var(--brand-watermark); background-repeat:repeat; background-size:200px auto; background-position:0 0; background-attachment:fixed; }
       .container { width:min(980px,92vw); margin:0 auto; padding:30px 0; }
       .top { display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between; }
+      .top-actions { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
       a.btn { text-decoration:none; border:1px solid var(--line); border-radius:999px; color:var(--white); padding:9px 13px; }
       a.btn.main { background:var(--orange); border-color:transparent; color:#111; font-weight:700; }
+      button.btn { text-decoration:none; border:1px solid var(--line); border-radius:999px; color:var(--white); padding:9px 13px; background:transparent; font:inherit; }
+      button.btn.main { background:var(--orange); border-color:transparent; color:#111; font-weight:700; }
       .list { margin-top:16px; display:grid; gap:10px; }
       .item { border:1px solid var(--line); border-radius:12px; background:#171717; padding:12px; }
       .item.unread { border-color:rgba(255,107,0,.45); }
@@ -27,9 +30,13 @@
     <main class="container">
       <div class="top">
         <h1>Notifications</h1>
-        <div>
+        <div class="top-actions">
           <a class="btn" href="/">Accueil</a>
-          <a class="btn main" href="?mark_read=1">Tout marquer lu</a>
+          <form method="post" action="{% url 'marketplace:notifications' %}">
+            {% csrf_token %}
+            <input type="hidden" name="mark_read" value="1" />
+            <button class="btn main" type="submit">Tout marquer lu</button>
+          </form>
         </div>
       </div>
       <div class="list">

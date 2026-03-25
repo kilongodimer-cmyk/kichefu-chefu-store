@@ -1,5 +1,11 @@
 import re
 import logging
+from decimal import Decimal, InvalidOperation
+from datetime import timedelta
+from urllib.parse import quote
+from xml.sax.saxutils import escape as xml_escape
+
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -16,10 +22,6 @@ from django.utils import timezone
 from django.views import View
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, permissions, viewsets
-from urllib.parse import quote
-from datetime import timedelta
-from decimal import Decimal
-from xml.sax.saxutils import escape as xml_escape
 
 from .demo_seed import ensure_seeded_data
 from .forms import PhoneAuthenticationForm, PhoneSignupForm, ProposalSellForm
@@ -485,7 +487,7 @@ def _normalize_price_filters(request):
 			parsed_min = Decimal(min_price)
 		if max_price:
 			parsed_max = Decimal(max_price)
-	except Exception:
+	except (InvalidOperation, ValueError, TypeError):
 		parsed_min = None
 		parsed_max = None
 	return parsed_min, parsed_max
@@ -886,7 +888,7 @@ class GlobalSearchView(SiteLoginRequiredMixin, View):
 			if not results and not query:
 				approximate_results = []
 
-			if not approximate_results:
+			if not approximate_results and not query:
 				# Aucun préfixe pertinent : on retombe sur un lot "best sellers" pour éviter une page vide.
 				fallback_querysets = [
 					Car.objects.prefetch_related("images").order_by("-view_count", "-date_added")[:6],
@@ -1512,7 +1514,7 @@ class TogglePriceAlertView(LoginRequiredMixin, View):
 		target_price = request.POST.get("target_price", "").strip()
 		try:
 			alert_price = Decimal(target_price) if target_price else instance.price
-		except Exception:
+		except (InvalidOperation, ValueError, TypeError):
 			alert_price = instance.price
 
 		alert, created = PriceDropAlert.objects.get_or_create(
@@ -1544,10 +1546,13 @@ class NotificationsView(LoginRequiredMixin, View):
 	login_url = "/connexion/"
 	template_name = "notifications.html"
 
+	def post(self, request):
+		if request.POST.get("mark_read") == "1":
+			UserNotification.objects.filter(user=request.user, is_read=False).update(is_read=True)
+		return redirect("marketplace:notifications")
+
 	def get(self, request):
 		notifications = UserNotification.objects.filter(user=request.user).order_by("-created_at")
-		if request.GET.get("mark_read") == "1":
-			notifications.filter(is_read=False).update(is_read=True)
 		return render(request, self.template_name, {"notifications": notifications[:100]})
 
 
@@ -1570,7 +1575,8 @@ class SellWithUsView(SiteLoginRequiredMixin, View):
 			if proposal_image.image:
 				image_urls.append(request.build_absolute_uri(proposal_image.image.url))
 
-		created_listing = publish_proposal_to_catalog(proposal)
+		auto_publish_enabled = getattr(settings, "MARKETPLACE_AUTO_PUBLISH_PROPOSALS", False)
+		created_listing = publish_proposal_to_catalog(proposal) if auto_publish_enabled else None
 		if created_listing:
 			listing_url = request.build_absolute_uri(created_listing.get_absolute_url())
 			image_urls.append(listing_url)
@@ -1619,7 +1625,7 @@ class SitemapXmlView(View):
 			try:
 				for item in queryset:
 					urls.add(request.build_absolute_uri(item.get_absolute_url()))
-			except Exception:
+			except (AttributeError, TypeError, ValueError):
 				# Keep sitemap available even if one model query fails.
 				logger.exception("Sitemap generation failed for %s", label)
 

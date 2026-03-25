@@ -31,7 +31,7 @@ class BrandIdentityWatermarkMiddleware:
             if marker not in response.content:
                 try:
                     content = response.content.decode(response.charset)
-                except Exception:
+                except (UnicodeDecodeError, LookupError, TypeError):
                     return response
 
                 head_close = content.lower().find("</head>")
