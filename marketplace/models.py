@@ -137,6 +137,8 @@ class Car(models.Model):
 			models.Index(fields=["city", "availability"]),
 			models.Index(fields=["year", "mileage"]),
 		]
+		verbose_name = "Voiture"
+		verbose_name_plural = "Voitures"
 
 	def __str__(self):
 		return f"{self.brand} {self.model} ({self.year})"
@@ -186,6 +188,8 @@ class Phone(models.Model):
 			models.Index(fields=["brand", "model"]),
 			models.Index(fields=["availability", "price"]),
 		]
+		verbose_name = "Telephone"
+		verbose_name_plural = "Telephones"
 
 	def __str__(self):
 		return f"{self.brand} {self.model}"
@@ -231,6 +235,8 @@ class Accessory(models.Model):
 	class Meta:
 		ordering = ["-date_added"]
 		indexes = [models.Index(fields=["availability", "price"])]
+		verbose_name = "Accessoire"
+		verbose_name_plural = "Accessoires"
 
 	def __str__(self):
 		return self.name
@@ -316,6 +322,8 @@ class RealEstate(models.Model):
 			models.Index(fields=["real_estate_type", "location"]),
 			models.Index(fields=["availability", "price"]),
 		]
+		verbose_name = "Bien immobilier"
+		verbose_name_plural = "Biens immobiliers"
 
 	def __str__(self):
 		return f"{self.get_real_estate_type_display()} - {self.location}"
@@ -396,6 +404,8 @@ class Proposal(models.Model):
 
 	class Meta:
 		ordering = ["-created_at"]
+		verbose_name = "Proposition"
+		verbose_name_plural = "Propositions"
 
 	def __str__(self):
 		return f"{self.name} - {self.get_asset_type_display()}"
@@ -426,6 +436,8 @@ class CarSellRequest(models.Model):
 
 	class Meta:
 		ordering = ["-created_at"]
+		verbose_name = "Demande de vente voiture"
+		verbose_name_plural = "Demandes de vente voiture"
 
 	def __str__(self):
 		return f"{self.name} - {self.model} ({self.year})"
@@ -461,6 +473,8 @@ class Favorite(models.Model):
 			models.UniqueConstraint(fields=["user", "content_type", "object_id"], name="unique_user_favorite")
 		]
 		indexes = [models.Index(fields=["content_type", "object_id"])]
+		verbose_name = "Favori"
+		verbose_name_plural = "Favoris"
 
 	def __str__(self):
 		return f"Favorite #{self.pk} by {self.user_id}"
@@ -472,6 +486,10 @@ class UserMarketplaceProfile(models.Model):
 	notify_new_listings = models.BooleanField(default=True, db_index=True)
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)
+
+	class Meta:
+		verbose_name = "Profil marketplace"
+		verbose_name_plural = "Profils marketplace"
 
 	def __str__(self):
 		return f"Profile {self.user_id}"
@@ -497,6 +515,8 @@ class PriceDropAlert(models.Model):
 		indexes = [
 			models.Index(fields=["content_type", "object_id", "is_active"]),
 		]
+		verbose_name = "Alerte de baisse de prix"
+		verbose_name_plural = "Alertes de baisse de prix"
 
 	def __str__(self):
 		return f"PriceAlert #{self.pk} by {self.user_id}"
@@ -522,6 +542,8 @@ class UserNotification(models.Model):
 		indexes = [
 			models.Index(fields=["user", "is_read", "created_at"]),
 		]
+		verbose_name = "Notification utilisateur"
+		verbose_name_plural = "Notifications utilisateur"
 
 	def __str__(self):
 		return f"Notification #{self.pk} -> {self.user_id}"
