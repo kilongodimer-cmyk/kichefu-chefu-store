@@ -64,12 +64,8 @@ logger = logging.getLogger(__name__)
 
 
 def ensure_seeded_data_safe():
-	"""Initialise silencieusement les données de démonstration si la base est vide."""
-	try:
-		ensure_seeded_data()
-	except Exception:
-		# Never block page/API rendering if DB is not ready yet.
-		pass
+	"""Compatibilité: le seed automatique est désactivé pour éviter la réapparition des annonces supprimées."""
+	return False
 
 
 def make_whatsapp_link(phone_number, message):
