@@ -246,15 +246,17 @@ class Accessory(models.Model):
 
 class Product(models.Model):
 	"""Fiche produit simplifiee pour relier les contenus marketing video."""
-	titre = models.CharField(max_length=160, db_index=True)
-	slug = models.SlugField(max_length=180, unique=True, blank=True, null=True, db_index=True)
-	description = models.TextField(blank=True)
-	prix = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, db_index=True)
-	url_produit = models.URLField(max_length=500)
-	created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+	titre = models.CharField("Titre", max_length=160, db_index=True)
+	slug = models.SlugField("Slug", max_length=180, unique=True, blank=True, null=True, db_index=True)
+	description = models.TextField("Description", blank=True)
+	prix = models.DecimalField("Prix", max_digits=12, decimal_places=2, null=True, blank=True, db_index=True)
+	url_produit = models.URLField("URL du produit", max_length=500)
+	created_at = models.DateTimeField("Date de creation", auto_now_add=True, db_index=True)
 
 	class Meta:
 		ordering = ["-created_at"]
+		verbose_name = "Produit"
+		verbose_name_plural = "Produits"
 
 	def __str__(self):
 		return self.titre
@@ -270,15 +272,17 @@ class Product(models.Model):
 
 class Video(models.Model):
 	"""Videos promotionnelles affichables sur la page d'accueil."""
-	titre = models.CharField(max_length=160)
-	video = models.FileField(upload_to=upload_product_video)
-	description = models.TextField(blank=True)
-	produit = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="videos")
-	is_active = models.BooleanField(default=True, db_index=True)
-	created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+	titre = models.CharField("Titre", max_length=160)
+	video = models.FileField("Video", upload_to=upload_product_video)
+	description = models.TextField("Description", blank=True)
+	produit = models.ForeignKey(Product, verbose_name="Produit", on_delete=models.CASCADE, related_name="videos")
+	is_active = models.BooleanField("Active", default=True, db_index=True)
+	created_at = models.DateTimeField("Date de creation", auto_now_add=True, db_index=True)
 
 	class Meta:
 		ordering = ["-created_at"]
+		verbose_name = "Video"
+		verbose_name_plural = "Videos"
 
 	def __str__(self):
 		return self.titre
