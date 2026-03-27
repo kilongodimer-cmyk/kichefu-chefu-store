@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Activity, AlertTriangle, Power } from "lucide-react";
 
 import { ChartPanel } from "./components/ChartPanel";
@@ -27,6 +27,32 @@ export function App() {
   const setHalted = useTerminalStore((state) => state.setHalted);
   const pushLog = useTerminalStore((state) => state.pushLog);
   const logs = useTerminalStore((state) => state.logs);
+  const [readingMode, setReadingMode] = useState(false);
+  const [frozenOrderBook, setFrozenOrderBook] = useState(orderBook);
+  const [frozenTrades, setFrozenTrades] = useState(trades);
+  const [frozenSignals, setFrozenSignals] = useState(signals);
+
+  useEffect(() => {
+    if (!readingMode) {
+      setFrozenOrderBook(orderBook);
+    }
+  }, [orderBook, readingMode]);
+
+  useEffect(() => {
+    if (!readingMode) {
+      setFrozenTrades(trades);
+    }
+  }, [trades, readingMode]);
+
+  useEffect(() => {
+    if (!readingMode) {
+      setFrozenSignals(signals);
+    }
+  }, [signals, readingMode]);
+
+  const visibleOrderBook = readingMode ? frozenOrderBook : orderBook;
+  const visibleTrades = readingMode ? frozenTrades : trades;
+  const visibleSignals = readingMode ? frozenSignals : signals;
 
   const liveSharpe = useMemo(() => {
     if (trades.length < 5) {
@@ -147,42 +173,53 @@ export function App() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
-      <header className="border-b border-white/5 px-8 py-4 flex items-center justify-between">
+    <div className="min-h-screen text-slate-100">
+      <header className="border-b border-white/10 px-4 py-4 md:px-8 flex items-center justify-between">
         <div>
-          <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Quant Platform</p>
-          <h1 className="text-2xl font-semibold">Real-Time Trading Terminal</h1>
+          <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Quant Platform</p>
+          <h1 className="title-display text-xl font-extrabold text-white md:text-3xl">Real-Time Trading Terminal</h1>
         </div>
         <button
-          className="inline-flex items-center gap-2 rounded-full bg-rose-500/10 px-4 py-2 text-rose-300 transition hover:bg-rose-500/20 disabled:opacity-60"
+          className="interactive-lift inline-flex items-center gap-2 rounded-[10px] border border-rose-300/30 bg-rose-500/12 px-4 py-2 text-rose-200 hover:bg-rose-500/18 disabled:opacity-60"
           onClick={handlePanicSell}
           disabled={halted}
         >
           <Power size={16} /> Panic Sell
         </button>
+        <button
+          type="button"
+          className={`interactive-lift inline-flex items-center gap-2 rounded-[10px] border px-4 py-2 text-sm ${
+            readingMode
+              ? "border-amber-300/35 bg-amber-500/14 text-amber-100"
+              : "border-white/20 bg-white/8 text-slate-100"
+          }`}
+          onClick={() => setReadingMode((current) => !current)}
+        >
+          {readingMode ? "Reprendre le live" : "Mode lecture (figer)"}
+        </button>
       </header>
 
-      <main className="grid grid-cols-1 gap-6 p-8 xl:grid-cols-3">
-        <section className="xl:col-span-2 space-y-6">
+      <main className="grid grid-cols-1 gap-5 p-4 md:gap-6 md:p-8 xl:grid-cols-3">
+        <section className="section-enter xl:col-span-2 space-y-5 md:space-y-6">
           <ControlBar
             halted={halted}
             onPanicSell={handlePanicSell}
             onResume={handleResume}
           />
           <div className="grid gap-6 lg:grid-cols-2">
-            <ChartPanel orderBook={orderBook} trades={trades} />
-            <TradeFeed trades={trades} />
+            <ChartPanel orderBook={visibleOrderBook} trades={visibleTrades} />
+            <TradeFeed trades={visibleTrades} />
           </div>
-          <SignalFeed signals={signals} halted={halted} />
+          <SignalFeed signals={visibleSignals} halted={halted} />
         </section>
-        <aside className="space-y-6">
+        <aside className="section-enter space-y-5 md:space-y-6">
           <RiskPanel stats={risk} showWarning={showDailyWarning} />
           <TerminalLogPanel logs={logs} />
-          <div className="rounded-2xl border border-white/5 bg-white/5 p-5 backdrop-blur">
+          <div className="surface-card interactive-lift p-5">
             <p className="flex items-center gap-2 text-sm font-medium text-slate-300">
               <Activity size={16} /> AI Model
             </p>
-            <p className="mt-3 text-3xl font-semibold text-white">RandomForest v0.1</p>
+            <p className="title-display mt-3 text-3xl font-bold text-white">RandomForest v0.1</p>
             <p className="mt-2 text-sm text-slate-400">
               Live inference with 150 estimators, retrained 2026-03-15.
             </p>

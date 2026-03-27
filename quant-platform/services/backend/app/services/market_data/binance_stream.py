@@ -3,6 +3,7 @@ import logging
 from datetime import datetime
 from typing import Any
 
+import httpx
 from tenacity import RetryError, retry, stop_after_attempt, wait_fixed
 
 try:
@@ -20,30 +21,65 @@ logger = logging.getLogger(__name__)
 
 class BinanceMarketStream:
     def __init__(self) -> None:
-        if ccxt_binance is None:
-            raise RuntimeError("ccxtpro is not installed")
-
         settings = get_settings()
         self.symbol = settings.trading_symbol
-        self._client = ccxt_binance({
-            "enableRateLimit": True,
-            "options": {
-                "defaultType": "future",
-            },
-        })
+        self._normalized_symbol = self.symbol.replace("/", "")
+        self._use_rest_fallback = ccxt_binance is None
+        self._client = None
+        if not self._use_rest_fallback:
+            self._client = ccxt_binance({
+                "enableRateLimit": True,
+                "options": {
+                    "defaultType": "future",
+                },
+            })
+        self._rest_client = httpx.AsyncClient(
+            base_url="https://fapi.binance.com",
+            timeout=10.0,
+        )
         self._store = MarketDataStore()
 
     async def connect(self) -> None:
-        await self._client.load_markets()
-        logger.info("Binance markets loaded")
+        if self._client is not None:
+            await self._client.load_markets()
+            logger.info("Binance markets loaded via ccxtpro")
+            return
+        logger.warning("ccxtpro unavailable, using Binance REST fallback polling")
 
     @retry(stop=stop_after_attempt(5), wait=wait_fixed(5))
     async def watch_order_book(self) -> Any:
-        return await self._client.watch_order_book(self.symbol)
+        if self._client is not None:
+            return await self._client.watch_order_book(self.symbol)
+        response = await self._rest_client.get(
+            "/fapi/v1/depth",
+            params={"symbol": self._normalized_symbol, "limit": 20},
+        )
+        response.raise_for_status()
+        payload = response.json()
+        return {
+            "bids": [[float(price), float(size)] for price, size in payload.get("bids", [])],
+            "asks": [[float(price), float(size)] for price, size in payload.get("asks", [])],
+        }
 
     @retry(stop=stop_after_attempt(5), wait=wait_fixed(5))
     async def watch_trades(self) -> Any:
-        return await self._client.watch_trades(self.symbol)
+        if self._client is not None:
+            return await self._client.watch_trades(self.symbol)
+        response = await self._rest_client.get(
+            "/fapi/v1/trades",
+            params={"symbol": self._normalized_symbol, "limit": 40},
+        )
+        response.raise_for_status()
+        payload = response.json()
+        return [
+            {
+                "price": float(trade.get("price", 0.0)),
+                "amount": float(trade.get("qty", 0.0)),
+                "side": "SELL" if trade.get("isBuyerMaker") else "BUY",
+                "timestamp": trade.get("time"),
+            }
+            for trade in payload
+        ]
 
     async def run(self) -> None:
         await self.connect()

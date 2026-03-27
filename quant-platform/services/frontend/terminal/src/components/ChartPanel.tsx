@@ -152,9 +152,9 @@ export function ChartPanel({ orderBook, trades }: ChartPanelProps) {
   const lastTrade = trades[0];
 
   return (
-    <div className="rounded-2xl border border-white/5 bg-gradient-to-br from-white/10 via-white/5 to-transparent p-4 backdrop-blur">
+    <div className="surface-card interactive-lift p-4 md:p-5">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2 text-sm text-slate-400">
-        <p className="font-semibold text-slate-200">{orderBook?.symbol ?? "BTC/USDT"}</p>
+        <p className="title-display font-bold text-slate-100">{orderBook?.symbol ?? "BTC/USDT"}</p>
         <p>{orderBook ? `Spread ${orderBook.spread.toFixed(2)}` : "Waiting feed"}</p>
         {lastTrade && (
           <span className="text-xs text-emerald-300">
@@ -195,7 +195,10 @@ function OrderBookSide({ title, data, accent }: OrderBookSideProps) {
       <div className="mt-2 space-y-1 text-xs text-slate-300">
         {data.length === 0 && <p className="text-slate-600">—</p>}
         {data.map(([price, size]) => (
-          <div key={`${title}-${price}-${size}`} className="flex justify-between rounded-lg bg-white/5 px-2 py-1">
+          <div
+            key={`${title}-${price}-${size}`}
+            className="interactive-lift flex justify-between rounded-[10px] bg-white/7 px-2 py-1"
+          >
             <span>{price.toFixed(2)}</span>
             <span>{size.toFixed(3)}</span>
           </div>

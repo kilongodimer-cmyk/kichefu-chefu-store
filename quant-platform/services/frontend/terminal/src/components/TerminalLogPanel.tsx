@@ -22,7 +22,7 @@ const levelIcon: Record<TerminalLog["level"], JSX.Element> = {
 
 export function TerminalLogPanel({ logs }: TerminalLogPanelProps) {
   return (
-    <div className="rounded-2xl border border-white/5 bg-slate-900/50 p-4 backdrop-blur">
+    <div className="surface-card interactive-lift p-4 md:p-5">
       <header className="mb-4 flex items-center justify-between text-sm text-slate-300">
         <span className="flex items-center gap-2">
           <Activity size={16} /> Journal IA
@@ -34,7 +34,7 @@ export function TerminalLogPanel({ logs }: TerminalLogPanelProps) {
         {logs.map((log) => (
           <article
             key={log.id}
-            className="flex items-center justify-between rounded-xl border border-white/5 bg-white/5 px-3 py-2"
+            className="interactive-lift flex items-center justify-between rounded-[10px] border border-white/10 bg-white/7 px-3 py-2"
           >
             <div className={`flex items-center gap-2 ${levelStyles[log.level]}`}>
               {levelIcon[log.level]}
