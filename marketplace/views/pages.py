@@ -59,11 +59,11 @@ class HomePageView(View):
 		real_estates = RealEstate.objects.prefetch_related("images").all()
 		videos = Video.objects.select_related("produit").filter(is_active=True)[:12]
 		user_city = get_user_city(request)
-		available_cars_count = cars.filter(availability="available").count()
+		available_cars_count = cars.filter(availability=AvailabilityChoices.AVAILABLE).count()
 
-		popular_cars = list(cars.filter(availability="available")[:6])
+		popular_cars = list(cars.filter(availability=AvailabilityChoices.AVAILABLE)[:6])
 		new_cars = list(cars.filter(date_added__gte=timezone.now() - timedelta(days=30))[:6])
-		popular_phones = list(phones.filter(availability="available")[:6])
+		popular_phones = list(phones.filter(availability=AvailabilityChoices.AVAILABLE)[:6])
 		recent_real_estates = list(real_estates.filter(location__in=LUBUMBASHI_NEIGHBORHOODS)[:6])
 		hot_cars = list(cars.order_by("-view_count", "-date_added")[:6])
 		hot_phones = list(phones.order_by("-view_count", "-date_added")[:6])
@@ -88,11 +88,11 @@ class HomePageView(View):
 			)
 
 		most_sold_items = []
-		for car in cars.filter(availability="sold").order_by("-date_added")[:5]:
+		for car in cars.filter(availability=AvailabilityChoices.SOLD).order_by("-date_added")[:5]:
 			most_sold_items.append({"kind": "Voiture", "title": f"{car.brand} {car.model}", "price": car.price, "url": car.get_absolute_url()})
-		for phone in phones.filter(availability="sold").order_by("-date_added")[:5]:
+		for phone in phones.filter(availability=AvailabilityChoices.SOLD).order_by("-date_added")[:5]:
 			most_sold_items.append({"kind": "Telephone", "title": f"{phone.brand} {phone.model}", "price": phone.price, "url": phone.get_absolute_url()})
-		for listing in real_estates.filter(availability="sold").order_by("-date_added")[:5]:
+		for listing in real_estates.filter(availability=AvailabilityChoices.SOLD).order_by("-date_added")[:5]:
 			most_sold_items.append(
 				{
 					"kind": "Immobilier",
@@ -119,14 +119,14 @@ class HomePageView(View):
 
 		nearby_cars = []
 		if user_city:
-			nearby_cars = list(cars.filter(city__iexact=user_city, availability="available").order_by("-view_count", "-date_added")[:8])
+			nearby_cars = list(cars.filter(city__iexact=user_city, availability=AvailabilityChoices.AVAILABLE).order_by("-view_count", "-date_added")[:8])
 
 		best_offers = []
-		for car in cars.filter(availability="available").order_by("price")[:4]:
+		for car in cars.filter(availability=AvailabilityChoices.AVAILABLE).order_by("price")[:4]:
 			best_offers.append({"kind": "Voiture", "title": f"{car.brand} {car.model}", "price": car.price, "url": car.get_absolute_url()})
-		for phone in phones.filter(availability="available").order_by("price")[:4]:
+		for phone in phones.filter(availability=AvailabilityChoices.AVAILABLE).order_by("price")[:4]:
 			best_offers.append({"kind": "Telephone", "title": f"{phone.brand} {phone.model}", "price": phone.price, "url": phone.get_absolute_url()})
-		for listing in real_estates.filter(availability="available").order_by("price")[:4]:
+		for listing in real_estates.filter(availability=AvailabilityChoices.AVAILABLE).order_by("price")[:4]:
 			best_offers.append(
 				{
 					"kind": "Immobilier",
@@ -143,7 +143,7 @@ class HomePageView(View):
 			"popular_cars": [(item, build_badges(item, idx)) for idx, item in enumerate(popular_cars)],
 			"new_cars": [(item, build_badges(item, idx)) for idx, item in enumerate(new_cars)],
 			"popular_phones": [(item, build_badges(item, idx)) for idx, item in enumerate(popular_phones)],
-			"top_accessories": [(item, build_badges(item, idx)) for idx, item in enumerate(accessories.filter(availability="available")[:6])],
+			"top_accessories": [(item, build_badges(item, idx)) for idx, item in enumerate(accessories.filter(availability=AvailabilityChoices.AVAILABLE)[:6])],
 			"recent_real_estates": [(item, build_badges(item, idx)) for idx, item in enumerate(recent_real_estates)],
 			"best_offers": best_offers,
 			"popular_products": {

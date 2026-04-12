@@ -15,11 +15,12 @@ from .models import (
 )
 
 
+WHATSAPP_DEFAULT = "+243814191316"
 WHATSAPP_MESSAGE = "Bonjour, je suis intéressé par ce produit sur KICHEFU-CHEFU STORE."
 
 
 def build_whatsapp_link():
-    return f"https://wa.me/243814191316?text={quote(WHATSAPP_MESSAGE)}"
+    return f"https://wa.me/{WHATSAPP_DEFAULT.lstrip('+')}?text={quote(WHATSAPP_MESSAGE)}"
 
 
 class CarImageSerializer(serializers.ModelSerializer):
