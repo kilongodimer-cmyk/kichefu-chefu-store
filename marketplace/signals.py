@@ -3,7 +3,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
-from .models import Car, Phone, PriceDropAlert, RealEstate, UserMarketplaceProfile, UserNotification
+from .models import Car, Commission, Phone, PriceDropAlert, RealEstate, Sale, UserMarketplaceProfile, UserNotification
 
 
 User = get_user_model()
@@ -126,3 +126,10 @@ def handle_real_estate_events(sender, instance, created, **kwargs):
             message="Une nouvelle annonce immobiliere est disponible.",
         )
     _notify_price_drop(instance, getattr(instance, "_old_price", None))
+
+
+@receiver(post_save, sender=Sale)
+def create_commission_for_sale(sender, instance, created, **kwargs):
+    """Auto-crée une Commission à chaque nouvelle vente enregistrée."""
+    if created:
+        Commission.create_for_sale(instance)

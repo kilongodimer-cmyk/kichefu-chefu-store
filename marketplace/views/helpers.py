@@ -160,9 +160,9 @@ def build_badges(item, index=0):
 		badges.append("Populaire")
 	if getattr(item, "view_count", 0) >= 75:
 		badges.append("Best Seller")
-	if str(getattr(item, "availability", "")) == "reserved":
+	if getattr(item, "availability", "") == AvailabilityChoices.RESERVED:
 		badges.append("Stock limite")
-	if str(getattr(item, "availability", "")) == "available" and index % 4 == 0:
+	if getattr(item, "availability", "") == AvailabilityChoices.AVAILABLE and index % 4 == 0:
 		badges.append("Bonne affaire")
 	return badges
 

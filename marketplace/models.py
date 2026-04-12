@@ -349,7 +349,9 @@ class RealEstate(models.Model):
 		return f"{self.get_real_estate_type_display()} - {self.location}"
 
 	def get_absolute_url(self):
-		return reverse("marketplace:land_detail", kwargs={"slug": self.slug or str(self.pk)})
+		if self.real_estate_type == RealEstateType.LAND:
+			return reverse("marketplace:land_detail", kwargs={"slug": self.slug or str(self.pk)})
+		return reverse("marketplace:real_estate_detail", kwargs={"slug": self.slug or str(self.pk)})
 
 	def save(self, *args, **kwargs):
 		if not self.slug:

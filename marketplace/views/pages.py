@@ -7,7 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import Paginator
 from django.db.models import F, Prefetch, Q
-from django.http import JsonResponse
+from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views import View
@@ -432,7 +432,8 @@ class CarDetailView(View):
 			legacy_car = car_queryset.filter(pk=int(slug)).first()
 			if legacy_car:
 				return redirect(legacy_car.get_absolute_url())
-		car = get_object_or_404(car_queryset, slug=slug)
+		if car is None:
+			raise Http404("Voiture non trouvee")
 		Car.objects.filter(pk=car.pk).update(view_count=F("view_count") + 1)
 		car.refresh_from_db(fields=["view_count"])
 		track_recent_view(request, "cars", car.pk)
@@ -525,7 +526,8 @@ class PhoneDetailView(View):
 			legacy_phone = phone_queryset.filter(pk=int(slug)).first()
 			if legacy_phone:
 				return redirect(legacy_phone.get_absolute_url())
-		phone = get_object_or_404(phone_queryset, slug=slug)
+		if phone is None:
+			raise Http404("Telephone non trouve")
 		Phone.objects.filter(pk=phone.pk).update(view_count=F("view_count") + 1)
 		phone.refresh_from_db(fields=["view_count"])
 		track_recent_view(request, "phones", phone.pk)
@@ -641,7 +643,8 @@ class RealEstateDetailView(View):
 			legacy_listing = listing_queryset.filter(pk=int(slug)).first()
 			if legacy_listing:
 				return redirect(legacy_listing.get_absolute_url())
-		listing = get_object_or_404(listing_queryset, slug=slug)
+		if listing is None:
+			raise Http404("Bien immobilier non trouve")
 		RealEstate.objects.filter(pk=listing.pk).update(view_count=F("view_count") + 1)
 		listing.refresh_from_db(fields=["view_count"])
 		track_recent_view(request, "real_estate", listing.pk)
