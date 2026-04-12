@@ -1,3 +1,5 @@
+import uuid
+
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -118,6 +120,10 @@ class Car(models.Model):
 	city = models.CharField(max_length=80, blank=True, db_index=True)
 	description = models.TextField(blank=True)
 	seller_phone = models.CharField(max_length=30, blank=True)
+	seller = models.ForeignKey(
+		"SellerProfile", on_delete=models.SET_NULL, null=True, blank=True,
+		related_name="cars", verbose_name="Vendeur",
+	)
 	is_commission = models.BooleanField(default=False, db_index=True)
 	view_count = models.PositiveIntegerField(default=0, db_index=True)
 	availability = models.CharField(
@@ -173,6 +179,11 @@ class Phone(models.Model):
 	price = models.DecimalField(max_digits=10, decimal_places=2, db_index=True)
 	stock = models.PositiveIntegerField(default=1, db_index=True)
 	description = models.TextField(blank=True)
+	seller = models.ForeignKey(
+		"SellerProfile", on_delete=models.SET_NULL, null=True, blank=True,
+		related_name="phones", verbose_name="Vendeur",
+	)
+	is_commission = models.BooleanField(default=False, db_index=True)
 	view_count = models.PositiveIntegerField(default=0, db_index=True)
 	availability = models.CharField(
 		max_length=12,
@@ -224,6 +235,11 @@ class Accessory(models.Model):
 	description = models.TextField(blank=True)
 	stock = models.PositiveIntegerField(default=1, db_index=True)
 	image = models.ImageField(upload_to=upload_accessory_image, blank=True, null=True)
+	seller = models.ForeignKey(
+		"SellerProfile", on_delete=models.SET_NULL, null=True, blank=True,
+		related_name="accessories", verbose_name="Vendeur",
+	)
+	is_commission = models.BooleanField(default=False, db_index=True)
 	availability = models.CharField(
 		max_length=12,
 		choices=AvailabilityChoices.choices,
@@ -306,6 +322,10 @@ class RealEstate(models.Model):
 	slug = models.SlugField(max_length=180, unique=True, blank=True, null=True, db_index=True)
 	price = models.DecimalField(max_digits=12, decimal_places=2, db_index=True)
 	description = models.TextField(blank=True)
+	seller = models.ForeignKey(
+		"SellerProfile", on_delete=models.SET_NULL, null=True, blank=True,
+		related_name="real_estates", verbose_name="Vendeur",
+	)
 	is_commission = models.BooleanField(default=False, db_index=True)
 	view_count = models.PositiveIntegerField(default=0, db_index=True)
 	availability = models.CharField(
@@ -548,4 +568,138 @@ class UserNotification(models.Model):
 	def __str__(self):
 		return f"Notification #{self.pk} -> {self.user_id}"
 
-# Create your models here.
+# ──────────────────────────────────────────────────────────────
+# SYSTÈME DE COMMISSION
+# ──────────────────────────────────────────────────────────────
+
+
+class SellerProfile(models.Model):
+	"""Profil vendeur/dealer rattaché à un compte utilisateur."""
+	class SellerType(models.TextChoices):
+		INDIVIDUAL = "individual", "Particulier"
+		DEALER = "dealer", "Dealer / Professionnel"
+
+	user = models.OneToOneField(
+		settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+		related_name="seller_profile",
+	)
+	seller_type = models.CharField(
+		max_length=12, choices=SellerType.choices,
+		default=SellerType.INDIVIDUAL, db_index=True,
+	)
+	business_name = models.CharField("Nom commercial", max_length=120, blank=True)
+	phone = models.CharField("Telephone", max_length=30)
+	city = models.CharField(max_length=80, blank=True, db_index=True)
+	commission_rate = models.DecimalField(
+		"Taux de commission (%)", max_digits=5, decimal_places=2,
+		default=5.00,
+		validators=[MinValueValidator(0), MaxValueValidator(100)],
+	)
+	is_verified = models.BooleanField("Verifie", default=False, db_index=True)
+	is_active = models.BooleanField("Actif", default=True, db_index=True)
+	created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+	updated_at = models.DateTimeField(auto_now=True)
+
+	class Meta:
+		ordering = ["-created_at"]
+		verbose_name = "Profil vendeur"
+		verbose_name_plural = "Profils vendeurs"
+
+	def __str__(self):
+		label = self.business_name or self.user.get_full_name() or self.user.username
+		return f"{label} ({self.get_seller_type_display()})"
+
+	def display_name(self):
+		return self.business_name or self.user.get_full_name() or self.user.username
+
+
+# ─── Vente & Commission ──────────────────────────────────────
+
+
+class Sale(models.Model):
+	"""Enregistre chaque vente effectuée sur la plateforme."""
+	class PaymentMethod(models.TextChoices):
+		CASH = "cash", "Especes"
+		MOBILE_MONEY = "mobile_money", "Mobile Money"
+		BANK = "bank", "Virement bancaire"
+		OTHER = "other", "Autre"
+
+	reference = models.CharField(
+		"Reference", max_length=36, unique=True, default=uuid.uuid4, editable=False, db_index=True,
+	)
+	seller = models.ForeignKey(
+		SellerProfile, on_delete=models.PROTECT,
+		related_name="sales", verbose_name="Vendeur",
+	)
+	buyer_name = models.CharField("Nom acheteur", max_length=120, blank=True)
+	buyer_phone = models.CharField("Tel acheteur", max_length=30, blank=True)
+
+	# Produit vendu (générique : Car, Phone, Accessory, RealEstate)
+	content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+	object_id = models.PositiveIntegerField()
+	item = GenericForeignKey("content_type", "object_id")
+
+	item_title = models.CharField("Produit", max_length=200)
+	sale_price = models.DecimalField("Prix de vente", max_digits=12, decimal_places=2)
+	payment_method = models.CharField(
+		"Mode de paiement", max_length=16,
+		choices=PaymentMethod.choices, default=PaymentMethod.CASH,
+	)
+	notes = models.TextField("Notes", blank=True)
+	created_at = models.DateTimeField("Date de vente", auto_now_add=True, db_index=True)
+
+	class Meta:
+		ordering = ["-created_at"]
+		indexes = [
+			models.Index(fields=["seller", "created_at"]),
+			models.Index(fields=["content_type", "object_id"]),
+		]
+		verbose_name = "Vente"
+		verbose_name_plural = "Ventes"
+
+	def __str__(self):
+		return f"Vente {self.reference} — {self.item_title}"
+
+
+
+class Commission(models.Model):
+	"""Commission prélevée sur une vente. Créée automatiquement à chaque Sale."""
+	class Status(models.TextChoices):
+		PENDING = "pending", "En attente"
+		PAID = "paid", "Payee"
+		CANCELLED = "cancelled", "Annulee"
+
+	sale = models.OneToOneField(
+		Sale, on_delete=models.CASCADE,
+		related_name="commission", verbose_name="Vente",
+	)
+	rate = models.DecimalField(
+		"Taux applique (%)", max_digits=5, decimal_places=2, db_index=True,
+	)
+	amount = models.DecimalField(
+		"Montant commission", max_digits=12, decimal_places=2, db_index=True,
+	)
+	status = models.CharField(
+		"Statut", max_length=12, choices=Status.choices,
+		default=Status.PENDING, db_index=True,
+	)
+	paid_at = models.DateTimeField("Date de paiement", null=True, blank=True)
+	created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+	class Meta:
+		ordering = ["-created_at"]
+		indexes = [
+			models.Index(fields=["status", "created_at"]),
+		]
+		verbose_name = "Commission"
+		verbose_name_plural = "Commissions"
+
+	def __str__(self):
+		return f"{self.amount} USD ({self.rate}%) — {self.get_status_display()}"
+
+	@classmethod
+	def create_for_sale(cls, sale):
+		"""Crée automatiquement la commission liée à une vente."""
+		rate = sale.seller.commission_rate
+		amount = (sale.sale_price * rate / 100).quantize(sale.sale_price.__class__("0.01"))
+		return cls.objects.create(sale=sale, rate=rate, amount=amount)

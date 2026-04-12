@@ -12,6 +12,7 @@ from .models import (
 	CarImage,
 	CarSellRequest,
 	CarSellRequestImage,
+	Commission,
 	Favorite,
 	PriceDropAlert,
 	Phone,
@@ -21,6 +22,8 @@ from .models import (
 	ProposalImage,
 	RealEstate,
 	RealEstateImage,
+	Sale,
+	SellerProfile,
 	UserMarketplaceProfile,
 	UserNotification,
 	Video,
@@ -293,3 +296,71 @@ class UserNotificationAdmin(admin.ModelAdmin):
 	ordering = ("-created_at",)
 
 # Register your models here.
+
+
+# ──────────────────────────────────────────────────────────────
+# SYSTÈME DE COMMISSION
+# ──────────────────────────────────────────────────────────────
+
+
+@admin.register(SellerProfile)
+class SellerProfileAdmin(admin.ModelAdmin):
+	list_display = ("display_name", "seller_type", "phone", "city", "commission_rate", "is_verified", "is_active", "created_at")
+	list_filter = ("seller_type", "is_verified", "is_active", "city")
+	search_fields = ("user__username", "business_name", "phone", "city")
+	list_editable = ("commission_rate", "is_verified", "is_active")
+	ordering = ("-created_at",)
+	autocomplete_fields = ("user",)
+
+
+
+class CommissionInline(admin.StackedInline):
+	model = Commission
+	extra = 0
+	readonly_fields = ("rate", "amount", "created_at")
+	fields = ("rate", "amount", "status", "paid_at", "created_at")
+
+
+@admin.register(Sale)
+class SaleAdmin(admin.ModelAdmin):
+	list_display = ("reference", "seller", "item_title", "sale_price", "commission_display", "payment_method", "created_at")
+	list_filter = ("payment_method", "created_at", "seller__seller_type")
+	search_fields = ("reference", "item_title", "seller__business_name", "buyer_name", "buyer_phone")
+	date_hierarchy = "created_at"
+	ordering = ("-created_at",)
+	readonly_fields = ("reference",)
+	inlines = [CommissionInline]
+	autocomplete_fields = ("seller",)
+
+	def commission_display(self, obj):
+		try:
+			c = obj.commission
+			color = {"pending": "#e67e00", "paid": "#27ae60", "cancelled": "#999"}.get(c.status, "#333")
+			return format_html('<span style="color:{};font-weight:bold">{} USD ({}%)</span>', color, c.amount, c.rate)
+		except Commission.DoesNotExist:
+			return "-"
+	commission_display.short_description = "Commission"
+
+	def save_model(self, request, obj, form, change):
+		super().save_model(request, obj, form, change)
+		if not change:
+			Commission.create_for_sale(obj)
+
+
+@admin.register(Commission)
+class CommissionAdmin(admin.ModelAdmin):
+	list_display = ("sale", "rate", "amount", "status", "paid_at", "created_at")
+	list_filter = ("status", "created_at")
+	list_editable = ("status",)
+	search_fields = ("sale__reference", "sale__item_title", "sale__seller__business_name")
+	date_hierarchy = "created_at"
+	ordering = ("-created_at",)
+	actions = ["mark_as_paid"]
+
+	@admin.action(description="Marquer comme payee")
+	def mark_as_paid(self, request, queryset):
+		from django.utils import timezone
+		updated = queryset.filter(status=Commission.Status.PENDING).update(
+			status=Commission.Status.PAID, paid_at=timezone.now()
+		)
+		self.message_user(request, f"{updated} commission(s) marquee(s) comme payee(s).", messages.SUCCESS)

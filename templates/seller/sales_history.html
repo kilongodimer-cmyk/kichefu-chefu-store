@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Historique des ventes | KICHEFU-CHEFU STORE</title>
+  <style>
+    :root{--bg:#0d1218;--panel:#151d27;--line:#2b3645;--text:#f5f8ff;--muted:#aab6c8;--accent:#79d2a6;--gold:#d4a843}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif;background:linear-gradient(180deg,#0d1218,#101824);color:var(--text);min-height:100vh}
+    a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+    .top-bar{background:var(--panel);border-bottom:1px solid var(--line);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+    .top-bar h1{font-size:1.15rem;font-weight:700;color:var(--gold)}
+    .container{max-width:1100px;margin:0 auto;padding:24px 16px}
+    .filters{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+    .filters a{padding:6px 16px;border-radius:20px;font-size:.82rem;font-weight:600;border:1px solid var(--line);color:var(--muted)}
+    .filters a.active{background:var(--accent);color:#000;border-color:var(--accent)}
+    table{width:100%;border-collapse:collapse;font-size:.85rem}
+    th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line)}
+    th{color:var(--muted);font-weight:600;text-transform:uppercase;font-size:.72rem;letter-spacing:.5px}
+    tr:hover{background:rgba(121,210,166,.05)}
+    .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:600}
+    .badge.pending{background:rgba(230,126,0,.15);color:#e67e00}
+    .badge.paid{background:rgba(39,174,96,.15);color:#27ae60}
+    .badge.cancelled{background:rgba(153,153,153,.15);color:#999}
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <h1>&#x1F4DC; Historique des ventes</h1>
+    <div style="display:flex;gap:16px;font-size:.85rem">
+      <a href="{% url 'marketplace:seller_dashboard' %}">Dashboard</a>
+      <a href="{% url 'home' %}">Retour au site</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="filters">
+      <a href="{% url 'marketplace:seller_sales_history' %}" class="{% if not status_filter %}active{% endif %}">Toutes</a>
+      <a href="{% url 'marketplace:seller_sales_history' %}?status=pending" class="{% if status_filter == 'pending' %}active{% endif %}">En attente</a>
+      <a href="{% url 'marketplace:seller_sales_history' %}?status=paid" class="{% if status_filter == 'paid' %}active{% endif %}">Payees</a>
+      <a href="{% url 'marketplace:seller_sales_history' %}?status=cancelled" class="{% if status_filter == 'cancelled' %}active{% endif %}">Annulees</a>
+    </div>
+
+    {% if sales %}
+    <div style="overflow-x:auto">
+      <table>
+        <thead>
+          <tr>
+            <th>Reference</th>
+            <th>Produit</th>
+            <th>Acheteur</th>
+            <th>Prix</th>
+            <th>Commission</th>
+            <th>Paiement</th>
+            <th>Statut</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for sale in sales %}
+          <tr>
+            <td style="font-family:monospace;font-size:.78rem">{{ sale.reference|truncatechars:12 }}</td>
+            <td>{{ sale.item_title }}</td>
+            <td>{{ sale.buyer_name|default:"-" }}</td>
+            <td style="font-weight:600">{{ sale.sale_price|floatformat:2 }} USD</td>
+            <td>
+              {% if sale.commission %}
+                {{ sale.commission.amount|floatformat:2 }} USD
+              {% else %}-{% endif %}
+            </td>
+            <td style="font-size:.82rem">{{ sale.get_payment_method_display }}</td>
+            <td>
+              {% if sale.commission %}
+                <span class="badge {{ sale.commission.status }}">{{ sale.commission.get_status_display }}</span>
+              {% else %}-{% endif %}
+            </td>
+            <td style="color:var(--muted);font-size:.82rem">{{ sale.created_at|date:"d/m/Y H:i" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+      <p style="color:var(--muted);padding:20px 0">Aucune vente trouvee.</p>
+    {% endif %}
+  </div>
+</body>
+</html>

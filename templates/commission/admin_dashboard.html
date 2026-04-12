@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Commissions | Administration KICHEFU-CHEFU STORE</title>
+  <style>
+    :root{--bg:#0d1218;--panel:#151d27;--line:#2b3645;--text:#f5f8ff;--muted:#aab6c8;--accent:#79d2a6;--gold:#d4a843;--red:#e74c3c}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif;background:linear-gradient(180deg,#0d1218,#101824);color:var(--text);min-height:100vh}
+    a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+    .top-bar{background:var(--panel);border-bottom:1px solid var(--line);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+    .top-bar h1{font-size:1.15rem;font-weight:700;color:var(--gold)}
+    .container{max-width:1200px;margin:0 auto;padding:24px 16px}
+    .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:28px}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px}
+    .card .label{font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+    .card .value{font-size:1.6rem;font-weight:700}
+    .card .value.gold{color:var(--gold)}
+    .card .value.green{color:var(--accent)}
+    .card .value.red{color:var(--red)}
+    .section-title{font-size:1.1rem;font-weight:700;margin:22px 0 12px;border-left:3px solid var(--gold);padding-left:12px}
+    table{width:100%;border-collapse:collapse;font-size:.85rem}
+    th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line)}
+    th{color:var(--muted);font-weight:600;text-transform:uppercase;font-size:.72rem;letter-spacing:.5px}
+    tr:hover{background:rgba(121,210,166,.05)}
+    .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:600}
+    .badge.pending{background:rgba(230,126,0,.15);color:#e67e00}
+    .badge.paid{background:rgba(39,174,96,.15);color:#27ae60}
+    .badge.cancelled{background:rgba(153,153,153,.15);color:#999}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+    @media(max-width:768px){.two-col{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <h1>&#x1F4CA; Tableau de bord Commissions</h1>
+    <div style="display:flex;gap:16px;font-size:.85rem">
+      <a href="{% url 'marketplace:agent_dashboard' %}">Agent Dashboard</a>
+      <a href="/admin/">Django Admin</a>
+      <a href="{% url 'home' %}">Site</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="stats">
+      <div class="card">
+        <div class="label">Ventes totales</div>
+        <div class="value">{{ total_sales_count }}</div>
+      </div>
+      <div class="card">
+        <div class="label">Chiffre d'affaires global</div>
+        <div class="value gold">{{ total_sales_revenue|floatformat:2 }} USD</div>
+      </div>
+      <div class="card">
+        <div class="label">Commissions collectees</div>
+        <div class="value green">{{ total_commission_collected|floatformat:2 }} USD</div>
+      </div>
+      <div class="card">
+        <div class="label">Commissions en attente</div>
+        <div class="value red">{{ total_commission_pending|floatformat:2 }} USD</div>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="card">
+        <div class="label">Ventes ce mois</div>
+        <div class="value">{{ monthly_sales_count }}</div>
+      </div>
+      <div class="card">
+        <div class="label">CA ce mois</div>
+        <div class="value gold">{{ monthly_revenue|floatformat:2 }} USD</div>
+      </div>
+      <div class="card">
+        <div class="label">Commission ce mois</div>
+        <div class="value">{{ monthly_commission|floatformat:2 }} USD</div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <h2 class="section-title">Top vendeurs</h2>
+        {% if top_sellers %}
+        <table>
+          <thead><tr><th>Vendeur</th><th>Ventes</th><th>CA</th></tr></thead>
+          <tbody>
+            {% for s in top_sellers %}
+            <tr>
+              <td>{{ s.display_name }}</td>
+              <td>{{ s.nb_sales }}</td>
+              <td style="font-weight:600;color:var(--gold)">{{ s.revenue|floatformat:2 }} USD</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+          <p style="color:var(--muted);padding:12px 0">Aucun vendeur actif.</p>
+        {% endif %}
+      </div>
+
+      <div>
+        <h2 class="section-title">Dernieres commissions</h2>
+        {% if recent_commissions %}
+        <table>
+          <thead><tr><th>Vendeur</th><th>Montant</th><th>Statut</th><th>Date</th></tr></thead>
+          <tbody>
+            {% for c in recent_commissions %}
+            <tr>
+              <td>{{ c.sale.seller.display_name }}</td>
+              <td style="font-weight:600">{{ c.amount|floatformat:2 }} USD</td>
+              <td><span class="badge {{ c.status }}">{{ c.get_status_display }}</span></td>
+              <td style="color:var(--muted);font-size:.82rem">{{ c.created_at|date:"d/m/Y" }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+          <p style="color:var(--muted);padding:12px 0">Aucune commission enregistree.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</body>
+</html>

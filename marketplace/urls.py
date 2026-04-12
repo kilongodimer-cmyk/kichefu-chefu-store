@@ -4,6 +4,7 @@ from django.urls import path, re_path
 from .views import (
     AccessoryDetailView,
     AccessoryMarketplaceListView,
+    AdminCommissionDashboardView,
     AgentDashboardView,
     AgentLoginView,
     PhoneLoginView,
@@ -14,6 +15,9 @@ from .views import (
     PhoneMarketplaceListView,
     SearchSuggestionsView,
     GlobalSearchView,
+    SellerDashboardView,
+    SellerRegisterView,
+    SellerSalesHistoryView,
     SitemapXmlView,
     RobotsTxtView,
     GoogleSiteVerificationView,
@@ -57,4 +61,9 @@ urlpatterns = [
     path("favoris/toggle/<str:model_name>/<int:pk>/", ToggleFavoriteView.as_view(), name="toggle_favorite"),
     path("alertes/prix/<str:model_name>/<int:pk>/", TogglePriceAlertView.as_view(), name="toggle_price_alert"),
     path("notifications/", NotificationsView.as_view(), name="notifications"),
+    # Commission system
+    path("vendeur/inscription/", SellerRegisterView.as_view(), name="seller_register"),
+    path("vendeur/espace/", SellerDashboardView.as_view(), name="seller_dashboard"),
+    path("vendeur/ventes/", SellerSalesHistoryView.as_view(), name="seller_sales_history"),
+    path("agent/commissions/", AdminCommissionDashboardView.as_view(), name="admin_commission_dashboard"),
 ]

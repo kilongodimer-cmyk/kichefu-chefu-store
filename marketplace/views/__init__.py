@@ -46,3 +46,10 @@ from .seo import (  # noqa: F401
 	RobotsTxtView,
 	SitemapXmlView,
 )
+
+from .commission import (  # noqa: F401
+	AdminCommissionDashboardView,
+	SellerDashboardView,
+	SellerRegisterView,
+	SellerSalesHistoryView,
+)
